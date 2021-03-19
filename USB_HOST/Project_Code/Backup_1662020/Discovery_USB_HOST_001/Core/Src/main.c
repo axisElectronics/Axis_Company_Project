@@ -100,7 +100,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
   HAL_Delay(5000);
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);

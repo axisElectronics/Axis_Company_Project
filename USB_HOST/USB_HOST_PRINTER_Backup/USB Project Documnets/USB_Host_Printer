@@ -1,0 +1,44 @@
+
+@Project 				:	Custom Printer class
+@Software Developer		: 	Vivek Yadav
+@Document Auther		:	Vivek Yadav
+@PCB Designer			:	
+
+/===================================	Descriptions	=====================================/
+[...]
+@	This is a generic USB Host driver to communicate Printer on the STM32F407V-DISC Board.
+	(#) we are getting data serially as INPUT which sends furthur on USB BUS as OUTPUT.
+	(#) INPUT data is pre-converted into printer language. we are acting as bridge.
+	(#) we are not manipulating any byte.
+	(#) we have tested it on Thermal printer and Dot matrix printer as well and wroking fine.
+	(#)	we have implemented 3 cammand in it.
+		($) VIDPID
+			(*) It returns Vendor ID and Product ID of connected Devices.
+		($) BAUDRATE
+			(*) It returns Baudrate of Serial communication. By default BAUDRATE : 9600 8,N,1 
+		($) CHG_BAUDRATE
+			(*) This command is used to change BAUDRATE of serial communication.
+	
+	
+	
+[...]
+@	Limitations :
+	(#) Driver is not capable to accomadate multiple devices(Printer).
+	(#) Driver is specific to USB printer class.
+	
+	
+[...]
+@	Revision :
+	(#) None
+	
+[...]
+@	Update :
+	(#) We can Store a Test lable into Flash. Which shows Default Conditions.
+		To do this task we have to make one more command TEST.
+		In This STM32F407V-DISC Board we have 128Kbytes sector-11 Which can 
+		accomadate this test lable data and other data also.
+		($) Open Date  : 11-06-2020
+		($) Close Date : Not Implemented Yet
+			(*) It is valid for other controller also only Flash page/sector size will differ.
+	
+/===================================	Hardware	==========================================/

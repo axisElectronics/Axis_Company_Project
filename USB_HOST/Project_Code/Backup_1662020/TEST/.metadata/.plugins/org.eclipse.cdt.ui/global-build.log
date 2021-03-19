@@ -1,0 +1,14 @@
+10:50:12 **** Incremental Build of configuration Debug for project Discovery_USB_HOST_001 ****
+make -j4 all 
+arm-none-eabi-size   Discovery_USB_HOST_001.elf 
+   text	   data	    bss	    dec	    hex	filename
+  30992	    152	   5400	  36544	   8ec0	Discovery_USB_HOST_001.elf
+Finished building: default.size.stdout
+ 
+10:50:15 **** Incremental Build of configuration Debug for project Discovery_USB_HOST_001 ****
+make -j4 all 
+arm-none-eabi-size   Discovery_USB_HOST_001.elf 
+   text	   data	    bss	    dec	    hex	filename
+  30992	    152	   5400	  36544	   8ec0	Discovery_USB_HOST_001.elf
+Finished building: default.size.stdout
+ 
