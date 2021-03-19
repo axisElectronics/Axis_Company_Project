@@ -408,6 +408,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
+
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
  8000500:	2200      	movs	r2, #0
  8000502:	f44f 7100 	mov.w	r1, #512	; 0x200
@@ -12176,6 +12177,7 @@ static USBH_StatusTypeDef USBH_PRT_Process(USBH_HandleTypeDef *phost)
  8005010:	0800505d 	.word	0x0800505d
  8005014:	08005131 	.word	0x08005131
 	 {
+
 			case PRT_INIT:
 				PRT_Handle->state = PRT_SYNC;
  8005018:	f507 531d 	add.w	r3, r7, #10048	; 0x2740

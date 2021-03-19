@@ -163,6 +163,7 @@ static USBH_StatusTypeDef USBH_PRT_Process(USBH_HandleTypeDef *phost)
 
 	 switch(PRT_Handle->state)
 	 {
+
 			case PRT_INIT:
 				PRT_Handle->state = PRT_SYNC;
 				break;
