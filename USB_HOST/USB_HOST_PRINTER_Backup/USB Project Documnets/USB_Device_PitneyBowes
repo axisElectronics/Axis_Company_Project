@@ -1,0 +1,51 @@
+
+
+
+@Project 				:	Composite USB device
+@Software Developer		: 	Vivek Yadav
+@Document Auther		:	Vivek Yadav
+@PCB Designer			:	Sunil Sir
+
+/*************************	Descriptions	************************/
+
+	[...]
+	@	we took Pitney Bowes as a reference and made a device which has same features like Pitney Bowes.
+		(#) Features :
+			@	Pitney Bowes shows data on Physical device's LCD as calculated by weighing device sensor.
+			@	Pitney Bowes is able to communicate with Windows using USB protocol(as HID device).
+			@	Pitney Bowes is able to send data on web server through USB protocol.
+			
+		(#)	Advancements :
+			@	V-12 is able to Communicate with PC(OS: Windows) as virtual communication port.
+			@	V-12 is able to communicate with PC(OS: Windows) as HID device(KeyBoard + Point of scale).
+				It is able to send real time data to PC.
+			@	POS is define as per standards provided in POS USB specifications.
+			
+	[...]
+	@	VCOM Mode  :
+		(#) We can get weighing device data using VCOM continuously. In this projects we implement only one way
+			VOM communication.
+			[ PC ] <<<----VCOM----- [ Weighing Devie ]
+			
+	@	HID Mode :
+		(#) We can get weighing device data at specified location like a keyboard do. 
+			you can get this weighing device output at your Notepad also.
+			
+	[...]
+	@	Limitations :
+		(#) At a time only one mode will operational. Either VCOM or HID Mode.
+		
+		
+/************************	Custom Hardware	*******************************/
+							[SEPL-315]
+	[...]
+	@	This hardware is customized version of STM32F103C8T6 Board also know as Blue Pill.
+	@	Custom Board as mainly 3 important things.
+		(#) USB Connection pins
+		(#) 2 USART connection pins, One is standby mode.
+		(#) one External GPIO Pin which uses to decide USB Modes.
+
+	[...]
+	@	Revision :
+		(#) None
+		
