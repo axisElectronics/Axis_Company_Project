@@ -1,7 +1,143 @@
-17:37:02 **** Incremental Build of configuration Debug for project Port_405 ****
+16:55:18 **** Incremental Build of configuration Debug for project Port_405 ****
+make -j4 all 
+arm-none-eabi-gcc "D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F405xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../USB_HOST/App -I../USB_HOST/Target -I../Middlewares/ST/STM32_USB_Host_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Host_Library/Class/HID/Inc -I"D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Printer_Driver_Files/usbh_hid_test.d" -MT"Printer_Driver_Files/usbh_hid_test.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Printer_Driver_Files/usbh_hid_test.o"
+D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.c: In function 'USBH_PRT_ClassRequest':
+D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.c:161:62: warning: pointer targets in passing argument 1 of 'strlen' differ in signedness [-Wpointer-sign]
+  161 |  HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)strlen(buff) ,( uint32_t)1000);
+      |                                                              ^~~~
+      |                                                              |
+      |                                                              uint8_t * {aka unsigned char *}
+In file included from ../USB_HOST/Target/usbh_conf.h:32,
+                 from ../Middlewares/ST/STM32_USB_Host_Library/Core/Inc/usbh_core.h:28,
+                 from D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.h:11,
+                 from D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.c:8:
+c:\st\stm32cubeide_1.6.0\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.9-2020-q2-update.win32_1.5.0.202011040924\tools\arm-none-eabi\include\string.h:41:17: note: expected 'const char *' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+   41 | size_t  strlen (const char *);
+      |                 ^~~~~~~~~~~~
+D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.c:165:62: warning: pointer targets in passing argument 1 of 'strlen' differ in signedness [-Wpointer-sign]
+  165 |  HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)strlen(buff) ,( uint32_t)1000);
+      |                                                              ^~~~
+      |                                                              |
+      |                                                              uint8_t * {aka unsigned char *}
+In file included from ../USB_HOST/Target/usbh_conf.h:32,
+                 from ../Middlewares/ST/STM32_USB_Host_Library/Core/Inc/usbh_core.h:28,
+                 from D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.h:11,
+                 from D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.c:8:
+c:\st\stm32cubeide_1.6.0\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.9-2020-q2-update.win32_1.5.0.202011040924\tools\arm-none-eabi\include\string.h:41:17: note: expected 'const char *' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+   41 | size_t  strlen (const char *);
+      |                 ^~~~~~~~~~~~
+D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.c: In function 'USBH_PRT_Process':
+D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.c:207:16: warning: pointer targets in passing argument 1 of 'strlen' differ in signedness [-Wpointer-sign]
+  207 |     if((strlen(buff) < 10) )
+      |                ^~~~
+      |                |
+      |                uint8_t * {aka unsigned char *}
+In file included from ../USB_HOST/Target/usbh_conf.h:32,
+                 from ../Middlewares/ST/STM32_USB_Host_Library/Core/Inc/usbh_core.h:28,
+                 from D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.h:11,
+                 from D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.c:8:
+c:\st\stm32cubeide_1.6.0\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.9-2020-q2-update.win32_1.5.0.202011040924\tools\arm-none-eabi\include\string.h:41:17: note: expected 'const char *' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+   41 | size_t  strlen (const char *);
+      |                 ^~~~~~~~~~~~
+D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.c:216:22: warning: pointer targets in passing argument 1 of 'strlen' differ in signedness [-Wpointer-sign]
+  216 |    XferSize = strlen(buff)+1;
+      |                      ^~~~
+      |                      |
+      |                      uint8_t * {aka unsigned char *}
+In file included from ../USB_HOST/Target/usbh_conf.h:32,
+                 from ../Middlewares/ST/STM32_USB_Host_Library/Core/Inc/usbh_core.h:28,
+                 from D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.h:11,
+                 from D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.c:8:
+c:\st\stm32cubeide_1.6.0\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.9-2020-q2-update.win32_1.5.0.202011040924\tools\arm-none-eabi\include\string.h:41:17: note: expected 'const char *' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+   41 | size_t  strlen (const char *);
+      |                 ^~~~~~~~~~~~
+D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.c:182:22: warning: variable 'status' set but not used [-Wunused-but-set-variable]
+  182 |   USBH_StatusTypeDef status = USBH_OK;
+      |                      ^~~~~~
+At top level:
+D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files/usbh_hid_test.c:305:27: warning: 'USBH_PRT_Soft_Reset' defined but not used [-Wunused-function]
+  305 | static USBH_StatusTypeDef USBH_PRT_Soft_Reset(USBH_HandleTypeDef *phost, uint8_t *Buff, uint16_t Devlen){
+      |                           ^~~~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "Port_405.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Company_Projects_by_vivek\Axis_Company_Project\USB_HOST\Project_Code\TEST\Port_405\STM32F405RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Port_405.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Port_405.elf
+ 
+arm-none-eabi-objdump -h -S  Port_405.elf  > "Port_405.list"
+arm-none-eabi-objcopy  -O binary  Port_405.elf  "Port_405.bin"
+arm-none-eabi-size   Port_405.elf 
+   text	   data	    bss	    dec	    hex	filename
+  28548	    152	   3464	  32164	   7da4	Port_405.elf
+Finished building: default.size.stdout
+ 
+Finished building: Port_405.bin
+ 
+Finished building: Port_405.list
+ 
+16:55:21 **** Incremental Build of configuration Debug for project Port_405 ****
 make -j4 all 
 arm-none-eabi-size   Port_405.elf 
    text	   data	    bss	    dec	    hex	filename
-  28500	    152	   3464	  32116	   7d74	Port_405.elf
+  28548	    152	   3464	  32164	   7da4	Port_405.elf
+Finished building: default.size.stdout
+ 
+16:59:13 **** Incremental Build of configuration Debug for project Port_405 ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/stm32f4xx_it.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F405xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../USB_HOST/App -I../USB_HOST/Target -I../Middlewares/ST/STM32_USB_Host_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Host_Library/Class/HID/Inc -I"D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/stm32f4xx_it.d" -MT"Core/Src/stm32f4xx_it.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32f4xx_it.o"
+arm-none-eabi-gcc -o "Port_405.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Company_Projects_by_vivek\Axis_Company_Project\USB_HOST\Project_Code\TEST\Port_405\STM32F405RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Port_405.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Port_405.elf
+ 
+arm-none-eabi-objdump -h -S  Port_405.elf  > "Port_405.list"
+arm-none-eabi-objcopy  -O binary  Port_405.elf  "Port_405.bin"
+arm-none-eabi-size   Port_405.elf 
+   text	   data	    bss	    dec	    hex	filename
+  28512	    152	   3464	  32128	   7d80	Port_405.elf
+Finished building: default.size.stdout
+ 
+Finished building: Port_405.bin
+ 
+Finished building: Port_405.list
+ 
+17:00:30 **** Incremental Build of configuration Debug for project Port_405 ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/stm32f4xx_it.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F405xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../USB_HOST/App -I../USB_HOST/Target -I../Middlewares/ST/STM32_USB_Host_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Host_Library/Class/HID/Inc -I"D:/Company_Projects_by_vivek/Axis_Company_Project/USB_HOST/Project_Code/TEST/Port_405/Printer_Driver_Files" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/stm32f4xx_it.d" -MT"Core/Src/stm32f4xx_it.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32f4xx_it.o"
+arm-none-eabi-gcc -o "Port_405.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Company_Projects_by_vivek\Axis_Company_Project\USB_HOST\Project_Code\TEST\Port_405\STM32F405RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Port_405.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Port_405.elf
+ 
+arm-none-eabi-objdump -h -S  Port_405.elf  > "Port_405.list"
+arm-none-eabi-objcopy  -O binary  Port_405.elf  "Port_405.bin"
+arm-none-eabi-size   Port_405.elf 
+   text	   data	    bss	    dec	    hex	filename
+  28548	    152	   3464	  32164	   7da4	Port_405.elf
+Finished building: default.size.stdout
+ 
+Finished building: Port_405.bin
+ 
+Finished building: Port_405.list
+ 
+17:17:42 **** Incremental Build of configuration Debug for project Port_405 ****
+make -j4 all 
+arm-none-eabi-size   Port_405.elf 
+   text	   data	    bss	    dec	    hex	filename
+  28548	    152	   3464	  32164	   7da4	Port_405.elf
+Finished building: default.size.stdout
+ 
+17:18:21 **** Incremental Build of configuration Debug for project Port_405 ****
+make -j4 all 
+arm-none-eabi-size   Port_405.elf 
+   text	   data	    bss	    dec	    hex	filename
+  28548	    152	   3464	  32164	   7da4	Port_405.elf
+Finished building: default.size.stdout
+ 
+17:19:22 **** Incremental Build of configuration Debug for project Port_405 ****
+make -j4 all 
+arm-none-eabi-size   Port_405.elf 
+   text	   data	    bss	    dec	    hex	filename
+  28548	    152	   3464	  32164	   7da4	Port_405.elf
+Finished building: default.size.stdout
+ 
+17:19:58 **** Incremental Build of configuration Debug for project Port_405 ****
+make -j4 all 
+arm-none-eabi-size   Port_405.elf 
+   text	   data	    bss	    dec	    hex	filename
+  28548	    152	   3464	  32164	   7da4	Port_405.elf
 Finished building: default.size.stdout
  

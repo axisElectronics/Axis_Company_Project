@@ -552,3 +552,7 @@
 2021-03-19 16:50:49,345 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] Managed Build system manifest file error: Option com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.603383812.1468293864.954859770 uses a null category that is invalid in its context. The option was ignored.
 2021-03-19 16:50:49,350 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] Managed Build system manifest file error: Option com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.247057979.1536785459.2022376335 uses a null category that is invalid in its context. The option was ignored.
 2021-03-19 16:50:49,354 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] Managed Build system manifest file error: Option com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.2028001093.993929138.1758649458 uses a null category that is invalid in its context. The option was ignored.
+2021-03-20 11:06:42,373 [INFO] Activator:170 - 
+
+
+2021-03-20 11:06:42,373 [INFO] Activator:171 - !SESSION log4j initialized

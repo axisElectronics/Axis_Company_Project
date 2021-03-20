@@ -82,13 +82,13 @@ static USBH_StatusTypeDef USBH_PRT_InterfaceInit(USBH_HandleTypeDef *phost){
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
    if(phost->pActiveClass->ClassCode == USB_PRT_CLASS){
-	   HAL_UART_Transmit(&huart2, (uint8_t *)"\nPrinter class\r\n",(uint16_t)strlen("\nPrinter class\r\n"),( uint32_t) 500);
+	   HAL_UART_Transmit(&huart2, (uint8_t *)"\nPrinter class\r\n",(uint16_t)strlen("\nPrinter class\r\n"),( uint32_t) 1000);
    }else{
-	   HAL_UART_Transmit(&huart2, (uint8_t *)"\nNOT Printer class\r\n",(uint16_t)strlen("\nNOT Printer class\r\n"),( uint32_t) 500);
+	   HAL_UART_Transmit(&huart2, (uint8_t *)"\nNOT Printer class\r\n",(uint16_t)strlen("\nNOT Printer class\r\n"),( uint32_t) 1000);
    }
 
 
-	//	HAL_UART_Transmit(&huart2, (uint8_t *)phost->device.CfgDesc_Raw,(uint16_t)255 ,( uint32_t)1000);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)phost->device.CfgDesc_Raw,(uint16_t)255 ,( uint32_t)1000);
 
    /* Decode endpoint IN and OUT address from interface descriptor */
      for (int num = 0; num < 2; num++)
@@ -143,7 +143,7 @@ static USBH_StatusTypeDef USBH_PRT_InterfaceDeInit(USBH_HandleTypeDef *phost){
 
 
 
-
+HAL_Delay(500);
 
 return USBH_OK;
 }
@@ -158,15 +158,15 @@ static USBH_StatusTypeDef USBH_PRT_ClassRequest(USBH_HandleTypeDef *phost){
 // Although that infomation we don't required any where in this Driver.
 
 	while( USBH_PRT_Get_Device_Id(phost, buff, 150) != USBH_OK);
-	HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)100 ,( uint32_t)500);
+	HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)strlen(buff) ,( uint32_t)1000);
 	memset(buff,0,150);
 
 	while( USBH_PRT_Get_Port_Status(phost, buff, 150) != USBH_OK);
-	HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)100 ,( uint32_t)500);
+	HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)strlen(buff) ,( uint32_t)1000);
 	memset(buff,0,150);
 
 //	while( USBH_PRT_Soft_Reset(phost, buff, 1) != USBH_OK);
-//	HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)100 ,( uint32_t)500);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)strlen(buff) ,( uint32_t)1000);
 //	memset(buff,0,150);
 
 	return USBH_OK;
@@ -184,7 +184,7 @@ static USBH_StatusTypeDef USBH_PRT_Process(USBH_HandleTypeDef *phost){
 
 	 memset(temp,0,64);
 
-	 PRT_Handle->poll = 10;
+	 PRT_Handle->poll = 100;
 
 	 switch(PRT_Handle->state){
 
@@ -201,10 +201,14 @@ static USBH_StatusTypeDef USBH_PRT_Process(USBH_HandleTypeDef *phost){
 	      }
 
 		 memset(buff,0,SIZE_BUFF);
-		 while(strlen(buff) < 10)
-			 HAL_UART_Receive(&huart2, buff, SIZE_BUFF,1000);
 
-		 PRT_Handle->state = PRT_GET_DATA;
+		HAL_UART_Receive(&huart2, buff, SIZE_BUFF,1000);
+
+			 if((strlen(buff) < 10) )
+				 PRT_Handle->state = PRT_SYNC;
+			 else
+				 PRT_Handle->state = PRT_GET_DATA;
+
 	      break;
 
 	 case PRT_GET_DATA:
