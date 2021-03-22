@@ -71,12 +71,14 @@ void MX_USB_HOST_Process(void);
   * @brief  The application entry point.
   * @retval int
   */
+#define SIZE_BUFF 5000
 int main(void)
 {
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
-
+	 uint8_t buff[SIZE_BUFF];
+	 int max;
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -102,7 +104,7 @@ int main(void)
 
 
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
-  HAL_Delay(5000);
+//  HAL_Delay(5000);
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
 
   USBH_HID_KeybdInit(&hUsbHostFS);
@@ -112,6 +114,21 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+//  memset(buff,0,SIZE_BUFF);
+//  HAL_UART_Receive_IT(&huart2, (uint8_t *)buff, (uint16_t)SIZE_BUFF);
+
+//  while(1)
+//  {
+//
+//
+//	  if( strlen(buff) > 100 )
+//	  {
+//		  HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)strlen(buff), 1000);
+//		  memset(buff,0,SIZE_BUFF);
+//	  }
+//  }
+
   while (1)
   {
     /* USER CODE END WHILE */

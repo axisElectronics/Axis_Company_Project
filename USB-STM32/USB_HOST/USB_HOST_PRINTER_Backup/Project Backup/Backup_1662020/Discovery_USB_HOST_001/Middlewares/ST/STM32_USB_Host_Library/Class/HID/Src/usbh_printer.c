@@ -172,9 +172,11 @@ int CommandOperation( PRT_HandleTypeDef *PRT_Handle , uint8_t *buff)
 			 	 printReport();
 			 	 break;
 		 default:
+		 {
 			 HAL_UART_Transmit(&huart2, "This is not know Command\n", strlen(  "This is not know Command\n"),1000);
 			 flag = 0; //flag = 0 ; Command Not Found
-			 break;
+		 }
+		 break;
 
 		 }//end-Switch
 

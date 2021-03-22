@@ -24,7 +24,7 @@
 #define PRT_SYNC 1
 #define PRT_GET_DATA 2
 #define PRT_POLL 3
-#define SIZE_BUFF 10000
+#define SIZE_BUFF 8000
 #define VIDPID	1
 #define BAUDRATE 2
 #define CHN_BAUDRATE 3

@@ -129,18 +129,18 @@ static USBH_StatusTypeDef USBH_PRT_ClassRequest(USBH_HandleTypeDef *phost){
 
 	uint8_t buff[150];
 	memset(buff,0,150);
-
+//	HAL_UART_Transmit(&huart2, (uint8_t *)phost->device.CfgDesc_Raw,(uint16_t)255 ,( uint32_t)1000);
 
 	while( USBH_PRT_Get_Device_Id(phost, buff, 150) != USBH_OK);
-	HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)100 ,( uint32_t)500);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)strlen(buff) ,( uint32_t)100);
 	memset(buff,0,150);
 
-//	while( USBH_PRT_Get_Port_Status(phost, buff, 150) != USBH_OK);
-//	HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)100 ,( uint32_t)500);
-//	memset(buff,0,150);
+	while( USBH_PRT_Get_Port_Status(phost, buff, 150) != USBH_OK);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)100 ,( uint32_t)10);
+	memset(buff,0,150);
 
 //	while( USBH_PRT_Soft_Reset(phost, buff, 1) != USBH_OK);
-//	HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)100 ,( uint32_t)500);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)100 ,( uint32_t)1000);
 //	memset(buff,0,150);
 
 	return USBH_OK;
@@ -153,12 +153,12 @@ static USBH_StatusTypeDef USBH_PRT_Process(USBH_HandleTypeDef *phost)
 	 uint16_t XferSize=0;
 	 uint8_t temp[64],pktcnt;
 	 uint8_t buff[SIZE_BUFF];
-
+	 int8_t stat_flag = -1;
 	 USBH_StatusTypeDef status = USBH_OK;
 	 PRT_HandleTypeDef *PRT_Handle = (PRT_HandleTypeDef *) phost->pActiveClass->pData;
 
 	 memset(temp,0,64);
-
+	 memset(buff,0, sizeof(buff));
 	 PRT_Handle->poll = 10;
 
 	 switch(PRT_Handle->state)
@@ -186,13 +186,20 @@ static USBH_StatusTypeDef USBH_PRT_Process(USBH_HandleTypeDef *phost)
 				  * 	(#) CHN_BAUDRATE
 				  *
 				  */
-
-				 do
+				 HAL_UART_Receive_IT(&huart2, (uint8_t *)buff, (uint16_t)SIZE_BUFF);
+				 while(1)
 				 {
-					 memset(buff,0,SIZE_BUFF);
-					 HAL_UART_Receive(&huart2, buff, SIZE_BUFF,3000);
 
-				 }while(CommandOperation(PRT_Handle,buff));
+					 if( strlen(buff) > 0 ) break;
+				 }
+
+
+				 if( strlen(buff) > 0 )
+				 {
+					 HAL_Delay(2000);
+					 CommandOperation(PRT_Handle,buff);
+					 HAL_UART_Transmit(&huart2, (uint8_t *)"Data Received\r\n",(uint16_t)strlen("Data Received\r\n") ,( uint32_t)50);
+				 }
 
 				 /* Print Report Funcation
 				  *	It should be as per command.
@@ -201,20 +208,24 @@ static USBH_StatusTypeDef USBH_PRT_Process(USBH_HandleTypeDef *phost)
 				  *	should not work.
 				  *
 				  */
-				 if( printReport() )
+				 if(strlen(buff) > 16)
 				 {
-					 uint8_t *POSreport;
-					 POSreport = PRT_Report(buff);
-					 SendDataOnPrinter(phost,PRT_Handle, POSreport);
-				 }
+					 CommandOperation(PRT_Handle,buff);
 
+					 if( printReport() )
+					 {
+						 uint8_t *POSreport;
+						 POSreport = PRT_Report(buff);
+						 SendDataOnPrinter(phost,PRT_Handle, POSreport);
+					 }
 
-				 // Send Data on printer After choping into specified length.
-				 SendDataOnPrinter(phost,PRT_Handle, buff);
+					 // Send Data on printer After choping into specified length.
+					 SendDataOnPrinter(phost,PRT_Handle, buff);
 
-				 PRT_Handle->state = PRT_POLL;
-				 PRT_Handle->timer = phost->Timer;
-				 PRT_Handle->DataReady = 0U;
+					 PRT_Handle->state = PRT_POLL;
+					 PRT_Handle->timer = phost->Timer;
+					 PRT_Handle->DataReady = 0U;
+	 	 	 	 }
 				 break;
 
 			 case PRT_POLL:
@@ -223,14 +234,19 @@ static USBH_StatusTypeDef USBH_PRT_Process(USBH_HandleTypeDef *phost)
 				 {
 
 					 status = USBH_LL_GetURBState(phost, PRT_Handle->InPipe);
+				//	 HAL_UART_Transmit(&huart2, (uint8_t *)"PRT Poll received status\r\n",(uint16_t)strlen("PRT Poll received status\r\n") ,( uint32_t)5);
 					 XferSize = USBH_LL_GetLastXferSize(phost, PRT_Handle->InPipe);
 					 PRT_Handle->state = PRT_GET_DATA;
-					 USBH_Delay( PRT_Handle->poll);
+				//	 HAL_UART_Transmit(&huart2, (uint8_t *)"PRT Poll got polled data\r\n",(uint16_t)strlen("PRT Poll got polled data\r\n") ,( uint32_t)5);
+					 USBH_Delay( (PRT_Handle->poll)*2);
+					 HAL_UART_Transmit(&huart2, (uint8_t *)"PRT Poll done\r\n",(uint16_t)strlen("PRT Poll done\r\n") ,( uint32_t)50);
+					 memset(buff,0,strlen(buff));
 				 }
 
 				 break;
 
 			 default:
+				 HAL_UART_Transmit(&huart2, (uint8_t *)"Nothing to do...\r\n",(uint16_t)strlen("Nothing to do...\r\n") ,( uint32_t)50);
 				 break;
 
 	}
