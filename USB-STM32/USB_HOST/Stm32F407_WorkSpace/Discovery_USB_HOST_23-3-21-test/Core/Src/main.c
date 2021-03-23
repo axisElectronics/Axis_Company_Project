@@ -71,14 +71,13 @@ void MX_USB_HOST_Process(void);
   * @brief  The application entry point.
   * @retval int
   */
-#define SIZE_BUFF 5000
+
 int main(void)
 {
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
-	 uint8_t buff[SIZE_BUFF];
-	 int max;
+
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -115,18 +114,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-//  memset(buff,0,SIZE_BUFF);
-//  HAL_UART_Receive_IT(&huart2, (uint8_t *)buff, (uint16_t)SIZE_BUFF);
 
-//  while( strlen(buff) > 100)
-//  {
-//
-//	  HAL_UART_Transmit_IT(&huart2, (uint8_t *)buff,(uint16_t)strlen(buff));
-//	  if( strlen(buff) > 100 )
-//	  {
-//		  memset(buff,0,SIZE_BUFF);
-//	  }
-//  }
 
   while (1)
   {

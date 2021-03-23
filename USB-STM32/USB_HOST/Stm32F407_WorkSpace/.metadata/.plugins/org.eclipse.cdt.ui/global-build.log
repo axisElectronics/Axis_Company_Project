@@ -1,5 +1,35 @@
-13:20:45 **** Incremental Build of configuration Debug for project Discovery_USB_HOST_23-3-21-test ****
+14:52:22 **** Incremental Build of configuration Debug for project Discovery_USB_HOST_23-3-21-test ****
 make -j4 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DDEBUG -DSTM32F407xx -c -I../USB_HOST/App -I../Drivers/CMSIS/Include -I../Middlewares/ST/STM32_USB_Host_Library/Class/HID/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Core/Inc -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../USB_HOST/Target -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Middlewares/ST/STM32_USB_Host_Library/Core/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'USBH_HID_EventCallback':
+../Core/Src/main.c:252:32: warning: passing argument 2 of 'USB_ReadPacket' from incompatible pointer type [-Wincompatible-pointer-types]
+  252 |  data[0]= USB_ReadPacket(USBx, &dest,  len);
+      |                                ^~~~~
+      |                                |
+      |                                uint8_t (*)[8] {aka unsigned char (*)[8]}
+In file included from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_hcd.h:29,
+                 from ../Core/Inc/stm32f4xx_hal_conf.h:388,
+                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:30,
+                 from ../Core/Inc/main.h:31,
+                 from ../Core/Src/main.c:22:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:446:19: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint8_t (*)[8]' {aka 'unsigned char (*)[8]'}
+  446 | void             *USB_ReadPacket(USB_OTG_GlobalTypeDef *USBx, uint8_t *dest, uint16_t len);
+      |                   ^~~~~~~~~~~~~~
+../Core/Src/main.c:256:22: warning: variable 'temp4' set but not used [-Wunused-but-set-variable]
+  256 |    uint32_t temp3=0, temp4=0;
+      |                      ^~~~~
+../Core/Src/main.c:256:13: warning: variable 'temp3' set but not used [-Wunused-but-set-variable]
+  256 |    uint32_t temp3=0, temp4=0;
+      |             ^~~~~
+../Core/Src/main.c:247:18: warning: variable 'temp2' set but not used [-Wunused-but-set-variable]
+  247 |  uint8_t *temp1, temp2=0;
+      |                  ^~~~~
+../Core/Src/main.c:247:11: warning: unused variable 'temp1' [-Wunused-variable]
+  247 |  uint8_t *temp1, temp2=0;
+      |           ^~~~~
+../Core/Src/main.c:252:11: warning: 'USBx' is used uninitialized in this function [-Wuninitialized]
+  252 |  data[0]= USB_ReadPacket(USBx, &dest,  len);
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 arm-none-eabi-gcc -o "Discovery_USB_HOST_23-3-21-test.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Company_Projects_by_vivek\Axis_Company_Project\USB-STM32\USB_HOST\Stm32F407_WorkSpace\Discovery_USB_HOST_23-3-21-test\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Discovery_USB_HOST_23-3-21-test.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: Discovery_USB_HOST_23-3-21-test.elf
  
@@ -7,7 +37,7 @@ arm-none-eabi-size   Discovery_USB_HOST_23-3-21-test.elf
 arm-none-eabi-objdump -h -S  Discovery_USB_HOST_23-3-21-test.elf  > "Discovery_USB_HOST_23-3-21-test.list"
 arm-none-eabi-objcopy  -O binary  Discovery_USB_HOST_23-3-21-test.elf  "Discovery_USB_HOST_23-3-21-test.bin"
    text	   data	    bss	    dec	    hex	filename
-  32488	    152	   5400	  38040	   9498	Discovery_USB_HOST_23-3-21-test.elf
+  32480	    152	   5400	  38032	   9490	Discovery_USB_HOST_23-3-21-test.elf
 Finished building: default.size.stdout
  
 Finished building: Discovery_USB_HOST_23-3-21-test.bin
