@@ -6,7 +6,6 @@
  */
 
 #include "usbh_hid_test.h"
-
 #include "usbh_printer.h"
 
 
