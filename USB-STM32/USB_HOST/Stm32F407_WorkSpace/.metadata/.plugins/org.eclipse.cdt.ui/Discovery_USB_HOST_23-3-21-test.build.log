@@ -1,0 +1,21 @@
+13:20:45 **** Incremental Build of configuration Debug for project Discovery_USB_HOST_23-3-21-test ****
+make -j4 all 
+arm-none-eabi-gcc -o "Discovery_USB_HOST_23-3-21-test.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\Company_Projects_by_vivek\Axis_Company_Project\USB-STM32\USB_HOST\Stm32F407_WorkSpace\Discovery_USB_HOST_23-3-21-test\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Discovery_USB_HOST_23-3-21-test.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Discovery_USB_HOST_23-3-21-test.elf
+ 
+arm-none-eabi-size   Discovery_USB_HOST_23-3-21-test.elf 
+arm-none-eabi-objdump -h -S  Discovery_USB_HOST_23-3-21-test.elf  > "Discovery_USB_HOST_23-3-21-test.list"
+arm-none-eabi-objcopy  -O binary  Discovery_USB_HOST_23-3-21-test.elf  "Discovery_USB_HOST_23-3-21-test.bin"
+   text	   data	    bss	    dec	    hex	filename
+  32488	    152	   5400	  38040	   9498	Discovery_USB_HOST_23-3-21-test.elf
+Finished building: default.size.stdout
+ 
+Finished building: Discovery_USB_HOST_23-3-21-test.bin
+ 
+Finished building: Discovery_USB_HOST_23-3-21-test.list
+ 
+arm-none-eabi-objcopy -O ihex Discovery_USB_HOST_23-3-21-test.elf Discovery_USB_HOST_23-3-21-test.hex
+ 
+
+13:20:46 Build Finished. 0 errors, 0 warnings. (took 874ms)
+

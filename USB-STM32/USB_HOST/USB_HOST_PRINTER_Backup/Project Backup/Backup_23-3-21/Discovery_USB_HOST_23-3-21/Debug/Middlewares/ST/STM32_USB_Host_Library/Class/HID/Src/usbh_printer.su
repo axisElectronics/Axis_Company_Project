@@ -1,0 +1,11 @@
+usbh_printer.c:17:5:CheckCMD	16	static
+usbh_printer.c:42:6:reverse	24	static
+usbh_printer.c:63:6:I2A	24	static
+usbh_printer.c:79:10:A2I	24	static
+usbh_printer.c:98:11:checkBudrate	16	static
+usbh_printer.c:107:16:ChangeBaudrate	16	static
+usbh_printer.c:121:5:CommandOperation	88	static
+usbh_printer.c:189:9:printReport	4	static
+usbh_printer.c:203:10:PRT_Report	48	static
+usbh_printer.c:253:9:SendDataOnPrinter	112	static
+usbh_printer.c:285:6:fun2	232	static
