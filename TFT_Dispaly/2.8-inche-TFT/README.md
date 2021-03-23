@@ -1,5 +1,5 @@
 
-**Setup ESP32 DEVKIT with new 280x320 ILI9341 Driver based TFT with TFT_eSPI library.**
+# **Setup ESP32 DEVKIT with new 280x320 ILI9341 Driver based TFT with TFT_eSPI library.**
 
 Few Chnages into below files are required to work with this library.
 
