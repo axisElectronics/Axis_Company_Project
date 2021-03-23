@@ -9,6 +9,7 @@
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
 		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="D:\Company_Projects_by_vivek\Axis_Company_Project\USB-STM32\USB_HOST\USB_HOST_PRINTER_Backup\Project Backup\Backup_1662020\Discovery_USB_HOST_001"/>
 			<item value="D:\Company_Projects_by_vivek\Axis_Company_Project\USB-STM32\USB_HOST\Project_Code\Backup_1662020\Discovery_USB_HOST_001"/>
 		</list>
 	</section>
