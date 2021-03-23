@@ -8,3 +8,11 @@
 2021-03-22 15:18:56,637 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.debug.swv.core.SWVClient.readByte(SWVClient.java:312)
 2021-03-22 15:18:56,638 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.debug.swv.core.SWVClient.getNextByte(SWVClient.java:292)
 2021-03-22 15:18:56,640 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.debug.swv.core.SWVClient.run(SWVClient.java:337)
+2021-03-22 15:20:24,653 [INFO] Activator:170 - 
+
+
+2021-03-22 15:20:24,654 [INFO] Activator:171 - !SESSION log4j initialized
+2021-03-22 15:20:49,324 [INFO] RetryExec:97 - I/O exception (org.apache.http.NoHttpResponseException) caught when processing request to {s}->https://sw-center.st.com:443: The target server failed to respond
+2021-03-22 15:20:49,326 [INFO] RetryExec:113 - Retrying request to {s}->https://sw-center.st.com:443
+2021-03-22 15:20:49,536 [INFO] RetryExec:97 - I/O exception (org.apache.http.NoHttpResponseException) caught when processing request to {s}->https://sw-center.st.com:443: The target server failed to respond
+2021-03-22 15:20:49,537 [INFO] RetryExec:113 - Retrying request to {s}->https://sw-center.st.com:443

@@ -98,7 +98,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USB_HOST_Init();
-  MX_USART2_UART_Init(Bud_9600);
+  MX_USART2_UART_Init(Bud_115200);
   /* USER CODE BEGIN 2 */
 
 
@@ -118,13 +118,12 @@ int main(void)
 //  memset(buff,0,SIZE_BUFF);
 //  HAL_UART_Receive_IT(&huart2, (uint8_t *)buff, (uint16_t)SIZE_BUFF);
 
-//  while(1)
+//  while( strlen(buff) > 100)
 //  {
 //
-//
+//	  HAL_UART_Transmit_IT(&huart2, (uint8_t *)buff,(uint16_t)strlen(buff));
 //	  if( strlen(buff) > 100 )
 //	  {
-//		  HAL_UART_Transmit(&huart2, (uint8_t *)buff,(uint16_t)strlen(buff), 1000);
 //		  memset(buff,0,SIZE_BUFF);
 //	  }
 //  }

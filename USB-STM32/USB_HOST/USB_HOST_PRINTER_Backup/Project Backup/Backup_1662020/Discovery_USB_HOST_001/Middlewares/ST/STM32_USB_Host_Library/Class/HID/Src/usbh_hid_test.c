@@ -175,6 +175,7 @@ static USBH_StatusTypeDef USBH_PRT_Process(USBH_HandleTypeDef *phost)
 					PRT_Handle->state = PRT_GET_DATA;
 				 }
 				 PRT_Handle->state = PRT_GET_DATA;
+				// HAL_UART_Receive_IT(&huart2, (uint8_t *)buff, (uint16_t)2000);
 				 break;
 
 			 case PRT_GET_DATA:
@@ -186,20 +187,10 @@ static USBH_StatusTypeDef USBH_PRT_Process(USBH_HandleTypeDef *phost)
 				  * 	(#) CHN_BAUDRATE
 				  *
 				  */
-				 HAL_UART_Receive_IT(&huart2, (uint8_t *)buff, (uint16_t)SIZE_BUFF);
-				 while(1)
-				 {
+				 memset(buff,0,strlen(buff));
+				 HAL_UART_Receive(&huart2, (uint8_t *)buff, (uint16_t)SIZE_BUFF, 2000);
+			//	 HAL_UART_Transmit(&huart2, (uint8_t *)buff, (uint16_t)strlen( buff ), 5000 );
 
-					 if( strlen(buff) > 0 ) break;
-				 }
-
-
-				 if( strlen(buff) > 0 )
-				 {
-					 HAL_Delay(2000);
-					 CommandOperation(PRT_Handle,buff);
-					 HAL_UART_Transmit(&huart2, (uint8_t *)"Data Received\r\n",(uint16_t)strlen("Data Received\r\n") ,( uint32_t)50);
-				 }
 
 				 /* Print Report Funcation
 				  *	It should be as per command.
@@ -210,6 +201,7 @@ static USBH_StatusTypeDef USBH_PRT_Process(USBH_HandleTypeDef *phost)
 				  */
 				 if(strlen(buff) > 16)
 				 {
+					 HAL_UART_Transmit(&huart2, (uint8_t *)"Data Received\r\n",(uint16_t)strlen("Data Received\r\n") ,( uint32_t)50);
 					 CommandOperation(PRT_Handle,buff);
 
 					 if( printReport() )
@@ -238,9 +230,10 @@ static USBH_StatusTypeDef USBH_PRT_Process(USBH_HandleTypeDef *phost)
 					 XferSize = USBH_LL_GetLastXferSize(phost, PRT_Handle->InPipe);
 					 PRT_Handle->state = PRT_GET_DATA;
 				//	 HAL_UART_Transmit(&huart2, (uint8_t *)"PRT Poll got polled data\r\n",(uint16_t)strlen("PRT Poll got polled data\r\n") ,( uint32_t)5);
+
 					 USBH_Delay( (PRT_Handle->poll)*2);
 					 HAL_UART_Transmit(&huart2, (uint8_t *)"PRT Poll done\r\n",(uint16_t)strlen("PRT Poll done\r\n") ,( uint32_t)50);
-					 memset(buff,0,strlen(buff));
+
 				 }
 
 				 break;
