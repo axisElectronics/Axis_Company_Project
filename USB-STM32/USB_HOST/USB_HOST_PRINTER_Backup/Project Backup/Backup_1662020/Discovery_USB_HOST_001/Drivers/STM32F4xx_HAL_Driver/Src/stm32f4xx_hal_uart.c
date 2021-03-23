@@ -1223,7 +1223,8 @@ HAL_StatusTypeDef HAL_UART_Transmit_IT(UART_HandleTypeDef *huart, uint8_t *pData
 
     /* Enable the UART Transmit data register empty Interrupt */
     __HAL_UART_ENABLE_IT(huart, UART_IT_TXE);
-
+    /* Enable the UART Transmit data register complete Interrupt */
+//	 __HAL_UART_ENABLE_IT(huart, UART_IT_TC);
     return HAL_OK;
   }
   else

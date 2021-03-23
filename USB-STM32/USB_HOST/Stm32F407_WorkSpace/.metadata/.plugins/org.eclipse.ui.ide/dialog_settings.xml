@@ -2,6 +2,17 @@
 <section name="Workbench">
 	<section name="ExternalProjectImportWizard">
 		<item key="WizardProjectsImportPage.STORE_NESTED_PROJECTS" value="true"/>
+		<item key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID" value="false"/>
+		<item key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED" value="false"/>
+		<item key="WizardProjectsImportPage.STORE_CLOSE_CREATED_PROJECTS_ID" value="false"/>
+		<item key="WizardProjectsImportPage.STORE_HIDE_CONFLICTING_PROJECTS_ID" value="false"/>
+		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
+			<item value="D:\Company_Projects_by_vivek\Axis_Company_Project\USB-STM32\USB_HOST\Stm32F407_WorkSpace\Discovery_USB_HOST_23-3-21-test"/>
+			<item value="D:\Company_Projects_by_vivek\Axis_Company_Project\USB-STM32\USB_HOST\Stm32F407_WorkSpace\Discovery_USB_HOST_002"/>
+		</list>
+		<list key="WizardProjectsImportPage.STORE_ARCHIVES">
+			<item value=""/>
+		</list>
 	</section>
 	<section name="SmartImportWizard">
 		<item key="SmartImportRootWizardPage.STORE_HIDE_ALREADY_OPEN" value="false"/>
@@ -9,6 +20,8 @@
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
 		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="D:\Company_Projects_by_vivek\Axis_Company_Project\USB-STM32\USB_HOST\Stm32F407_WorkSpace\Discovery_USB_HOST_002"/>
+			<item value="D:\Company_Projects_by_vivek\Axis_Company_Project\USB-STM32\USB_HOST\USB_HOST_PRINTER_Backup\Project Backup\Backup_1662020\Discovery_USB_HOST_001"/>
 			<item value="D:\Company_Projects_by_vivek\Axis_Company_Project\USB-STM32\USB_HOST\Project_Code\Backup_1662020\Discovery_USB_HOST_001"/>
 		</list>
 	</section>
