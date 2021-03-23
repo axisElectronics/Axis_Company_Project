@@ -1,8 +1,0 @@
-usbh_hid_test.c:40:27:USBH_PRT_InterfaceInit	48	static
-usbh_hid_test.c:100:27:USBH_PRT_InterfaceDeInit	24	static
-usbh_hid_test.c:128:27:USBH_PRT_ClassRequest	168	static
-usbh_hid_test.c:150:27:USBH_PRT_Process	10096	static
-usbh_hid_test.c:242:27:USBH_PRT_SOFProcess	24	static
-usbh_hid_test.c:261:27:USBH_PRT_Get_Device_Id	24	static
-usbh_hid_test.c:273:27:USBH_PRT_Get_Port_Status	24	static
-usbh_hid_test.c:286:27:USBH_PRT_Soft_Reset	24	static
