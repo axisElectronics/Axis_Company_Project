@@ -1,0 +1,52 @@
+VERSION
+8
+
+COMMSETTINGS
+0
+COM4
+COM2
+115200
+2
+63
+4
+0
+0
+
+COMMDISPLAY
+0
+
+SEND
+0
+TEST_Lable
+
+0
+5
+
+SEND
+1
+Vendor ID and Product ID
+56 49 44 50 49 44
+0
+5
+
+SEND
+2
+get Baudrate
+42 41 55 44 52 41 54 45
+0
+5
+
+SEND
+3
+chnage Baudrate
+43 48 4E 5F 42 41 55 44 52 41 54 45
+0
+5
+
+SEND
+4
+
+31 31 35 32 30 30
+0
+5
+
