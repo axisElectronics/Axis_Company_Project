@@ -85,8 +85,6 @@ void touch_calibrate()
   }
 }
 
-
-
 void setup() {
   Serial.begin(9600); // DEBUG WINDOW
 //  Serial1.begin(9600, SERIAL_8N1, RXD1, TXD1); // Keypad interface
@@ -102,9 +100,7 @@ void setup() {
   delay(2000);
  tft.fillScreen(TFT_GREEN);
   delay(5000);
-   tft.fillScreen(TFT_RED);
-
-  
+   tft.fillScreen(TFT_RED); 
 }
 
 void loop() {
