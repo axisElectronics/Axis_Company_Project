@@ -59,25 +59,47 @@ In our case we are using ILI9341 Driver.
 
 **2.8" SD-Card TFT**
 
-> | Function  |   Dispaly PIN   | ESP32 PIN   
-> |-----------|-----------------|-------------
-> | MISO      |  21    |    19   |
-> | MOSI      |  19    |    23   |
-> | SCK       |  23    |    18   |
-> | DC        |  18    |    25   |
-> | CS        |  24    |    05   |
-> | RST       |  22    |    EN   |
-> | T_CS      |  26    |    26   |
-> | T_IRQ     |  11    |    27   |
-> | T_DO      |        |         |
-> | T_DIN     |        |         |
-> | T_CLK     |        |         |
-> | SD_CS     |        |         |
-> | SD_MOSI   |        |         |
-> | SD_MISO   |        |         |
-> | SD_CLK    |        |         |
-> | VCC       |        |         |
-> | GND       |        |         |
+> | Function  |   Dispaly PIN   | ESP32 PIN     |  
+> |:---       |:---------------:|           ---:|
+> | MISO      |  21             |    19         |
+> | MOSI      |  19             |    23         |
+> | SCK       |  23             |    18         |
+> | DC        |  18             |    25         |
+> | CS        |  24             |    05         |
+> | RST       |  22             |    EN         |
+> | T_CS      |  26             |    26         |
+> | T_IRQ     |  11             |    27         |
+> | T_DO      |                 |               |
+> | T_DIN     |                 |               |
+> | T_CLK     |                 |               |
+> | SD_CS     |                 |               |
+> | SD_MOSI   |                 |   13          |
+> | SD_MISO   |                 |   12          |
+> | SD_CLK    |                 |   14          |
+> | VCC       |                 |               |
+> | GND       |                 |               |
 > -----------------------------------------------
+
+
+
+**ESP32 UART PINOUT**
+
+> | Function  |   RX PIN   | TX PIN  | 
+> |:---       |:----------:|     ---:| 
+> | UART0     |  03        |    01   |
+> | UART1     |  09        |    10   |
+> | UART2     |  16        |    17   |
+
+
+**ESP32 SPI PINOUT**
+
+> | Function    |  ESP32 PIN     |  
+> |:---         |            ---:|
+> | H_MISO      | 12             |
+> | H_MOSI      | 13             |
+> | H_CLK       | 14             |
+> | V_SCK       | 18             |
+> | V_MISO      | 19             |
+> | V_MOSI      | 23             |
 
 
