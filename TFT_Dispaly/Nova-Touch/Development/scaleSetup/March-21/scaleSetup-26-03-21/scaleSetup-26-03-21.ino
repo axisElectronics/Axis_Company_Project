@@ -7,7 +7,7 @@ class WeighingHandle Wtft;
 void WeighingHandle :: readyAxisScales()
 {
   int Mode = 0;
-   uint16_t xAxis = 0, yAxis = 0, threshold = 1000;
+  uint16_t xAxis = 0, yAxis = 0, threshold = 1000;
 
   initWeighingTFT( );
 
@@ -28,7 +28,7 @@ HERE :
   //  TJpgDec.drawFsJpg(0, 0, "/jpg-3001.jpg");
   Wtft.startUPImage();
   SPL("Time Delay : " + String(millis() - tout) );
-  
+
   while (1)
   {
 
@@ -43,7 +43,7 @@ HERE :
       {
         if ( userSetting.weighingMode ) {
           Mode = 2;
-         CMD_STARTDATA
+          CMD_STARTDATA
           break;
         }
       }
@@ -51,13 +51,14 @@ HERE :
       {
         if ( userSetting.countingMode ) {
           Mode = 3;
-         CMD_STARTDATA
+          CMD_STARTDATA
           break;
         }
       }
       else if ( PriceingModeTouchEnable() )
       {
-        if ( userSetting.pricecomputing ) {
+        if ( userSetting.pricecomputing ) 
+        {
           Mode = 4;
           CMD_STARTDATA
           break;
@@ -65,10 +66,11 @@ HERE :
       }
       else if ( CheckingModeTouchEnable() )
       {
-        Mode = 5; //break;
+        Mode = 5;
+        CMD_STARTDATA
+        break;
       }
-
-    }
+    }//end-if(touch)
     yield();
   }//end-while()
 
@@ -110,10 +112,16 @@ HERE :
           goto HERE;
         }
       } break;
-    case 5: break;
-  }
+    case 5:
+      if (  startCheckWeighing() == -1 )
+      {
+        Mode = 0;
+        goto HERE;
+      }
+      break;
+  }//end- switch mode
 
-}
+}//end- readyAsixScales
 
 
 void setup() {

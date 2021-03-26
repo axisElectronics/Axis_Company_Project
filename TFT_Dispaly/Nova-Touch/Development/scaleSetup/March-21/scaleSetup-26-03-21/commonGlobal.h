@@ -84,45 +84,45 @@
   }//End-AdjustDot
 
 /*  ==============================================================
- *                Commands 
- *  =============================================================
- *  
- *  1 @ CMD_STARTDATA :
- *  --------------------
- *      >> get continuous data from Machine.
- *      
- *  2 @ CMD_STOPDATA :    
- *  -------------------
- *      >>  stop data coming from Weight machine
- *      >>   stop continuous data from machine SO that we didnot overflow buffer.
- *      
- *  3 @ CMD_GETTARE :
- *  -----------------
- *      >> get TARE data from Machine
- */
+                  Commands
+    =============================================================
+
+    1 @ CMD_STARTDATA :
+    --------------------
+        >> get continuous data from Machine.
+
+    2 @ CMD_STOPDATA :
+    -------------------
+        >>  stop data coming from Weight machine
+        >>   stop continuous data from machine SO that we didnot overflow buffer.
+
+    3 @ CMD_GETTARE :
+    -----------------
+        >> get TARE data from Machine
+*/
 
 #define CMD_STARTDATA   {                                 \
-                          String StartCMD = "\2DT#1\3";   \
-                          Serial2.print( StartCMD );      \
-                        }
+    String StartCMD = "\2DT#1\3";   \
+    Serial2.print( StartCMD );      \
+  }
 
 #define CMD_STOPDATA {                              \
-                      String StopCMD = "\2DT#0\3";  \
-                      Serial2.print(StopCMD);       \
-                    }
+    String StopCMD = "\2DT#0\3";  \
+    Serial2.print(StopCMD);       \
+  }
 
 
 #define CMD_GETTARE {                               \
-                      String StartCMD = "\2GT\3";    \
-                      Serial2.print( StartCMD );     \
-                    }
+    String StartCMD = "\2GT\3";    \
+    Serial2.print( StartCMD );     \
+  }
 
 
 #define EMPTY_SERIALBUFFER {                                                \
-                            while ( Serial2.available() )  Serial2.read();  \ 
-                            while ( Serial1.available() )  Serial1.read();  \
-                            while ( Serial.available() )   Serial.read();   \
-                           }
+    while ( Serial2.available() )  Serial2.read();  \
+    while ( Serial1.available() )  Serial1.read();  \
+    while ( Serial.available() )   Serial.read();   \
+  }
 
 
 #define WQ                 0
@@ -164,7 +164,7 @@
 #define yWeighingMode  ( ( yAxis >= y1Weighing  ) && ( yAxis <= y2Weighing ) )
 #define WeighingModeTouchEnable() ( xWeighingMode && yWeighingMode )
 //#define WeighingModeTouchEnable() ( ( (xAxis > 15) && (xAxis < 108) ) && ( ( yAxis > 70 ) && ( yAxis < 230 ) ) )
- 
+
 /**********************************************************************************************/
 
 #define x1Counting  135
@@ -248,6 +248,9 @@ char CmdWrite( struct task_list *CmdTaskHandler );
 
 #define COUNT 1
 
+#define MAX 4
+#define MIN 5
+
 class WeighingHandle : public settings
 
 {
@@ -256,8 +259,9 @@ class WeighingHandle : public settings
     uint8_t flags;
     double FromMachine[3];
     char FromMachineArray[3][10];
-   
-    
+    char maxvalue[10];
+    char minvalue[10];
+
     struct _imageAttri
     {
       bool (*ModeHeader)(void);
@@ -277,7 +281,7 @@ class WeighingHandle : public settings
       uint16_t fontDigitColor;
       uint16_t backDigitColor;
       int8_t cntBlankRect;
-      bool spclFlag=0;
+      bool spclFlag = 0;
     } showDigits;
 
 
@@ -288,9 +292,9 @@ class WeighingHandle : public settings
       struct s_setting *basesetting;
     } handler;
 
-void drawJpeg(const char *filename, int xpos, int ypos);
-void  jpegRender(int xpos, int ypos);
-void jpegInfo();
+    void drawJpeg(const char *filename, int xpos, int ypos);
+    void  jpegRender(int xpos, int ypos);
+    void jpegInfo();
     /******************************************
           >>>> common function <<<<
      ******************************************/
@@ -329,7 +333,7 @@ void jpegInfo();
     bool printStringWeight( );
     int8_t  handleTouchFuncationality_Weight();
     bool weightStripImage();
-    
+
     /******************************************
                 >>>> Price computing function <<<<
       ******************************************/
@@ -359,10 +363,13 @@ void jpegInfo();
     /******************************************
       >>>> Check Weighing function <<<<
      ******************************************/
-     int8_t   startCheckWeighing();
-     void   _updateWindowCHECK( uint8_t win );
-     int8_t   handleTouchFuncationality_CHECK();
-     String _readbufCHECK( );
+    int8_t   startCheckWeighing();
+    void   _updateWindowCHECK( uint8_t win );
+    int8_t   handleTouchFuncationality_CHECK();
+    String _readbufCHECK( );
+    
+    void _maxWin(char * maxValue );
+    void _minWin(char * minValue );
 };
 
 

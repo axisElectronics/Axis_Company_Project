@@ -90,7 +90,7 @@ int8_t saveAsDefault(  class settings *settings  )
   strcpy( settings->userScaleSetup.eVlaue            , settings->userSetting.eValue          );
   strcpy( settings->userScaleSetup.decimal           , settings->userSetting.decimalValue    );
   strcpy( settings->userScaleSetup.calibartionWeight , settings->userSetting.cali_weight     );
- 
+
   settings->saveAsDefault();
 
   return 1;
@@ -219,7 +219,7 @@ void showDigitfun( class settings *settings, int yPos )
 
 int8_t caliButtonTouch()
 {
-  uint16_t xAxis, yAxis, threshold=1000;
+  uint16_t xAxis, yAxis, threshold = 1000;
   if ( tft.getTouch(&xAxis, &yAxis, threshold) )
   {
     if (xNOLOAD && yNOLOAD ) return NOLOAD; //NOLOAD
@@ -243,17 +243,17 @@ int8_t readNoLoadcount( class settings *settings )
   strcpy(settings->userSetting.scaleCapacity, settings->_getCapacity().c_str() );
   strcpy(settings->userSetting.decimalValue, settings->_getDecimal().c_str() );
   strcpy(settings->userSetting.eValue, settings->_getEvalue().c_str() );
-  
+
   SPL("scaleCapacity : " +  String( settings->userSetting.scaleCapacity ) );
   SPL("decimalValue : " +  String( settings->userSetting.decimalValue ) );
   SPL("eValue : " +  String( settings->userSetting.eValue ) );
-//  SPL(" ");
-//  SPL("getscaleCapacity : " +  String( settings->_getCapacity() ) );
-//  SPL("getdecimalValue : " +  String( settings-> _getDecimal() ) );
-//  SPL("geteValue : " +  String( settings->_getEvalue() ) );
-  
+  //  SPL(" ");
+  //  SPL("getscaleCapacity : " +  String( settings->_getCapacity() ) );
+  //  SPL("getdecimalValue : " +  String( settings-> _getDecimal() ) );
+  //  SPL("geteValue : " +  String( settings->_getEvalue() ) );
+
   if ( strlen( settings->userSetting.scaleCapacity ) && strlen(settings->userSetting.decimalValue) && strlen(settings->userSetting.eValue) )
-  {   
+  {
     char buf[50] = {0};
     strcat(buf, "\2CAL#0,");
     strcat(buf, settings->userSetting.scaleCapacity);
@@ -264,8 +264,8 @@ int8_t readNoLoadcount( class settings *settings )
     buf[ strlen(buf) ] = '\3';
 
     Serial.println("Command--->>>> : " + String(buf));
-    Serial2.write(buf);
-    
+    Serial2.write(buf); // NO-Load Command
+
     //2. wait till you received "OK" from machine
     while (1)
     {
@@ -295,7 +295,7 @@ int8_t readNoLoadcount( class settings *settings )
     memset(  settings->showDigit.currentValue, '\0', 10);
     memset( settings->showDigit.preValue, '\0', 10);
 
-    Serial.println("NOload : " + String( noLoad_count ) );
+    // Serial.println("NOload : " + String( noLoad_count ) );
     strcpy( settings->userSetting.noLoad_count, noLoad_count.c_str() );
     settings->userSetting.noLoad_count[ strlen( settings->userSetting.noLoad_count ) - 2 ] = '\0';
     Serial.println("NOload : " + String(  settings->userSetting.noLoad_count ) );
@@ -387,6 +387,8 @@ void readLoadcount( class settings *settings )
 void showCaliWeight( class settings *settings )
 {
   String CalibratedWeight = String(NULL);
+  String temp = "";
+  unsigned int tout = millis();
 
   while ( 1 )
   {
@@ -405,27 +407,28 @@ void showCaliWeight( class settings *settings )
         buf[ strlen(buf) ] = '\3';
 
         Serial.println("Command--->>>> : " + String(buf));
-        Serial2.write(buf);
+        Serial2.print(buf); // Calibartion command
 
         //2. wait till you received "OK" from machine
-        String temp = "";
-        unsigned int tout = millis();
         while (1)
         {
-          if( Serial2.available() > 0 )
+          if ( Serial2.available() > 0 )
           {
-            temp += Serial2.readStringUntil('K');                  
+            temp += Serial2.readStringUntil('K');
             break;
           }
 
-          if( ( millis() - tout ) > 1000 )
+          if ( ( millis() - tout ) > 1000 )
           {
             tout = millis();
             Serial.println("Command--->>>> : " + String(buf));
-            Serial2.write(buf);
+            Serial2.print(buf);
           }
           yield();
         }//end-while
+        SPL("Response : " + String(temp) );
+        SPL("Calibartin request has been confirmed...!!!");
+
 
       }//end-if
 
@@ -456,9 +459,18 @@ void showCaliWeight( class settings *settings )
       // 5. Show data untill submit button is not pressed
       char temp[10];
       int8_t dotpos = 0;
+      // Request for continuous data
+      String StartCMD = "\2DT#1\3";
+      Serial2.print( StartCMD );
+
       while ( caliButtonTouch() != SUBMIT )
       {
 HERE:
+        // ASK for data
+//             String onDemandData = "\2W\3";
+//             Serial2.print(onDemandData);
+//             SPL("Data ON Depamd : " + String( Serial2.readStringUntil('=') ));
+       
         if ( Serial2.available() > 5 )
         {
 
@@ -472,7 +484,10 @@ HERE:
           dotpos = 0;
           memset(temp, '\0', 10);
           while ( settings->showDigit.currentValue[dotpos] != '.') {
-            if ( ++dotpos >= 10 ) goto HERE;
+            if ( ++dotpos >= 10 ) {
+
+              goto HERE;
+            }
           }
           settings->showDigit.dotpos = dotpos;
           strncpy(temp,  settings->showDigit.currentValue, dotpos );
@@ -590,9 +605,9 @@ int8_t decimalSetup(  class settings *settings )
   if ( settings->userSetting.decimalValue[ strlen( settings->userSetting.decimalValue ) - 1 ] == '_' )
     settings->userSetting.decimalValue[ strlen( settings->userSetting.decimalValue ) - 1 ] = '\0';
 
-// set decimal data into SPIFFS memory
+  // set decimal data into SPIFFS memory
   settings->_setDecimal( settings->userSetting.decimalValue[0] );
-  
+
   Enable_Text_Font()
   tft.fillScreen(TFT_BLACK);
   settings->settingPageImage();
@@ -615,19 +630,19 @@ int8_t eValueSetup(  class settings *settings )
 
   settings->userInput.numericSwitchFlag = 1; // only Numeric values are allowed
 
-    // read previous capacity from file system
-    String temp = settings->_getEvalue();
-    strcpy( settings->userSetting.eValue, temp.c_str() );
- 
+  // read previous capacity from file system
+  String temp = settings->_getEvalue();
+  strcpy( settings->userSetting.eValue, temp.c_str() );
+
   settings->takeUserInput( settings->userSetting.eValue );
   strcpy( settings->userSetting.eValue , &settings->userInput.userInputArray[15] );
 
   if ( settings->userSetting.eValue[ strlen( settings->userSetting.eValue ) - 1 ] == '_' )
     settings->userSetting.eValue[ strlen( settings->userSetting.eValue ) - 1 ] = '\0';
 
-// set evalue into SPIFFS memory
+  // set evalue into SPIFFS memory
   settings->_setEvalue( settings->userSetting.eValue[0] ) ;
-  
+
   Enable_Text_Font()
   tft.fillScreen(TFT_BLACK);
   settings->settingPageImage();
@@ -664,9 +679,9 @@ int8_t capacitySetup( class settings *settings )
     settings->userSetting.scaleCapacity[ strlen( settings->userSetting.scaleCapacity ) - 1 ] = '\0';
 
   // set capacity as default in parmanet memory
-  settings->_setCapacity( settings->userSetting.scaleCapacity ); 
+  settings->_setCapacity( settings->userSetting.scaleCapacity );
 
-  
+
   Enable_Text_Font()
   tft.fillScreen(TFT_BLACK);
   settings->settingPageImage();
@@ -715,7 +730,7 @@ int8_t clockSetup(  class settings *settings )
   else if ( tempStr == "Tons" ) settings->userSetting.WeigingUnits_t = 1;
   else if ( tempStr == "Ounces(oz)" ) settings->userSetting.WeigingUnits_oz = 1;
   else if ( tempStr == "Pounds(lb)" ) settings->userSetting.WeigingUnits_lb = 1;
-  
+
   return 1;
 }
 
@@ -741,7 +756,7 @@ int8_t stabilityFilter( class settings *settings )
   settings->userSetting.stabilityFilter =  ( temp == -1 ) ? settings->userSetting.stabilityFilter : temp;
   strcpy( settings->userSetting.decimalValue, settings->_getDecimal().c_str() );
   String tempStr = settings->_getWeighingUnit();
- if ( tempStr == "kg" ) settings->userSetting.WeigingUnits_kg = 1;
+  if ( tempStr == "kg" ) settings->userSetting.WeigingUnits_kg = 1;
   else if ( tempStr == "gm" ) settings->userSetting.WeigingUnits_gm = 1;
   else if ( tempStr == "Tons" ) settings->userSetting.WeigingUnits_t = 1;
   else if ( tempStr == "Ounces(oz)" ) settings->userSetting.WeigingUnits_oz = 1;
@@ -835,7 +850,7 @@ int8_t dataBits( class settings *settings )
 
   {
     String temp = settings->_getCOMPara( DataBits );
-   
+
     settings->userSetting.dataBits = (temp == "8 bits") ? 0 : (temp == "7 bits") ? 1 :  settings->userSetting.dataBits;
   }
 
@@ -847,13 +862,13 @@ int8_t dataBits( class settings *settings )
   */
   strcpy( settings->userSetting.decimalValue, settings->_getDecimal().c_str() );
   String tempStr = settings->_getWeighingUnit();
- 
+
   if ( tempStr == "kg" ) settings->userSetting.WeigingUnits_kg = 1;
   else if ( tempStr == "gm" ) settings->userSetting.WeigingUnits_gm = 1;
   else if ( tempStr == "Tons" ) settings->userSetting.WeigingUnits_t = 1;
   else if ( tempStr == "Ounces(oz)" ) settings->userSetting.WeigingUnits_oz = 1;
   else if ( tempStr == "Pounds(lb)" ) settings->userSetting.WeigingUnits_lb = 1;
-  
+
   return 1;
 }
 
@@ -953,7 +968,7 @@ int8_t setBaudrate( class settings *settings  )
   */
   strcpy( settings->userSetting.decimalValue, settings->_getDecimal().c_str() );
   String tempStr = settings->_getWeighingUnit();
-  
+
   if ( tempStr == "kg" ) settings->userSetting.WeigingUnits_kg = 1;
   else if ( tempStr == "gm" ) settings->userSetting.WeigingUnits_gm = 1;
   else if ( tempStr == "Tons" ) settings->userSetting.WeigingUnits_t = 1;
@@ -1134,7 +1149,7 @@ int8_t weighingMode( class settings *settings )
      So after doing this this problem is fixed some how.
   */
   strcpy( settings->userSetting.decimalValue, settings->_getDecimal().c_str() );
-   String tempStr = settings->_getWeighingUnit();
+  String tempStr = settings->_getWeighingUnit();
   SPL("setbaud->weghtUnit : " + String(tempStr) );
   if ( tempStr == "kg" ) settings->userSetting.WeigingUnits_kg = 1;
   else if ( tempStr == "gm" ) settings->userSetting.WeigingUnits_gm = 1;
@@ -1160,8 +1175,8 @@ int8_t countingMode( class settings *settings )
     So after doing this this problem is fixed some how.
   */
   strcpy( settings->userSetting.decimalValue, settings->_getDecimal().c_str() );
-    String tempStr = settings->_getWeighingUnit();
-  
+  String tempStr = settings->_getWeighingUnit();
+
   if ( tempStr == "kg" ) settings->userSetting.WeigingUnits_kg = 1;
   else if ( tempStr == "gm" ) settings->userSetting.WeigingUnits_gm = 1;
   else if ( tempStr == "Tons" ) settings->userSetting.WeigingUnits_t = 1;
@@ -1184,8 +1199,8 @@ int8_t checkWeighing( class settings *settings )
      So after doing this this problem is fixed some how.
   */
   strcpy( settings->userSetting.decimalValue, settings->_getDecimal().c_str() );
-   String tempStr = settings->_getWeighingUnit();
- 
+  String tempStr = settings->_getWeighingUnit();
+
   if ( tempStr == "kg" ) settings->userSetting.WeigingUnits_kg = 1;
   else if ( tempStr == "gm" ) settings->userSetting.WeigingUnits_gm = 1;
   else if ( tempStr == "Tons" ) settings->userSetting.WeigingUnits_t = 1;
@@ -1208,8 +1223,8 @@ int8_t priceComputing( class settings *settings )
     So after doing this this problem is fixed some how.
   */
   strcpy( settings->userSetting.decimalValue, settings->_getDecimal().c_str() );
-   String tempStr = settings->_getWeighingUnit();
- 
+  String tempStr = settings->_getWeighingUnit();
+
   if ( tempStr == "kg" ) settings->userSetting.WeigingUnits_kg = 1;
   else if ( tempStr == "gm" ) settings->userSetting.WeigingUnits_gm = 1;
   else if ( tempStr == "Tons" ) settings->userSetting.WeigingUnits_t = 1;

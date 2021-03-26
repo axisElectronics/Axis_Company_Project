@@ -117,8 +117,8 @@ int8_t  WeighingHandle :: startCountComputing()
 
     if ( handleTouchFuncationality_COUNT() == -1 )
     {
-      CMD_STOPDATA             
-      EMPTY_SERIALBUFFER       
+      CMD_STOPDATA
+      EMPTY_SERIALBUFFER
       return -1;
     }
 
@@ -441,9 +441,9 @@ int8_t  WeighingHandle :: startPriceComputing()
     memset(src, '\0', 10);
     strcpy(src, _readbufPrice( ).c_str() );
 
-    if ( handleTouchFuncationality_PRICE() == -1 ){
-      CMD_STOPDATA             
-      EMPTY_SERIALBUFFER  
+    if ( handleTouchFuncationality_PRICE() == -1 ) {
+      CMD_STOPDATA
+      EMPTY_SERIALBUFFER
       return -1;
     }
 
@@ -483,7 +483,7 @@ int8_t  WeighingHandle :: handleTouchFuncationality_PRICE()
     else if ( ESC_Touch )
     {
       SPL("ESCTouch...\n"); return -1;
-      
+
     }
     else if ( Field_three_Touch  )
     {
@@ -756,690 +756,890 @@ bool  WeighingHandle :: printStringPrice( )
  ******************************************************************************/
 
 
-  int8_t  WeighingHandle :: startWeighing()
+int8_t  WeighingHandle :: startWeighing()
+{
+  char src[12];
+  char dest[10];
+
+  //  initWeighingTFT( ); //do'nt use more then one time in same program flow. it cause problems.
+  initTFTHandler ( );
+  printStringWeight( );
+
+  uint8_t tempdot = _getDecimal().c_str()[0];
+  showDigits.dotPosition = tempdot - 48;
+
+  // get TARE data from Machine
+  CMD_GETTARE
+  _readbufWeight( );
+
+  while (1)
   {
-    char src[12];
-    char dest[10];
+    memset(dest, '\0', 10);
+    memset(src, '\0', 10);
 
-    //  initWeighingTFT( ); //do'nt use more then one time in same program flow. it cause problems.
-    initTFTHandler ( );
-    printStringWeight( );
-
-    uint8_t tempdot = _getDecimal().c_str()[0];
-    showDigits.dotPosition = tempdot - 48;
-
-    // get TARE data from Machine
-     CMD_GETTARE
-    _readbufWeight( );
-
-    while (1)
+    if ( handleTouchFuncationality_Weight() == -1 )
     {
-      memset(dest, '\0', 10);
-      memset(src, '\0', 10);
+      CMD_STOPDATA
+      EMPTY_SERIALBUFFER
+      return -1;
+    }
 
-      if ( handleTouchFuncationality_Weight() == -1 )
-      {
-        CMD_STOPDATA             
-        EMPTY_SERIALBUFFER  
-        return -1;
-      }
+    strcpy(src, _readbufWeight( ).c_str() );
+
+    bufferWithoutDot(dest, src);
+    src[7] = '\0';
+
+    if ( strlen(dest) > 5 )
+    {
+      _updateNetWeight( src );
+
+      _updateWindow( NET );
+      _updateWindow( GROSS );
+    }
+    yield();
+  }
+
+}
+
+
+
+void WeighingHandle ::handleTareCommand( char *Weight  )
+{
+  String cmdBuf = "";
+  String temp = Weight;
+  int8_t stx = temp.indexOf(2);
+  int8_t etx = temp.indexOf(3);
+
+  for (int8_t leftIdx = stx + 3; leftIdx < etx; ++leftIdx )
+  {
+    cmdBuf += temp[leftIdx];
+  }
+  _updateTareWeight( (char *) cmdBuf.c_str() );
+  _updateWindow(TARE);
+}
+
+
+
+void WeighingHandle ::_updateWindow( uint8_t win )
+{
+  char dest[10];
+  if ( win != TARE )
+  {
+    bufferWithoutDot( dest,  FromMachineArray[win] );
+    strcpy( showDigits.currentValue, dest);
+    showDigits.currentValue[6] = '\0';
+  }
+
+
+  switch (win)
+  {
+    case NET   :   windowOne( ); break;
+    case GROSS :   windowTwo( ); break;
+    case TARE  :
+      bufferWithoutDot( dest,  FromMachineArray[TARE] );
+
+      strcpy( showDigits.currentValue, dest);
+      showDigits.currentValue[6] = '\0';
+      windowThree( );
+      break;
+  }
+
+}
+
+
+void WeighingHandle ::_updateNetWeight( char *Temp )
+{
+
+  FromMachine[NET] = strtod( Temp, NULL);
+
+  int8_t dotpos = 0;
+  char temp[8];
+  for (int i = 0; i < 8 ; temp[i++] = '0');  temp[7] = '\0';
+
+  // convert double value into char Array
+  memset( FromMachineArray[NET], '\0' , 10);
+  sprintf( FromMachineArray[NET], "%lf", FromMachine[NET]);
+  // Adjust dot postion in Array
+  findDotPosition( FromMachineArray[NET], dotpos);
+
+  for (int8_t i = 0, j = ( 6 - showDigits.dotPosition - dotpos); ( i < 7 ) && ( j < 7 ) ; i++, j++ )
+  {
+    temp[ j ] = FromMachineArray[NET][i];
+  }
+
+  temp[7] = '\0';
+  strcpy( FromMachineArray[NET], temp );
+
+  FromMachineArray[NET][7] = '\0';
+  //  SPL("NET### : " + String(FromMachineArray[NET] ) );
+  _updateGrossWeight( );
+
+}
+
+
+void WeighingHandle ::_updateGrossWeight(  )
+{
+  FromMachine[GROSS]  = FromMachine[NET] +  FromMachine[TARE];
+
+  int8_t dotpos = 0;
+  char temp[8];
+  for (int i = 0; i < 8 ; temp[i++] = '0');
+
+  // convert double value into char Array
+  memset(FromMachineArray[GROSS], '\0' , 10);
+  sprintf(FromMachineArray[GROSS], "%lf", FromMachine[GROSS]);
+
+  // Adjust dot postion in Array
+  findDotPosition(FromMachineArray[GROSS], dotpos);
+
+  for (int8_t i = 0, j = ( 6 - showDigits.dotPosition - dotpos); ( i < 7 ) && ( j < 7 ) ; i++, j++ )
+  {
+    temp[ j ] = FromMachineArray[GROSS][i];
+  }
+
+  for (int8_t i = 0; i < 7; i++ )
+  {
+    FromMachineArray[GROSS][i] = temp[i];
+  }
+  FromMachineArray[GROSS][7] = '\0';
+  //  SPL("GROSS### : " + String( FromMachineArray[GROSS]) );
+}
+
+void  WeighingHandle ::_updateTareWeight( char *Temp )
+{
+  FromMachine[TARE] = strtod( Temp, NULL);
+
+  int8_t dotpos = 0;
+  char temp[8];
+  for (int i = 0; i < 8 ; temp[i++] = '0'); temp[7] = '\0';
+
+  // convert double value into char Array
+  memset( FromMachineArray[TARE], '\0' , 10);
+  sprintf( FromMachineArray[TARE], "%lf", FromMachine[TARE]);
+
+  // Adjust dot postion in Array
+  findDotPosition( FromMachineArray[TARE], dotpos);
+
+  for (int8_t i = 0, j = ( 6 - showDigits.dotPosition - dotpos); ( i < 7 ) && ( j < 7 ) ; i++, j++ )
+  {
+    temp[ j ] = FromMachineArray[TARE][i];
+  }
+
+  for (int8_t i = 0; i < 7; i++ )
+  {
+    FromMachineArray[TARE][i] = temp[i];
+  }
+
+  FromMachineArray[TARE][7] = '\0';
+
+  //  SPL("updateTare showDigits.dotPosition -->> " + String( showDigits.dotPosition ) );
+  //  SPL("TARE### : " + String( FromMachineArray[TARE] ) );
+
+}
+
+bool   WeighingHandle :: weightStripImage()
+{
+  tft.setSwapBytes(true);
+  tft.pushImage(10, 0, WeightModeStripWidth, WeightModeStripHeight, WeightModeStrip );
+}
+
+bool  WeighingHandle :: printStringWeight( )
+{
+  String weightUnit = _getWeighingUnit();
+  weightStripImage();
+  SPL("weightUnit : " + String(weightUnit) );
+  tft.setTextSize( 1 );
+  tft.setFreeFont( (const GFXfont *)EUROSTILE_B13 );
+  tft.setTextColor(TFT_WHITE, TFT_BLACK);
+  tft.setCursor(18, 50);  tft.print("NET WT");
+  tft.setCursor(400, 50);  tft.print(weightUnit);
+  tft.setFreeFont( (const GFXfont *)EUROSTILE_B10 );
+  tft.setCursor(18, 173);  tft.print("GROSS WT");
+  tft.setCursor(180, 173);   tft.print(weightUnit);
+  tft.setCursor(260, 173);  tft.print("TARE WT");
+  tft.setCursor(420, 173);  tft.print(weightUnit);
+  tft.setTextColor(TFT_RED, TFT_BLACK);
+  tft.setCursor(18, 310);  tft.print(weightUnit);
+}
+
+
+String  WeighingHandle :: _readbufWeight( )
+{
+
+  String temp =  "";
+HERE :
+  // 1. Get data from weighing machine
+  if ( Serial2.available() > 12  )
+  {
+    temp = Serial2.readStringUntil('=');
+  }
+
+  //2. check, is String temp contains <STX> <ETX> ??
+  int8_t stx = temp.indexOf(2);
+  if ( stx >= 0 )
+  {
+    char ch = temp[stx + 1];
+    switch (ch)
+    {
+      case '1':
+        FromMachine[GROSS] = 0.00;
+        FromMachine[NET] = 0.00;
+        FromMachine[TARE] = 0.00;
+        handleTareCommand( "0.00"  );
+        break;
+      case 'T':
+        handleTareCommand( (char *)temp.c_str() );
+        break;
+
+      default : break;
+    }
+    temp = "";
+    goto HERE;
+  }
+  handleFlags( (char *)temp.c_str() );
+  return temp;
+}
+
+
+int8_t  WeighingHandle :: handleTouchFuncationality_Weight()
+{
+  uint16_t xAxis = 0, yAxis = 0, threshold = 1000;
+
+  char src[12] = {0};
+
+  if ( tft.getTouch(&xAxis, &yAxis, threshold ) )
+  {
+    if ( Taretouch_Auto )
+    {
+      char cmd[20] = "\2T\3";
+      Serial2.print(cmd);
+    }
+    else if ( Zerotouch )
+    {
+      char cmd[20] = "\2Z\3";
+      Serial2.print(cmd);
+    }
+    else if ( ESC_Touch )
+    {
+      SPL("ESCTouch...\n");
+      //delay(250);
+      return -1;
+    }
+    else if ( Field_three_Touch  )
+    {
+      kbd.userInput.userInputArray_Size = 25;
+      kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
+      kbd.init( );
+      kbd.userInput.numericSwitchFlag = 1;
+
+      kbd.takeUserInput(  NULL );
+      SPL("keyboard : " + String( kbd.userInput.userInputArray ) );
+
+      char cmd[20] = "\2T#";
+      strcat(cmd, kbd.userInput.userInputArray );
+      cmd[strlen(cmd)] = 3;
+
+      Serial2.print(cmd);
+      SPL("Manual Tare : " + String(cmd) );
 
       strcpy(src, _readbufWeight( ).c_str() );
 
-      bufferWithoutDot(dest, src);
-      src[7] = '\0';
+      initTFTHandler();
+      printStringWeight( );
+    }
+  }
+}
 
-      if ( strlen(dest) > 5 )
-      {
-        _updateNetWeight( src );
 
-        _updateWindow( NET );
-        _updateWindow( GROSS );
-      }
-      yield();
+
+
+
+/****************************************************************************
+                      ---->> Check Weighing <<----
+
+
+****************************************************************************/
+
+
+int8_t WeighingHandle :: startCheckWeighing()
+{
+  char src[12];
+  char dest[10];
+
+  //  initWeighingTFT( );
+  initTFTHandler ( );
+ // printStringCOUNT( );
+  showDigits.dotPosition = _getDecimal().c_str()[0] - 48;
+
+  _updateWeightperCOUNT( "1.00" );
+  _updateWindowCOUNT(perPCS);
+
+
+  while (1)
+  {
+    memset(dest, '\0', 10);
+    memset(src, '\0', 10);
+    strcpy(src, _readbufCHECK( ).c_str() );
+
+    if ( handleTouchFuncationality_CHECK() == -1 )
+    {
+      CMD_STOPDATA
+      EMPTY_SERIALBUFFER
+      return -1;
     }
 
+    bufferWithoutDot(dest, src);
+    src[7] = '\0';
+
+    if ( strlen(dest) > 5 )
+    {
+      _updateTotalWeightCOUNT( src );
+
+      _updateWindowCHECK(GROSS);
+     _updateWindowCHECK(COUNT);
+
+    }
+    yield();
+  }
+
+}
+
+
+int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
+{
+  uint16_t xAxis = 0, yAxis = 0, threshold = 1000;
+  char src[12] = {0};
+  if ( tft.getTouch(&xAxis, &yAxis, threshold ) )
+  {
+    if ( Field_Two_Touch  )
+    {
+      int8_t tempDot = showDigits.dotPosition;
+
+      kbd.userInput.userInputArray_Size = 25;
+      kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
+      kbd.init(  );
+      kbd.userInput.numericSwitchFlag = 1;
+
+      kbd.takeUserInput( NULL );
+      SPL("keyboard : " + String( kbd.userInput.userInputArray ) );
+      strcpy( maxvalue,  kbd.userInput.userInputArray );
+      _updateWeightperPrice( kbd.userInput.userInputArray );
+
+      strcpy(src, _readbufPrice( ).c_str() );
+
+      initTFTHandler();
+      printStringCOUNT( );
+
+      _updateWindowPricing(perPCS);
+
+      showDigits.dotPosition = tempDot;
+    }
+  }
+  else if ( Field_three_Touch  )
+  {
+    int8_t tempDot = showDigits.dotPosition;
+
+    kbd.userInput.userInputArray_Size = 25;
+    kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
+    kbd.init(  );
+    kbd.userInput.numericSwitchFlag = 1;
+
+    kbd.takeUserInput( NULL );
+    SPL("keyboard : " + String( kbd.userInput.userInputArray ) );
+     strcpy( minvalue,  kbd.userInput.userInputArray );
+     
+    _updateWeightperPrice( kbd.userInput.userInputArray );
+
+    strcpy(src, _readbufPrice( ).c_str() );
+
+    initTFTHandler();
+    printStringCOUNT( );
+
+    _updateWindowPricing(perPCS);
+
+    showDigits.dotPosition = tempDot;
+  }
+  else if ( Zerotouch )
+  {
+
+    char cmd[20] = "\2Z\3";
+    Serial2.print(cmd);
+  }
+  else if ( ESC_Touch )
+  {
+    SPL("ESCTouch...\n");
+    return -1;
+  }
+
+}
+
+void WeighingHandle ::  _updateWindowCHECK( uint8_t win )
+{
+   char dest[10];
+
+  if ( win != perPCS )
+  {
+    bufferWithoutDot( dest,  FromMachineArray[win] );
+    strcpy( showDigits.currentValue, dest);
+    showDigits.currentValue[6] = '\0';
   }
 
 
 
-  void WeighingHandle ::handleTareCommand( char *Weight  )
+  switch (win)
   {
-    String cmdBuf = "";
-    String temp = Weight;
-    int8_t stx = temp.indexOf(2);
-    int8_t etx = temp.indexOf(3);
+    case GROSS   :   windowOne( ); break;
+    case COUNT   :   windowTwo( ); break;
+    case perPCS  :
 
-    for (int8_t leftIdx = stx + 3; leftIdx < etx; ++leftIdx )
-    {
-      cmdBuf += temp[leftIdx];
-    }
-    _updateTareWeight( (char *) cmdBuf.c_str() );
-    _updateWindow(TARE);
-  }
-
-
-
-  void WeighingHandle ::_updateWindow( uint8_t win )
-  {
-    char dest[10];
-    if ( win != TARE )
-    {
-      bufferWithoutDot( dest,  FromMachineArray[win] );
-      strcpy( showDigits.currentValue, dest);
+      bufferWithoutDot( dest,  FromMachineArray[perPCS] );
+      dest[7] = '\0';
+      for (uint8_t idx = 0;  showDigits.currentValue[idx] = dest[idx]; ++idx );
       showDigits.currentValue[6] = '\0';
-    }
+      windowThree( );
+      break;
+
+      case MAX  : windowTwo( );    break;
+      case MIN  : windowThree( );  break;
+  }
 
 
-    switch (win)
+
+}
+
+String WeighingHandle ::  _readbufCHECK( )
+{
+  String temp =  "";
+HERE :
+  // 1. Get data from weighing machine
+  if ( Serial2.available() > 12  )
+  {
+    temp = Serial2.readStringUntil('=');
+  }
+  if ( temp.length() > 50 ) {
+    temp = "";
+    goto HERE;
+  }
+  //2. check, is String temp contains <STX> <ETX> ??
+  int8_t stx = temp.indexOf(2);
+  if ( stx >= 0 )
+  {
+    char ch = temp[stx + 1];
+    switch (ch)
     {
-      case NET   :   windowOne( ); break;
-      case GROSS :   windowTwo( ); break;
-      case TARE  :
-        bufferWithoutDot( dest,  FromMachineArray[TARE] );
-
-        strcpy( showDigits.currentValue, dest);
-        showDigits.currentValue[6] = '\0';
-        windowThree( );
+      case '1':
+        FromMachine[GROSS] = 0.00;
+        FromMachine[PRICE] = 0.00;
+        FromMachine[perPCS] = 1.00;
+        _updateWeightperCOUNT( "1.00" );
+        strcpy(showDigits.preValue[perPCS], "ABCDEFGH");
+        _updateWindowPricing(perPCS);
         break;
-    }
+      case 'T':
+        //        handleTareCommand( (char *)temp.c_str() );
+        break;
 
+      default : break;
+    }
+    temp = "";
+    goto HERE;
   }
 
+  handleFlags( (char *)temp.c_str() );
+  return temp;
+}
 
-  void WeighingHandle ::_updateNetWeight( char *Temp )
+
+
+/****************************************************************************
+                    ---->> Common Funcations <<----
+   @ handleFlags :
+    - This funcation handles all common flags. when and which flag must be ON
+      it take cares.
+   ===============================================================================
+
+   @ initWeighingTFT( ) :
+    - This funcation setup TFT touch screen parameters and UART and their baudRate.
+   ====================================================================================
+
+   @ initTFTHandler ( ) :
+    - This funcation is use to call Images which is necessary for basic funcationality.
+      and update preVlaue with default "ABCDEFGH".
+   =====================================================================================
+
+ *****************************************************************************/
+
+
+String  WeighingHandle :: handleFlags( char *Weight )
+{
+  flags = Weight[8];
+  /* check Zero Bit */
+  ( flags & 0x01 ) ? zeroSymbl(1) : zeroSymbl(0);
+  /* check Tare Bit */
+  (  flags & 0x02 ) ? tareweightSymbl(1) : tareweightSymbl(0);
+  /* check stable Bit */
+  ( flags & 0x04 ) ? stableSymbl(1) : stableSymbl(0);
+  /* Check Negative Falg */
+  if ( flags & 0x40 ) Weight[0] = '-';
+
+  return Weight;
+}
+
+
+bool tft_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap)
+{
+  // Stop further decoding as image is running off bottom of screen
+  if ( y >= tft.height() ) return 0;
+
+  // This function will clip the image block rendering automatically at the TFT boundaries
+  tft.pushImage(x, y, w, h, bitmap);
+
+  // Return 1 to decode next block
+  return 1;
+}
+
+
+
+void WeighingHandle :: initWeighingTFT( )
+{
+  Serial.begin(9600); // DEBUG WINDOW
+  Serial1.begin(9600, SERIAL_8N1, RXD1, TXD1); // Keypad interface
+  Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2); // Weight Mechine
+  SPI.beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
+
+  tft.init();
+  tft.fillScreen(TFT_BLACK);
+  tft.setRotation(1);
+  uint16_t calData[5] = { 329, 3444, 448, 3193, 2 };
+  tft.setTouch(calData);
+  tft.fillScreen(TFT_BLACK);
+
+  // Initialise SPIFFS
+  if (!SPIFFS.begin()) {
+    Serial.println("SPIFFS initialisation failed!");
+    while (1) yield(); // Stay here twiddling thumbs waiting
+  }
+  Serial.println("\r\nInitialisation done.");
+  tft.setSwapBytes(true); // We need to swap the colour bytes (endianess)
+
+  // The jpeg image can be scaled by a factor of 1, 2, 4, or 8
+  TJpgDec.setJpgScale(1);
+
+  // The decoder must be given the exact name of the rendering function above
+  TJpgDec.setCallback(tft_output);
+}
+
+
+
+
+void WeighingHandle :: initTFTHandler ( )
+{
+  weighingMode();
+  batterySymbl();
+  stableSymbl(0);
+  zeroSymbl(0);
+  tareweightSymbl(0);
+
+  strcpy( showDigits.preValue[0], "ABCDEFGH" );
+  strcpy( showDigits.preValue[1], "ABCDEFGH" );
+  strcpy( showDigits.preValue[2], "ABCDEFGH" );
+
+}
+
+
+void WeighingHandle :: windowThree( )
+{
+
+  static int8_t cnt_3 = 3;
+  int8_t leadingZero = 0;
+  //  check with previous Value
+  if ( !strcmp( showDigits.preValue[2] , showDigits.currentValue ) ) return;
+
+
+  // 1. Set Font Size and style
+  showDigits.digitFontSize  = 1;
+  showDigits.digitFontStyle = LED7SEG_STD18;
+  tft.setTextSize( showDigits.digitFontSize );
+  tft.setFreeFont( (const GFXfont *)showDigits.digitFontStyle );
+
+  // Add Leading Zero into current Value
+  memmove( &showDigits.currentValue[1], &showDigits.currentValue[0], strlen(showDigits.currentValue) );
+  showDigits.currentValue[0] = '0';
+  showDigits.currentValue[7] = '\0';
+
+  eliminateLeadingZeros( showDigits.currentValue, ( 7 - showDigits.dotPosition ), leadingZero )
+
+  //4. draw blank rectangle only those digits which is different from previous Value.
+  tft.setTextColor( makeCustomColor(10, 10, 10), TFT_BLACK );
+  for (uint8_t idx = 0; idx < 7; ++idx )
   {
-
-    FromMachine[NET] = strtod( Temp, NULL);
-
-    int8_t dotpos = 0;
-    char temp[8];
-    for (int i = 0; i < 8 ; temp[i++] = '0');  temp[7] = '\0';
-
-    // convert double value into char Array
-    memset( FromMachineArray[NET], '\0' , 10);
-    sprintf( FromMachineArray[NET], "%lf", FromMachine[NET]);
-    // Adjust dot postion in Array
-    findDotPosition( FromMachineArray[NET], dotpos);
-
-    for (int8_t i = 0, j = ( 6 - showDigits.dotPosition - dotpos); ( i < 7 ) && ( j < 7 ) ; i++, j++ )
+    if ( showDigits.preValue[2][idx] !=  showDigits.currentValue[idx] )
     {
-      temp[ j ] = FromMachineArray[NET][i];
+      tft.fillRect( 249  + ( idx * 31),  180,   30,  40,  TFT_BLACK );
+      tft.drawChar( '8', 249 + ( idx * 31) , 210,  1 );
     }
 
-    temp[7] = '\0';
-    strcpy( FromMachineArray[NET], temp );
-
-    FromMachineArray[NET][7] = '\0';
-    //  SPL("NET### : " + String(FromMachineArray[NET] ) );
-    _updateGrossWeight( );
-
   }
-
-
-  void WeighingHandle ::_updateGrossWeight(  )
+  //5. remove all previous dots and redraw at given position;
+  for (uint8_t idx = 0; idx < 6; ++idx )
   {
-    FromMachine[GROSS]  = FromMachine[NET] +  FromMachine[TARE];
+    tft.fillCircle( 275 + ( idx * 31), 216, 3, TFT_BLACK);
+  }
+  int8_t dotPosition = 6 - showDigits.dotPosition;
+  tft.fillCircle( 275 + ( dotPosition * 31), 216, 3, TFT_RED );
 
-    int8_t dotpos = 0;
-    char temp[8];
-    for (int i = 0; i < 8 ; temp[i++] = '0');
-
-    // convert double value into char Array
-    memset(FromMachineArray[GROSS], '\0' , 10);
-    sprintf(FromMachineArray[GROSS], "%lf", FromMachine[GROSS]);
-
-    // Adjust dot postion in Array
-    findDotPosition(FromMachineArray[GROSS], dotpos);
-
-    for (int8_t i = 0, j = ( 6 - showDigits.dotPosition - dotpos); ( i < 7 ) && ( j < 7 ) ; i++, j++ )
+  //6. draw Digits only,, Those digits which is different from previous Value.
+  tft.setTextColor(TFT_GREEN, TFT_BLACK);
+  for (uint8_t idx = leadingZero; idx < 7; ++idx )
+  {
+    if ( showDigits.preValue[2][idx] !=  showDigits.currentValue[idx] )
     {
-      temp[ j ] = FromMachineArray[GROSS][i];
-    }
-
-    for (int8_t i = 0; i < 7; i++ )
-    {
-      FromMachineArray[GROSS][i] = temp[i];
-    }
-    FromMachineArray[GROSS][7] = '\0';
-    //  SPL("GROSS### : " + String( FromMachineArray[GROSS]) );
-  }
-
-  void  WeighingHandle ::_updateTareWeight( char *Temp )
-  {
-    FromMachine[TARE] = strtod( Temp, NULL);
-
-    int8_t dotpos = 0;
-    char temp[8];
-    for (int i = 0; i < 8 ; temp[i++] = '0'); temp[7] = '\0';
-
-    // convert double value into char Array
-    memset( FromMachineArray[TARE], '\0' , 10);
-    sprintf( FromMachineArray[TARE], "%lf", FromMachine[TARE]);
-
-    // Adjust dot postion in Array
-    findDotPosition( FromMachineArray[TARE], dotpos);
-
-    for (int8_t i = 0, j = ( 6 - showDigits.dotPosition - dotpos); ( i < 7 ) && ( j < 7 ) ; i++, j++ )
-    {
-      temp[ j ] = FromMachineArray[TARE][i];
-    }
-
-    for (int8_t i = 0; i < 7; i++ )
-    {
-      FromMachineArray[TARE][i] = temp[i];
-    }
-
-    FromMachineArray[TARE][7] = '\0';
-
-    //  SPL("updateTare showDigits.dotPosition -->> " + String( showDigits.dotPosition ) );
-    //  SPL("TARE### : " + String( FromMachineArray[TARE] ) );
-
-  }
-
-  bool   WeighingHandle :: weightStripImage()
-  {
-    tft.setSwapBytes(true);
-    tft.pushImage(10, 0, WeightModeStripWidth, WeightModeStripHeight, WeightModeStrip );
-  }
-
-  bool  WeighingHandle :: printStringWeight( )
-  {
-    String weightUnit = _getWeighingUnit();
-    weightStripImage();
-    SPL("weightUnit : " + String(weightUnit) );
-    tft.setTextSize( 1 );
-    tft.setFreeFont( (const GFXfont *)EUROSTILE_B13 );
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
-    tft.setCursor(18, 50);  tft.print("NET WT");
-    tft.setCursor(400, 50);  tft.print(weightUnit);
-    tft.setFreeFont( (const GFXfont *)EUROSTILE_B10 );
-    tft.setCursor(18, 173);  tft.print("GROSS WT");
-    tft.setCursor(180, 173);   tft.print(weightUnit);
-    tft.setCursor(260, 173);  tft.print("TARE WT");
-    tft.setCursor(420, 173);  tft.print(weightUnit);
-    tft.setTextColor(TFT_RED, TFT_BLACK);
-    tft.setCursor(18, 310);  tft.print(weightUnit);
-  }
-
-
-  String  WeighingHandle :: _readbufWeight( )
-  {
-
-    String temp =  "";
-  HERE :
-    // 1. Get data from weighing machine
-    if ( Serial2.available() > 12  )
-    {
-      temp = Serial2.readStringUntil('=');
-    }
-
-    //2. check, is String temp contains <STX> <ETX> ??
-    int8_t stx = temp.indexOf(2);
-    if ( stx >= 0 )
-    {
-      char ch = temp[stx + 1];
-      switch (ch)
-      {
-        case '1':
-          FromMachine[GROSS] = 0.00;
-          FromMachine[NET] = 0.00;
-          FromMachine[TARE] = 0.00;
-          handleTareCommand( "0.00"  );
-          break;
-        case 'T':
-          handleTareCommand( (char *)temp.c_str() );
-          break;
-
-        default : break;
-      }
-      temp = "";
-      goto HERE;
-    }
-    handleFlags( (char *)temp.c_str() );
-    return temp;
-  }
-
-
-  int8_t  WeighingHandle :: handleTouchFuncationality_Weight()
-  {
-    uint16_t xAxis = 0, yAxis = 0, threshold = 1000;
-    
-    char src[12] = {0};
-
-    if ( tft.getTouch(&xAxis, &yAxis, threshold ) )
-    {
-      if ( Taretouch_Auto )
-      {
-        char cmd[20] = "\2T\3";
-        Serial2.print(cmd);
-      }
-      else if ( Zerotouch )
-      {
-        char cmd[20] = "\2Z\3";
-        Serial2.print(cmd);
-      }
-      else if ( ESC_Touch )
-      {
-        SPL("ESCTouch...\n");
-        //delay(250);
-        return -1;
-      }
-      else if ( Field_three_Touch  )
-      {
-        kbd.userInput.userInputArray_Size = 25;
-        kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
-        kbd.init( );
-        kbd.userInput.numericSwitchFlag = 1;
-
-        kbd.takeUserInput(  NULL );
-        SPL("keyboard : " + String( kbd.userInput.userInputArray ) );
-
-        char cmd[20] = "\2T#";
-        strcat(cmd, kbd.userInput.userInputArray );
-        cmd[strlen(cmd)] = 3;
-
-        Serial2.print(cmd);
-        SPL("Manual Tare : " + String(cmd) );
-
-        strcpy(src, _readbufWeight( ).c_str() );
-
-        initTFTHandler();
-        printStringWeight( );
-      }
+      tft.drawChar(  showDigits.currentValue[idx], 249 + ( idx * 31) , 210,  1 );
     }
   }
 
+  // end : update preVlaue
+  strcpy( showDigits.preValue[2], showDigits.currentValue );
 
-  /****************************************************************************
-                      ---->> Common Funcations <<----
-     @ handleFlags :
-      - This funcation handles all common flags. when and which flag must be ON
-        it take cares.
-     ===============================================================================
-
-     @ initWeighingTFT( ) :
-      - This funcation setup TFT touch screen parameters and UART and their baudRate.
-     ====================================================================================
-
-     @ initTFTHandler ( ) :
-      - This funcation is use to call Images which is necessary for basic funcationality.
-        and update preVlaue with default "ABCDEFGH".
-     =====================================================================================
-
-   *****************************************************************************/
+}
 
 
-  String  WeighingHandle :: handleFlags( char *Weight )
+void WeighingHandle :: windowTwo( )
+{
+  int8_t leadingZero = 0;
+
+  //3. check with previous Value
+  if ( !strcmp(  showDigits.preValue[GROSS] , showDigits.currentValue ) ) return;
+
+  // 1. Set Font Size
+  showDigits.digitFontSize  = 1;
+  showDigits.digitFontStyle = LED7SEG_STD18;
+  tft.setTextSize( showDigits.digitFontSize );
+  tft.setFreeFont( (const GFXfont *)showDigits.digitFontStyle );
+
+  //2. Add Leading Zero into current Value
+
+  if (  showDigits.spclFlag )
   {
-    flags = Weight[8];
-    /* check Zero Bit */
-    ( flags & 0x01 ) ? zeroSymbl(1) : zeroSymbl(0);
-    /* check Tare Bit */
-    (  flags & 0x02 ) ? tareweightSymbl(1) : tareweightSymbl(0);
-    /* check stable Bit */
-    ( flags & 0x04 ) ? stableSymbl(1) : stableSymbl(0);
-    /* Check Negative Falg */
-    if ( flags & 0x40 ) Weight[0] = '-';
-
-    return Weight;
+    showDigits.currentValue[6] = '0';
   }
-
-
-  bool tft_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap)
+  else
   {
-    // Stop further decoding as image is running off bottom of screen
-    if ( y >= tft.height() ) return 0;
-
-    // This function will clip the image block rendering automatically at the TFT boundaries
-    tft.pushImage(x, y, w, h, bitmap);
-
-    // Return 1 to decode next block
-    return 1;
-  }
-
-
-
-  void WeighingHandle :: initWeighingTFT( )
-  {
-    Serial.begin(9600); // DEBUG WINDOW
-    Serial1.begin(9600, SERIAL_8N1, RXD1, TXD1); // Keypad interface
-    Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2); // Weight Mechine
-    SPI.beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
-
-    tft.init();
-    tft.fillScreen(TFT_BLACK);
-    tft.setRotation(1);
-    uint16_t calData[5] = { 329, 3444, 448, 3193, 2 };
-    tft.setTouch(calData);
-    tft.fillScreen(TFT_BLACK);
-
-    // Initialise SPIFFS
-    if (!SPIFFS.begin()) {
-      Serial.println("SPIFFS initialisation failed!");
-      while (1) yield(); // Stay here twiddling thumbs waiting
-    }
-    Serial.println("\r\nInitialisation done.");
-    tft.setSwapBytes(true); // We need to swap the colour bytes (endianess)
-
-    // The jpeg image can be scaled by a factor of 1, 2, 4, or 8
-    TJpgDec.setJpgScale(1);
-
-    // The decoder must be given the exact name of the rendering function above
-    TJpgDec.setCallback(tft_output);
-  }
-
-
-
-
-  void WeighingHandle :: initTFTHandler ( )
-  {
-    weighingMode();
-    batterySymbl();
-    stableSymbl(0);
-    zeroSymbl(0);
-    tareweightSymbl(0);
-
-    strcpy( showDigits.preValue[0], "ABCDEFGH" );
-    strcpy( showDigits.preValue[1], "ABCDEFGH" );
-    strcpy( showDigits.preValue[2], "ABCDEFGH" );
-
-  }
-
-
-  void WeighingHandle :: windowThree( )
-  {
-
-    static int8_t cnt_3 = 3;
-    int8_t leadingZero = 0;
-    //  check with previous Value
-    if ( !strcmp( showDigits.preValue[2] , showDigits.currentValue ) ) return;
-
-
-    // 1. Set Font Size and style
-    showDigits.digitFontSize  = 1;
-    showDigits.digitFontStyle = LED7SEG_STD18;
-    tft.setTextSize( showDigits.digitFontSize );
-    tft.setFreeFont( (const GFXfont *)showDigits.digitFontStyle );
-
-    // Add Leading Zero into current Value
     memmove( &showDigits.currentValue[1], &showDigits.currentValue[0], strlen(showDigits.currentValue) );
     showDigits.currentValue[0] = '0';
-    showDigits.currentValue[7] = '\0';
+  }
+  showDigits.currentValue[7] = '\0';
 
-    eliminateLeadingZeros( showDigits.currentValue, ( 7 - showDigits.dotPosition ), leadingZero )
+  eliminateLeadingZeros( showDigits.currentValue, ( 7 - showDigits.dotPosition ), leadingZero )
 
-    //4. draw blank rectangle only those digits which is different from previous Value.
-    tft.setTextColor( makeCustomColor(10, 10, 10), TFT_BLACK );
-    for (uint8_t idx = 0; idx < 7; ++idx )
+  //4. draw blank rectangle only those digits which is different from previous Value.
+  tft.setTextColor( makeCustomColor(10, 10, 10), TFT_BLACK );
+  for (uint8_t idx = 0; idx < 7; ++idx )
+  {
+    if ( showDigits.preValue[1][idx] !=  showDigits.currentValue[idx] )
     {
-      if ( showDigits.preValue[2][idx] !=  showDigits.currentValue[idx] )
-      {
-        tft.fillRect( 249  + ( idx * 31),  180,   30,  40,  TFT_BLACK );
-        tft.drawChar( '8', 249 + ( idx * 31) , 210,  1 );
-      }
-
+      tft.fillRect( 15  + ( idx * 31),  180,   30,  40,  TFT_BLACK );
+      tft.drawChar(  '8', 15 + ( idx * 31) , 210,  1);
     }
-    //5. remove all previous dots and redraw at given position;
-    for (uint8_t idx = 0; idx < 6; ++idx )
+  }
+  //5. remove all previous dots and redraw at given position;
+  for (uint8_t idx = 0; idx < 6; ++idx )
+  {
+    tft.fillCircle( 41 + ( idx * 31), 216, 3, TFT_BLACK);
+  }
+  int8_t dotPosition = 6 - showDigits.dotPosition;
+  tft.fillCircle( 41 + ( dotPosition * 31), 216, 3, TFT_RED );
+
+  //6. draw Digits only,, Those digits which is different from previous Value.
+  tft.setTextColor( TFT_GREEN, TFT_BLACK );
+  for (uint8_t idx = leadingZero; idx < 7; ++idx )
+  {
+    if ( showDigits.preValue[1][idx] !=  showDigits.currentValue[idx] )
     {
-      tft.fillCircle( 275 + ( idx * 31), 216, 3, TFT_BLACK);
+      tft.drawChar(  showDigits.currentValue[idx], 15 + ( idx * 31) , 210,  1);
     }
-    int8_t dotPosition = 6 - showDigits.dotPosition;
-    tft.fillCircle( 275 + ( dotPosition * 31), 216, 3, TFT_RED );
-
-    //6. draw Digits only,, Those digits which is different from previous Value.
-    tft.setTextColor(TFT_GREEN, TFT_BLACK);
-    for (uint8_t idx = leadingZero; idx < 7; ++idx )
-    {
-      if ( showDigits.preValue[2][idx] !=  showDigits.currentValue[idx] )
-      {
-        tft.drawChar(  showDigits.currentValue[idx], 249 + ( idx * 31) , 210,  1 );
-      }
-    }
-
-    // end : update preVlaue
-    strcpy( showDigits.preValue[2], showDigits.currentValue );
-
   }
 
+  // end : update preVlaue
+  strcpy( showDigits.preValue[1], showDigits.currentValue );
+}
 
-  void WeighingHandle :: windowTwo( )
-  {
-    int8_t leadingZero = 0;
+void WeighingHandle :: windowOne( )
+{
+  static int8_t cnt_1 = 0;
+  int8_t leadingZero = 0;
 
-    //3. check with previous Value
-    if ( !strcmp(  showDigits.preValue[GROSS] , showDigits.currentValue ) ) return;
+  //3. check with previous Value
+  if ( !strcmp( showDigits.preValue[0] , showDigits.currentValue ) )  return;
 
-    // 1. Set Font Size
-    showDigits.digitFontSize  = 1;
-    showDigits.digitFontStyle = LED7SEG_STD18;
-    tft.setTextSize( showDigits.digitFontSize );
-    tft.setFreeFont( (const GFXfont *)showDigits.digitFontStyle );
-
-    //2. Add Leading Zero into current Value
-
-    if (  showDigits.spclFlag )
-    {
-      showDigits.currentValue[6] = '0';
-    }
-    else
-    {
-      memmove( &showDigits.currentValue[1], &showDigits.currentValue[0], strlen(showDigits.currentValue) );
-      showDigits.currentValue[0] = '0';
-    }
-    showDigits.currentValue[7] = '\0';
-
-    eliminateLeadingZeros( showDigits.currentValue, ( 7 - showDigits.dotPosition ), leadingZero )
-
-    //4. draw blank rectangle only those digits which is different from previous Value.
-    tft.setTextColor( makeCustomColor(10, 10, 10), TFT_BLACK );
-    for (uint8_t idx = 0; idx < 7; ++idx )
-    {
-      if ( showDigits.preValue[1][idx] !=  showDigits.currentValue[idx] )
-      {
-        tft.fillRect( 15  + ( idx * 31),  180,   30,  40,  TFT_BLACK );
-        tft.drawChar(  '8', 15 + ( idx * 31) , 210,  1);
-      }
-    }
-    //5. remove all previous dots and redraw at given position;
-    for (uint8_t idx = 0; idx < 6; ++idx )
-    {
-      tft.fillCircle( 41 + ( idx * 31), 216, 3, TFT_BLACK);
-    }
-    int8_t dotPosition = 6 - showDigits.dotPosition;
-    tft.fillCircle( 41 + ( dotPosition * 31), 216, 3, TFT_RED );
-
-    //6. draw Digits only,, Those digits which is different from previous Value.
-    tft.setTextColor( TFT_GREEN, TFT_BLACK );
-    for (uint8_t idx = leadingZero; idx < 7; ++idx )
-    {
-      if ( showDigits.preValue[1][idx] !=  showDigits.currentValue[idx] )
-      {
-        tft.drawChar(  showDigits.currentValue[idx], 15 + ( idx * 31) , 210,  1);
-      }
-    }
-
-    // end : update preVlaue
-    strcpy( showDigits.preValue[1], showDigits.currentValue );
+  //check valid Dot position.
+  if (  !( showDigits.dotPosition < 5 &&  showDigits.dotPosition > 0 ) ) {
+    SPL("Error : showDigits.dotPosition : " + String( showDigits.dotPosition ));
+    return;
   }
 
-  void WeighingHandle :: windowOne( )
+  // 1. Set Font Size & Style
+  showDigits.digitFontSize  = 1;
+  showDigits.digitFontStyle = LED7SEG_STD40;
+  tft.setTextSize( showDigits.digitFontSize );
+  tft.setFreeFont( (const GFXfont *)showDigits.digitFontStyle );
+
+  //2. Add Leading Zero into current Value
+  memmove( &showDigits.currentValue[1], &showDigits.currentValue[0], strlen(showDigits.currentValue) );
+  showDigits.currentValue[0] = '0';
+  showDigits.currentValue[7] = '\0';
+
+
+  eliminateLeadingZeros( showDigits.currentValue, ( 7 - showDigits.dotPosition ), leadingZero )
+
+  //4. draw blank rectangle only those digits which is different from previous Value.
+  if ( ( cnt_1++) > 20 )
   {
-    static int8_t cnt_1 = 0;
-    int8_t leadingZero = 0;
-
-    //3. check with previous Value
-    if ( !strcmp( showDigits.preValue[0] , showDigits.currentValue ) )  return;
-
-    //check valid Dot position.
-    if (  !( showDigits.dotPosition < 5 &&  showDigits.dotPosition > 0 ) ) {
-      SPL("Error : showDigits.dotPosition : " + String( showDigits.dotPosition ));
-      return;
-    }
-
-    // 1. Set Font Size & Style
-    showDigits.digitFontSize  = 1;
-    showDigits.digitFontStyle = LED7SEG_STD40;
-    tft.setTextSize( showDigits.digitFontSize );
-    tft.setFreeFont( (const GFXfont *)showDigits.digitFontStyle );
-
-    //2. Add Leading Zero into current Value
-    memmove( &showDigits.currentValue[1], &showDigits.currentValue[0], strlen(showDigits.currentValue) );
-    showDigits.currentValue[0] = '0';
-    showDigits.currentValue[7] = '\0';
-
-
-    eliminateLeadingZeros( showDigits.currentValue, ( 7 - showDigits.dotPosition ), leadingZero )
-
-    //4. draw blank rectangle only those digits which is different from previous Value.
-    if ( ( cnt_1++) > 20 )
-    {
-      for (uint8_t idx = 0; idx < 7; ++idx )
-      {
-        if ( showDigits.preValue[0][idx] !=  showDigits.currentValue[idx] )
-        {
-          tft.fillRect( 15  + ( idx * 65),  58,   62,  90,  TFT_BLACK);
-          if ( cnt_1 > 22 ) cnt_1 = 0;
-        }
-
-      }
-    }
-
-    tft.setTextColor( makeCustomColor(10, 10, 10), TFT_BLACK );
     for (uint8_t idx = 0; idx < 7; ++idx )
     {
       if ( showDigits.preValue[0][idx] !=  showDigits.currentValue[idx] )
       {
-
-        tft.drawChar( '8', 15 + ( idx * 65), 130,  1);
+        tft.fillRect( 15  + ( idx * 65),  58,   62,  90,  TFT_BLACK);
+        if ( cnt_1 > 22 ) cnt_1 = 0;
       }
-    }
 
-    //5. remove all previous dots and redraw at given position;
-    for (uint8_t idx = 0; idx < 6; ++idx )
+    }
+  }
+
+  tft.setTextColor( makeCustomColor(10, 10, 10), TFT_BLACK );
+  for (uint8_t idx = 0; idx < 7; ++idx )
+  {
+    if ( showDigits.preValue[0][idx] !=  showDigits.currentValue[idx] )
     {
-      tft.fillCircle( 73 + ( idx * 65 ), 138, 8, TFT_BLACK);
-    }
-    int8_t dotPosition = 6 - showDigits.dotPosition;
-    tft.fillCircle( 73 + ( dotPosition * 65), 138, 8, TFT_RED );
 
-    //6. draw Digits only,, Those digits which is different from previous Value.
-    tft.setTextColor(TFT_GREEN, TFT_BLACK);
-    for (uint8_t idx = leadingZero; idx < 7; ++idx )
+      tft.drawChar( '8', 15 + ( idx * 65), 130,  1);
+    }
+  }
+
+  //5. remove all previous dots and redraw at given position;
+  for (uint8_t idx = 0; idx < 6; ++idx )
+  {
+    tft.fillCircle( 73 + ( idx * 65 ), 138, 8, TFT_BLACK);
+  }
+  int8_t dotPosition = 6 - showDigits.dotPosition;
+  tft.fillCircle( 73 + ( dotPosition * 65), 138, 8, TFT_RED );
+
+  //6. draw Digits only,, Those digits which is different from previous Value.
+  tft.setTextColor(TFT_GREEN, TFT_BLACK);
+  for (uint8_t idx = leadingZero; idx < 7; ++idx )
+  {
+    if ( showDigits.preValue[0][idx] !=  showDigits.currentValue[idx] )
     {
-      if ( showDigits.preValue[0][idx] !=  showDigits.currentValue[idx] )
-      {
-        tft.drawChar( showDigits.currentValue[idx], 15 + ( idx * 65), 130,  1);
-      }
+      tft.drawChar( showDigits.currentValue[idx], 15 + ( idx * 65), 130,  1);
     }
-
-    // end : update preVlaue
-    strcpy( showDigits.preValue[0], showDigits.currentValue );
   }
 
-
-  /******************************************************************
-     @makeCustomColor :
-     (#) we can make custom color accordingly changed the value of RGB color.
-   *                                                                *
-   *******************************************************************/
+  // end : update preVlaue
+  strcpy( showDigits.preValue[0], showDigits.currentValue );
+}
 
 
-  /********************************************************************************************************************************
-
-     @ batterySymbl()  -- >> This Function is responsible for drawing battery Symbol
-     @ stableSymbl()   -->>  This Function is reposible for drawing weight stable symbol
-     @ tareweightSymbl -->>  This Function is reponsible for drawing tare weight symbol
-     @ zeroSymbl       -->>  This Function is responsible for drawing Zero symbol.
-     @ BootingImage()  -->>  This is booting image. It is doing Nothing but it looks good. It can be used later but not for now.
-     @ startUPImage()  -->>  StartUP Image shows 4 Menu option to choose and accordingly program works.
-     @ weighingMode()  -->>  This is base image which is used in all 4 Modes with title modification.
-     @ numKeypad()     -->>  This is keypad image which works in all 4 Modes to get user data from screen when it touched by user.
-
-   ********************************************************************************************************************************/
-
-  bool WeighingHandle :: batterySymbl()
-  {
-    tft.setSwapBytes(true);
-    tft.pushImage(250, 2, bettry_symbWidth, bettry_symbHeight, bettry_symb );
-  }
-
-  /********************************************************************************************************************************/
-  bool  WeighingHandle :: stableSymbl(uint8_t flag)
-  {
-    tft.setSwapBytes(true);
-    if ( flag )
-      tft.pushImage(310, 4, stable_symbWidth, stable_symbHeight, Stable_symbl );
-    else
-      tft.pushImage(310, 4, stable_symbWidth, stable_symbHeight, hideStable_symbl );
-
-  }
+/******************************************************************
+   @makeCustomColor :
+   (#) we can make custom color accordingly changed the value of RGB color.
+ *                                                                *
+ *******************************************************************/
 
 
-  bool  WeighingHandle :: tareweightSymbl(uint8_t flag)
-  {
-    tft.setSwapBytes(true);
-    if ( flag )
-      tft.pushImage(350, 4, taresymblWidth, taresymblHeight, Tare_symb );
-    else
-      tft.pushImage(350, 4, taresymblWidth, taresymblHeight, hideTare_symb );
-  }
+/********************************************************************************************************************************
+
+   @ batterySymbl()  -- >> This Function is responsible for drawing battery Symbol
+   @ stableSymbl()   -->>  This Function is reposible for drawing weight stable symbol
+   @ tareweightSymbl -->>  This Function is reponsible for drawing tare weight symbol
+   @ zeroSymbl       -->>  This Function is responsible for drawing Zero symbol.
+   @ BootingImage()  -->>  This is booting image. It is doing Nothing but it looks good. It can be used later but not for now.
+   @ startUPImage()  -->>  StartUP Image shows 4 Menu option to choose and accordingly program works.
+   @ weighingMode()  -->>  This is base image which is used in all 4 Modes with title modification.
+   @ numKeypad()     -->>  This is keypad image which works in all 4 Modes to get user data from screen when it touched by user.
+
+ ********************************************************************************************************************************/
+
+bool WeighingHandle :: batterySymbl()
+{
+  tft.setSwapBytes(true);
+  tft.pushImage(250, 2, bettry_symbWidth, bettry_symbHeight, bettry_symb );
+}
+
+/********************************************************************************************************************************/
+bool  WeighingHandle :: stableSymbl(uint8_t flag)
+{
+  tft.setSwapBytes(true);
+  if ( flag )
+    tft.pushImage(310, 4, stable_symbWidth, stable_symbHeight, Stable_symbl );
+  else
+    tft.pushImage(310, 4, stable_symbWidth, stable_symbHeight, hideStable_symbl );
+
+}
 
 
-  bool WeighingHandle :: zeroSymbl(uint8_t flag)
-  {
-    tft.setSwapBytes(true);
+bool  WeighingHandle :: tareweightSymbl(uint8_t flag)
+{
+  tft.setSwapBytes(true);
+  if ( flag )
+    tft.pushImage(350, 4, taresymblWidth, taresymblHeight, Tare_symb );
+  else
+    tft.pushImage(350, 4, taresymblWidth, taresymblHeight, hideTare_symb );
+}
 
-    if (flag)
-      tft.pushImage(420, 4, zeroSymblWidth, zeroSymblHeight, ZeroSymbl );
-    else
-      tft.pushImage(420, 4, zeroSymblWidth, zeroSymblHeight, hideSymbolZero );
-  }
 
-  /******************************************************************
-   *                                                                *
-   *                                                                *
-   *******************************************************************/
+bool WeighingHandle :: zeroSymbl(uint8_t flag)
+{
+  tft.setSwapBytes(true);
 
-  bool  WeighingHandle :: BootingImage() {
-    tft.fillScreen(TFT_BLACK);
-    tft.setSwapBytes(true);
-    tft.pushImage(40, 50, bootWidth, bootHeight, Boot);
+  if (flag)
+    tft.pushImage(420, 4, zeroSymblWidth, zeroSymblHeight, ZeroSymbl );
+  else
+    tft.pushImage(420, 4, zeroSymblWidth, zeroSymblHeight, hideSymbolZero );
+}
 
-    tft.setTextSize(2);
-    tft.setTextColor(TFT_BLACK, TFT_WHITE);
-  }
+/******************************************************************
+ *                                                                *
+ *                                                                *
+ *******************************************************************/
 
-  /******************************************************************
-   *                                                                *
-   *                                                                *
-   *******************************************************************/
+bool  WeighingHandle :: BootingImage() {
+  tft.fillScreen(TFT_BLACK);
+  tft.setSwapBytes(true);
+  tft.pushImage(40, 50, bootWidth, bootHeight, Boot);
 
-  bool  WeighingHandle :: startUPImage() {
-    tft.setSwapBytes(true);
-    tft.pushImage(1, 1, startUPWidth, startUPHeight, StartUP );
-  }
+  tft.setTextSize(2);
+  tft.setTextColor(TFT_BLACK, TFT_WHITE);
+}
 
-  /******************************************************************
-     @ weighingMode()  -->>  This is base image which is used in
-                             all 4 Modes with title modification.                                                                *
-   *******************************************************************/
-  bool  WeighingHandle :: weighingMode()
-  {
-    tft.setSwapBytes(true);
-    tft.fillScreen(TFT_BLACK);
-    tft.pushImage(5, 22, WeighingModeWidth, WeighingModeHeight, WeighingMode );
-  }
+/******************************************************************
+ *                                                                *
+ *                                                                *
+ *******************************************************************/
 
-  bool WeighingHandle :: numKeypad()
-  {
-    //  tft.setSwapBytes(true);
-    //  tft.pushImage(0, 3, NumkeypadWidth, NumkeypadHeight, Numkeypad );
-  }
+bool  WeighingHandle :: startUPImage() {
+  tft.setSwapBytes(true);
+  tft.pushImage(1, 1, startUPWidth, startUPHeight, StartUP );
+}
 
-  bool WeighingHandle :: cross(uint16_t x, uint16_t y)
-  {
-    //  tft.setSwapBytes(true);
-    //  tft.pushImage(x, y, crossImageWidth, crossImageHeight, crossImage );
-  }
+/******************************************************************
+   @ weighingMode()  -->>  This is base image which is used in
+                           all 4 Modes with title modification.                                                                *
+ *******************************************************************/
+bool  WeighingHandle :: weighingMode()
+{
+  tft.setSwapBytes(true);
+  tft.fillScreen(TFT_BLACK);
+  tft.pushImage(5, 22, WeighingModeWidth, WeighingModeHeight, WeighingMode );
+}
+
+bool WeighingHandle :: numKeypad()
+{
+  //  tft.setSwapBytes(true);
+  //  tft.pushImage(0, 3, NumkeypadWidth, NumkeypadHeight, Numkeypad );
+}
+
+bool WeighingHandle :: cross(uint16_t x, uint16_t y)
+{
+  //  tft.setSwapBytes(true);
+  //  tft.pushImage(x, y, crossImageWidth, crossImageHeight, crossImage );
+}

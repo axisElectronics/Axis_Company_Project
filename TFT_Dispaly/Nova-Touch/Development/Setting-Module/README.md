@@ -16,14 +16,17 @@
 >       @ Manual calibartion
 >
 > 2. Right now after getting NOLOAD Count, LOAD Count and entering weight value. When we are trying to get data from machine. But not getting calibated continuous data.
-> Althoutgh command is correct to calibarte. we are getting "OK" from Machine. 
+> Althoutgh command is correct to calibarte. we are getting "OK" from Machine. [Solved]
 > 
-> HINT : talk with Neeraj Sir.
->
-> 3. We are getting error when we giving tare values to machine.
+> 3. We are getting error when we giving tare values to machine. [Solved]
 >
 > 4. we need to implement password also.
-> 5. we need to increase touch sensitivity.
+> 5. we need to increase touch sensitivity.[  look uinto Touch.h ]
+> may be I have to change #define Z_THRESHOLD 350 to #define Z_THRESHOLD 500.
+> 
 > 6. pre value must be print fast
-> 7. when ever we enter into Weighing Mode. First reset the tare weight.
-> 8. 
+> 7. when ever we enter into Weighing Mode. First ask tare weight.[Done]
+
+@ Date : 25-03-2021 
+
+> 1. 
