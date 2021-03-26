@@ -37,7 +37,6 @@ void setup() {
   set.settingPageInit(  );
   set.settingPageHandler( );
 
-  tft.getTouch();
 }
 
 void loop() {

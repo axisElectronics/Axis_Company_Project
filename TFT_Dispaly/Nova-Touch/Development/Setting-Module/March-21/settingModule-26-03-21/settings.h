@@ -278,6 +278,7 @@ class settings : public userKeyBoard, public defaultSettings
     friend int8_t stabilityFilter(class settings *settings );
     friend int8_t clockSetup( class settings *settings  );
     friend int8_t autoZero(class settings *settings  );
+   
     friend int8_t capacitySetup(class settings *settings  );
     friend int8_t eValueSetup( class settings *settings);
     friend  int8_t decimalSetup( class settings *settings );

@@ -217,15 +217,10 @@ void showDigitfun( class settings *settings, int yPos )
 }
 
 
-
-
-
-
-//
 int8_t caliButtonTouch()
 {
-  uint16_t xAxis, yAxis;
-  if ( tft.getTouch(&xAxis, &yAxis) )
+  uint16_t xAxis, yAxis, threshold=1000;
+  if ( tft.getTouch(&xAxis, &yAxis, threshold) )
   {
     if (xNOLOAD && yNOLOAD ) return NOLOAD; //NOLOAD
     else if (xLOAD && yLOAD ) return LOAD;
@@ -245,13 +240,20 @@ int8_t readNoLoadcount( class settings *settings )
   // three value required for this command.
   // i.e <STX>CAL#0,capacity,decimal,eValue<ETX>
 
+  strcpy(settings->userSetting.scaleCapacity, settings->_getCapacity().c_str() );
+  strcpy(settings->userSetting.decimalValue, settings->_getDecimal().c_str() );
+  strcpy(settings->userSetting.eValue, settings->_getEvalue().c_str() );
+  
   SPL("scaleCapacity : " +  String( settings->userSetting.scaleCapacity ) );
   SPL("decimalValue : " +  String( settings->userSetting.decimalValue ) );
   SPL("eValue : " +  String( settings->userSetting.eValue ) );
-  saveAsDefault(settings); 
-
-  if ( strlen( settings->userSetting.scaleCapacity) && strlen(settings->userSetting.decimalValue) && strlen(settings->userSetting.eValue) )
-  {
+//  SPL(" ");
+//  SPL("getscaleCapacity : " +  String( settings->_getCapacity() ) );
+//  SPL("getdecimalValue : " +  String( settings-> _getDecimal() ) );
+//  SPL("geteValue : " +  String( settings->_getEvalue() ) );
+  
+  if ( strlen( settings->userSetting.scaleCapacity ) && strlen(settings->userSetting.decimalValue) && strlen(settings->userSetting.eValue) )
+  {   
     char buf[50] = {0};
     strcat(buf, "\2CAL#0,");
     strcat(buf, settings->userSetting.scaleCapacity);
@@ -402,14 +404,26 @@ void showCaliWeight( class settings *settings )
         strcat(buf, settings->userSetting.cali_weight);
         buf[ strlen(buf) ] = '\3';
 
-        //        Serial.println("Command--->>>> : " + String(buf));
+        Serial.println("Command--->>>> : " + String(buf));
         Serial2.write(buf);
 
         //2. wait till you received "OK" from machine
+        String temp = "";
+        unsigned int tout = millis();
         while (1)
         {
-          if ( Serial2.readStringUntil('K') )
+          if( Serial2.available() > 0 )
+          {
+            temp += Serial2.readStringUntil('K');                  
             break;
+          }
+
+          if( ( millis() - tout ) > 1000 )
+          {
+            tout = millis();
+            Serial.println("Command--->>>> : " + String(buf));
+            Serial2.write(buf);
+          }
           yield();
         }//end-while
 
@@ -576,7 +590,9 @@ int8_t decimalSetup(  class settings *settings )
   if ( settings->userSetting.decimalValue[ strlen( settings->userSetting.decimalValue ) - 1 ] == '_' )
     settings->userSetting.decimalValue[ strlen( settings->userSetting.decimalValue ) - 1 ] = '\0';
 
-  //  SPL("decimalValue : " + String( settings->userSetting.decimalValue ));
+// set decimal data into SPIFFS memory
+  settings->_setDecimal( settings->userSetting.decimalValue[0] );
+  
   Enable_Text_Font()
   tft.fillScreen(TFT_BLACK);
   settings->settingPageImage();
@@ -609,7 +625,9 @@ int8_t eValueSetup(  class settings *settings )
   if ( settings->userSetting.eValue[ strlen( settings->userSetting.eValue ) - 1 ] == '_' )
     settings->userSetting.eValue[ strlen( settings->userSetting.eValue ) - 1 ] = '\0';
 
-    SPL("evalue : " + String( settings->userSetting.eValue));
+// set evalue into SPIFFS memory
+  settings->_setEvalue( settings->userSetting.eValue[0] ) ;
+  
   Enable_Text_Font()
   tft.fillScreen(TFT_BLACK);
   settings->settingPageImage();
@@ -645,6 +663,10 @@ int8_t capacitySetup( class settings *settings )
   if ( settings->userSetting.scaleCapacity[ strlen( settings->userSetting.scaleCapacity ) - 1 ] == '_' )
     settings->userSetting.scaleCapacity[ strlen( settings->userSetting.scaleCapacity ) - 1 ] = '\0';
 
+  // set capacity as default in parmanet memory
+  settings->_setCapacity( settings->userSetting.scaleCapacity ); 
+
+  
   Enable_Text_Font()
   tft.fillScreen(TFT_BLACK);
   settings->settingPageImage();

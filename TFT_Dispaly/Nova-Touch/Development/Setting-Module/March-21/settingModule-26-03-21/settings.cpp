@@ -127,15 +127,17 @@ void settings :: settingPageImage()
 
 int8_t settings :: ButtonTouch( )
 {
-  uint16_t xAxis, yAxis;
-  if ( tft.getTouch(&xAxis, &yAxis) )
+  uint16_t xAxis, yAxis, threshold=1000;
+  if ( tft.getTouch(&xAxis, &yAxis, threshold) )
   {
     if (xUP && yUP )           return UP; //UP
     else if (xDOWN && yDOWN )  return Down; //DOWN
     else if (xENT && yENT )    return ENT; //ENT
     else if (xESC && yESC )    return ESC; //ESC
     else
-      Serial.println("ELSE Touch :\nxAxis --->>> " + String(xAxis) + "\nyAxis --->>> " + String(yAxis) );
+     {
+//      Serial.println("ELSE Touch :\nxAxis --->>> " + String(xAxis) + "\nyAxis --->>> " + String(yAxis) );
+     }
   }
   return 5;
 }
@@ -176,16 +178,14 @@ void settings :: drawSettingString(  )
   }//end-for
 }//end-drawSettingString
 
-//
-//
-///*
-//   @  settingPage ::
-//    (#) This function is the entry point of machine settings.
-//        - It also takes care UP, Down, ESC and ENT button functionality.
-//        - According to various steps taken by user, appropriate functions will be called.
-//        -
-//*/
-//
+/*
+   @  settingPage ::
+    (#) This function is the entry point of machine settings.
+        - It also takes care UP, Down, ESC and ENT button functionality.
+        - According to various steps taken by user, appropriate functions will be called.
+        -
+*/
+
 int8_t  settings :: findPageTotalItems(  )
 {
 
@@ -203,8 +203,6 @@ void  settings :: settingPageHandler( )
   // This is the base image of setting
   settingPageImage();
   
-//    TJpgDec.drawFsJpg(0, 0, "/SettingBase1.jpg");
-
   settingIndexBlankFullCircle();
   settingIndexfillCircle( basesetting.dotIdx);
   Enable_Text_Font()
@@ -237,7 +235,6 @@ void  settings :: settingPageHandler( )
     yield();
   }
 
-  Serial.println("While Loop Ends and back  to menu touch ");
 }//end-settingPage
 
 
@@ -295,8 +292,8 @@ int8_t settings :: handleENTButton(  )
   if ( settingMenuArray[idx].sub_func == SUB_MENU )
   {
     basesetting.baseStringIdx     = ( basesetting.stringIdx + basesetting.dotIdx ) * 10;
-    basesetting.baseEndStringIdx  = basesetting.baseStringIdx + 10;
-    basesetting.stringIdx         = basesetting.baseStringIdx;
+    basesetting.baseEndStringIdx  =   basesetting.baseStringIdx + 10;
+    basesetting.stringIdx         =   basesetting.baseStringIdx;
 
     findPageTotalItems( );
     settingIndexBlankFullCircle();
