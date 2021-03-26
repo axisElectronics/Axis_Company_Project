@@ -57,7 +57,7 @@ HERE :
       }
       else if ( PriceingModeTouchEnable() )
       {
-        if ( userSetting.pricecomputing ) 
+        if ( userSetting.pricecomputing )
         {
           Mode = 4;
           CMD_STARTDATA
@@ -113,6 +113,7 @@ HERE :
         }
       } break;
     case 5:
+      CMD_STARTDATA
       if (  startCheckWeighing() == -1 )
       {
         Mode = 0;

@@ -1109,12 +1109,14 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
 {
   uint16_t xAxis = 0, yAxis = 0, threshold = 1000;
   char src[12] = {0};
+  int8_t tempDot = showDigits.dotPosition;
+   
   if ( tft.getTouch(&xAxis, &yAxis, threshold ) )
   {
     if ( Field_Two_Touch  )
     {
       SPL("Field Two Touch \nxAxis : " + String(xAxis ) + "\nyAxis : " + String(yAxis) );
-      int8_t tempDot = showDigits.dotPosition;
+     
 
       kbd.userInput.userInputArray_Size = 25;
       kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
@@ -1124,19 +1126,17 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
       kbd.takeUserInput( NULL );
       SPL("keyboard : " + String( kbd.userInput.userInputArray ) );
       if ( strlen( kbd.userInput.userInputArray ) > 0 )
-      { 
+      {
         strcpy( maxvalue,  kbd.userInput.userInputArray );
-        _updateWeightMinWindow( kbd.userInput.userInputArray );
+        _updateWeightMaxWindow( kbd.userInput.userInputArray );
       }
-      
+
       strcpy(src, _readbufPrice( ).c_str() );
 
       initTFTHandler();
       printStringCOUNT( );
-
-      _updateWindowPricing(GROSS);
-
-      showDigits.dotPosition = tempDot;
+      _updateWindowCHECK(MAX);
+      showDigits.dotPosition = tempDot;      
     }
   }
   else if ( Field_three_Touch  )
@@ -1181,6 +1181,34 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
 
 }
 
+void  WeighingHandle :: _updateWeightMaxWindow( char *Temp )
+{
+ FromMachine[GROSS] = strtod( Temp, NULL);
+  uint8_t dotpos = 0;
+  char temp[8];
+  for (int i = 0; i < 8 ; temp[i++] = '0');  temp[7] = '\0';
+
+  // convert double value into char Array
+  memset( FromMachineArray[GROSS], '\0' , 10);
+  sprintf( FromMachineArray[GROSS], "%lf", FromMachine[GROSS]);
+  // Adjust dot postion in Array
+  findDotPosition( FromMachineArray[GROSS], dotpos);
+
+  for (int8_t i = 0, j = ( 6 - showDigits.dotPosition - dotpos); ( i < 7 ) && ( j < 7 ) ; i++, j++ )
+  {
+    temp[ j ] = FromMachineArray[GROSS][i];
+  }
+
+  temp[7] = '\0';
+  strcpy( FromMachineArray[GROSS], temp );
+
+  FromMachineArray[GROSS][7] = '\0';
+    SPL("MAX### : " + String( FromMachineArray[GROSS] ) );
+}
+
+
+
+
 void WeighingHandle ::  _updateWindowCHECK( uint8_t win )
 {
   char dest[10];
@@ -1189,15 +1217,13 @@ void WeighingHandle ::  _updateWindowCHECK( uint8_t win )
   {
     bufferWithoutDot( dest,  FromMachineArray[win] );
     strcpy( showDigits.currentValue, dest);
-    showDigits.currentValue[6] = '\0';
+    showDigits.currentValue[6] = '\0'; 
   }
-
-
 
   switch (win)
   {
-    case GROSS   :   windowOne( ); break;
-    case COUNT   :   windowTwo( ); break;
+    case GROSS   :  windowOne( ); break;                     
+    case COUNT   :  windowTwo( ); break;
     case perPCS  :
 
       bufferWithoutDot( dest,  FromMachineArray[perPCS] );
@@ -1363,6 +1389,15 @@ void WeighingHandle :: windowThree( )
   //  check with previous Value
   if ( !strcmp( showDigits.preValue[2] , showDigits.currentValue ) ) return;
 
+   /*
+   * Bug Fix : showDigits.dotPosition was corrupting again again. 
+   */
+  showDigits.dotPosition = _getDecimal().c_str()[0] - '0';
+  if (  !( showDigits.dotPosition < 5 &&  showDigits.dotPosition > 0 ) ) {
+    SPL("Error : showDigits.dotPosition : " + String( showDigits.dotPosition ));
+    return;
+  }
+
 
   // 1. Set Font Size and style
   showDigits.digitFontSize  = 1;
@@ -1418,6 +1453,16 @@ void WeighingHandle :: windowTwo( )
 
   //3. check with previous Value
   if ( !strcmp(  showDigits.preValue[GROSS] , showDigits.currentValue ) ) return;
+
+   /*
+   * Bug Fix : showDigits.dotPosition was corrupting again again. 
+   */
+  showDigits.dotPosition = _getDecimal().c_str()[0] - '0';
+  if (  !( showDigits.dotPosition < 5 &&  showDigits.dotPosition > 0 ) ) {
+    SPL("Error : showDigits.dotPosition : " + String( showDigits.dotPosition ));
+    return;
+  }
+
 
   // 1. Set Font Size
   showDigits.digitFontSize  = 1;
@@ -1481,6 +1526,10 @@ void WeighingHandle :: windowOne( )
   if ( !strcmp( showDigits.preValue[0] , showDigits.currentValue ) )  return;
 
   //check valid Dot position.
+  /*
+   * Bug Fix : showDigits.dotPosition was corrupting again again. 
+   */
+  showDigits.dotPosition = _getDecimal().c_str()[0] - '0';
   if (  !( showDigits.dotPosition < 5 &&  showDigits.dotPosition > 0 ) ) {
     SPL("Error : showDigits.dotPosition : " + String( showDigits.dotPosition ));
     return;
