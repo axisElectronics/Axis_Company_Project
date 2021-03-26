@@ -1068,7 +1068,7 @@ int8_t WeighingHandle :: startCheckWeighing()
 
   //  initWeighingTFT( );
   initTFTHandler ( );
- // printStringCOUNT( );
+  // printStringCOUNT( );
   showDigits.dotPosition = _getDecimal().c_str()[0] - 48;
 
   _updateWeightperCOUNT( "1.00" );
@@ -1096,7 +1096,7 @@ int8_t WeighingHandle :: startCheckWeighing()
       _updateTotalWeightCOUNT( src );
 
       _updateWindowCHECK(GROSS);
-     _updateWindowCHECK(COUNT);
+      _updateWindowCHECK(COUNT);
 
     }
     yield();
@@ -1113,6 +1113,7 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
   {
     if ( Field_Two_Touch  )
     {
+      SPL("Field Two Touch \nxAxis : " + String(xAxis ) + "\nyAxis : " + String(yAxis) );
       int8_t tempDot = showDigits.dotPosition;
 
       kbd.userInput.userInputArray_Size = 25;
@@ -1122,15 +1123,18 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
 
       kbd.takeUserInput( NULL );
       SPL("keyboard : " + String( kbd.userInput.userInputArray ) );
-      strcpy( maxvalue,  kbd.userInput.userInputArray );
-      _updateWeightperPrice( kbd.userInput.userInputArray );
-
+      if ( strlen( kbd.userInput.userInputArray ) > 0 )
+      { 
+        strcpy( maxvalue,  kbd.userInput.userInputArray );
+        _updateWeightMinWindow( kbd.userInput.userInputArray );
+      }
+      
       strcpy(src, _readbufPrice( ).c_str() );
 
       initTFTHandler();
       printStringCOUNT( );
 
-      _updateWindowPricing(perPCS);
+      _updateWindowPricing(GROSS);
 
       showDigits.dotPosition = tempDot;
     }
@@ -1146,8 +1150,8 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
 
     kbd.takeUserInput( NULL );
     SPL("keyboard : " + String( kbd.userInput.userInputArray ) );
-     strcpy( minvalue,  kbd.userInput.userInputArray );
-     
+    strcpy( minvalue,  kbd.userInput.userInputArray );
+
     _updateWeightperPrice( kbd.userInput.userInputArray );
 
     strcpy(src, _readbufPrice( ).c_str() );
@@ -1170,12 +1174,16 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
     SPL("ESCTouch...\n");
     return -1;
   }
+  else
+  {
+    // SPL("xAxis : " + String(xAxis ) + "\nyAxis : " + String(yAxis) );
+  }
 
 }
 
 void WeighingHandle ::  _updateWindowCHECK( uint8_t win )
 {
-   char dest[10];
+  char dest[10];
 
   if ( win != perPCS )
   {
@@ -1199,8 +1207,8 @@ void WeighingHandle ::  _updateWindowCHECK( uint8_t win )
       windowThree( );
       break;
 
-      case MAX  : windowTwo( );    break;
-      case MIN  : windowThree( );  break;
+    case MAX  : windowTwo( );    break;
+    case MIN  : windowThree( );  break;
   }
 
 

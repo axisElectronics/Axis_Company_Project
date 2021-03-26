@@ -367,6 +367,7 @@ class WeighingHandle : public settings
     void   _updateWindowCHECK( uint8_t win );
     int8_t   handleTouchFuncationality_CHECK();
     String _readbufCHECK( );
+    _updateWeightMinWindow( kbd.userInput.userInputArray );
     
     void _maxWin(char * maxValue );
     void _minWin(char * minValue );
