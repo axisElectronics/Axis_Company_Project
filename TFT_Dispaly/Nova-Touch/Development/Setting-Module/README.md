@@ -21,9 +21,9 @@
 > HINT : talk with Neeraj Sir.
 >
 > 3. We are getting error when we giving tare values to machine.
-
-4. we need to implement password also.
-5. we need to increase touch sensitivity.
-6. pre value must be print fast
-7. when ever we enter into Weighing Mode. First reset the tare weight.
-8. 
+>
+> 4. we need to implement password also.
+> 5. we need to increase touch sensitivity.
+> 6. pre value must be print fast
+> 7. when ever we enter into Weighing Mode. First reset the tare weight.
+> 8. 
