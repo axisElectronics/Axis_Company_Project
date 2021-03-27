@@ -74,7 +74,7 @@ void  WeighingHandle ::_updateWindowCOUNT( uint8_t win )
   switch (win)
   {
     case COUNT_GROSS   :   windowThree( );  break;
-    case COUNT   :         windowOne( ); break;
+    case COUNT   :         updateTotalPcsWindow(); break;
     
     case COUNT_perPCS  :
 
@@ -302,7 +302,80 @@ bool  WeighingHandle :: printStringCOUNT( )
 
 void  WeighingHandle :: updateTotalPcsWindow()
 {
+   static int8_t cnt_1 = 0;
+  int8_t leadingZero = 0;
+
+  //3. check with previous Value
+  if ( !strcmp( showDigits.preValue[0] , showDigits.currentValue ) )  return;
+
+  //check valid Dot position.
+  /*
+     Bug Fix : showDigits.dotPosition was corrupting again again.
+  */
+  showDigits.dotPosition = _getDecimal().c_str()[0] - '0';
+  if (  !( showDigits.dotPosition < 5 &&  showDigits.dotPosition > 0 ) ) {
+    SPL("Error : showDigits.dotPosition : " + String( showDigits.dotPosition ));
+    return;
+  }
+
+  // 1. Set Font Size & Style
+  showDigits.digitFontSize  = 1;
+  showDigits.digitFontStyle = LED7SEG_STD40;
+  tft.setTextSize( showDigits.digitFontSize );
+  tft.setFreeFont( (const GFXfont *)showDigits.digitFontStyle );
+
   
+  //2. Add Leading Zero into current Value
+  memmove( &showDigits.currentValue[1], &showDigits.currentValue[0], strlen(showDigits.currentValue) );
+  showDigits.currentValue[0] = '0';
+  showDigits.currentValue[7] = '\0';
+
+  SPL("After Leading Zero : " + String( showDigits.currentValue ) );
+  eliminateLeadingZeros( showDigits.currentValue, ( 7 - showDigits.dotPosition ), leadingZero )
+  SPL("Leading cnt = " + String( leadingZero ) );
+  //4. draw blank rectangle only those digits which is different from previous Value.
+  if ( ( cnt_1++) > 20 )
+  {
+    for (uint8_t idx = 0; idx < 7; ++idx )
+    {
+      if ( showDigits.preValue[0][idx] !=  showDigits.currentValue[idx] )
+      {
+        tft.fillRect( 15  + ( idx * 65),  58,   62,  90,  TFT_BLACK);
+        if ( cnt_1 > 22 ) cnt_1 = 0;
+      }
+
+    }
+  }
+
+  tft.setTextColor( makeCustomColor(10, 10, 10), TFT_BLACK );
+  for (uint8_t idx = 0; idx < 7; ++idx )
+  {
+    if ( showDigits.preValue[0][idx] !=  showDigits.currentValue[idx] )
+    {
+
+      tft.drawChar( '8', 15 + ( idx * 65), 130,  1);
+    }
+  }
+
+  //5. remove all previous dots and redraw at given position;
+  for (uint8_t idx = 0; idx < 6; ++idx )
+  {
+    tft.fillCircle( 73 + ( idx * 65 ), 138, 8, TFT_BLACK);
+  }
+  // Don't need any dot here. because every pcs is in round figure.
+//  int8_t dotPosition = 6 - showDigits.dotPosition;
+//  tft.fillCircle( 73 + ( dotPosition * 65), 138, 8, TFT_RED );
+
+  //6. draw Digits only,, Those digits which is different from previous Value.
+  tft.setTextColor(TFT_GREEN, TFT_BLACK);
+
+  // pick raw double value and print that only.
+  SPL("raw Count : " + String(FromMachine[COUNT]) );
+    SPL("rawArray Count : " + String(FromMachineArray[COUNT]) );
+  
+
+  // end : update preVlaue
+  strcpy( showDigits.preValue[0], showDigits.currentValue );
 
   
 }
