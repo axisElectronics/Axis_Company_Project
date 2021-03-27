@@ -27,6 +27,7 @@
 > 6. pre value must be print fast
 > 7. when ever we enter into Weighing Mode. First ask tare weight.[Done]
 
-@ Date : 25-03-2021 
+@ Date : 27-03-2021 
 
-> 1. 
+> 1. implement Tare command in Counting Mode.
+> 2. 
