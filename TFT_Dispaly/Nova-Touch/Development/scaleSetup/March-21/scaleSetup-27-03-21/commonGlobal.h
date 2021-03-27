@@ -356,6 +356,7 @@ class WeighingHandle : public settings
     int8_t   startCountComputing();
     void   _updateWindowCOUNT( uint8_t win );
     void   _updateTotalWeightCOUNT( char *Temp );
+    void  updateTotalPcsWindow();
     void   _updateWeightCOUNT();
     void   _updateWeightperCOUNT( char *Temp );
     int8_t   handleTouchFuncationality_COUNT();
