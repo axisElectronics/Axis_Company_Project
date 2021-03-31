@@ -24,8 +24,8 @@ extern class userKeyBoard kbd;
 
 int8_t  WeighingHandle :: startCountComputing()
 {
-  char src[12];
-  char dest[10];
+  char *src  = new char[10];
+  char *dest = new char[10];
 
   //  initWeighingTFT( );
   initTFTHandler ( );
@@ -49,14 +49,14 @@ int8_t  WeighingHandle :: startCountComputing()
       return -1;
     }
 
-    bufferWithoutDot(dest, src);
-    src[7] = '\0';
-
-    if ( strlen(dest) > 5 )
+    if ( strlen(src) > 5 )
     {
+       src[7] = '\0';
+      SPL("-->>> " + String( src) );
       _updateTotalWeightCOUNT( src );
 
-      _updateWindowCOUNT(COUNT_NetWeight);
+      
+      _updateWindowCOUNT( COUNT_NetWeight );
       _updateWindowCOUNT(COUNT);
 
     }
@@ -67,28 +67,18 @@ int8_t  WeighingHandle :: startCountComputing()
 
 void  WeighingHandle ::_updateWindowCOUNT( uint8_t win )
 {
-  char dest[10];
 
-  if ( win != COUNT_UnitWeight )
-  {
-    bufferWithoutDot( dest,  FromMachineArray[win] );
-    strcpy( showDigits.currentValue, dest);
-    showDigits.currentValue[6] = '\0';
-  }
-
+  bufferWithoutDot( showDigits.currentValue,  FromMachineArray[win] );
+  showDigits.currentValue[6] = '\0';
+  
   switch (win)
   {
-    case COUNT_NetWeight   :   windowThree( );  break;
-    case COUNT   :         updateTotalPcsWindow(); break;
-
-    case COUNT_UnitWeight  :
-
-      bufferWithoutDot( dest,  FromMachineArray[COUNT_UnitWeight] );
-      dest[7] = '\0';
-      for (uint8_t idx = 0;  showDigits.currentValue[idx] = dest[idx]; ++idx );
-      showDigits.currentValue[6] = '\0';
-      windowTwo( );
-      break;
+    case COUNT_NetWeight   : 
+     
+    windowThree( );  break;
+    
+    case COUNT             :  updateTotalPcsWindow(); break;
+    case COUNT_UnitWeight  :  windowTwo( );   break;
   }
 
 }
@@ -113,6 +103,12 @@ void  WeighingHandle :: _updateTotalWeightCOUNT( char *Temp )
   // Adjust dot postion in Array
   findDotPosition( FromMachineArray[COUNT_NetWeight], dotpos);
 
+  //check valid Dot position.
+  /*
+     Bug Fix : showDigits.dotPosition was corrupting again & again.
+  */
+  showDigits.dotPosition = _getDecimal().c_str()[0] - '0';
+
   for (int8_t i = 0, j = ( 6 - showDigits.dotPosition - dotpos); ( i < 7 ) && ( j < 7 ) ; i++, j++ )
   {
     temp[ j ] = FromMachineArray[COUNT_NetWeight][i];
@@ -122,7 +118,7 @@ void  WeighingHandle :: _updateTotalWeightCOUNT( char *Temp )
   strcpy( FromMachineArray[COUNT_NetWeight], temp );
 
   FromMachineArray[COUNT_NetWeight][7] = '\0';
-  //  SPL("GROSS### : " + String( FromMachineArray[GROSS] ) );
+  SPL("Count-GROSS### : " + String( FromMachineArray[COUNT_NetWeight] ) );
   _updateWeightCOUNT();
 
 }
@@ -182,7 +178,7 @@ void WeighingHandle :: _updateWeightperCOUNT( char *Temp )
 int8_t  WeighingHandle :: handleTouchFuncationality_COUNT()
 {
   uint16_t xAxis = 0, yAxis = 0, threshold = 1000;
-  char src[12] = {0};
+
   if ( tft.getTouch(&xAxis, &yAxis, threshold ) )
   {
     if ( Taretouch_Auto )
@@ -203,6 +199,9 @@ int8_t  WeighingHandle :: handleTouchFuncationality_COUNT()
     }
     else if ( Field_Two_Touch  )
     {
+      char src[12] ;
+      char dest[10];
+
       int8_t tempDot = showDigits.dotPosition;
 
       kbd.userInput.userInputArray_Size = 25;
@@ -213,18 +212,19 @@ int8_t  WeighingHandle :: handleTouchFuncationality_COUNT()
       kbd.takeUserInput( NULL );
       SPL("keyboard : " + String( kbd.userInput.userInputArray ) );
 
+      // update unit weight value.
       _updateWeightperCOUNT( kbd.userInput.userInputArray );
 
-      strcpy(src, _readbufPrice( ).c_str() );
-
       initTFTHandler();
-      printStringCOUNT( );
-
-      _updateWindowCOUNT(COUNT_UnitWeight);
-      showDigits.dotPosition = tempDot;
+      printStringCOUNT( );      
+      
+      _updateWindowCOUNT( COUNT_UnitWeight );
+        
+      
     }
   }
 }
+
 
 
 
@@ -254,10 +254,11 @@ HERE :
         FromMachine[COUNT_UnitWeight] = 1.00;
         _updateWeightperCOUNT( "1.00" );
         strcpy(showDigits.preValue[COUNT_UnitWeight], "ABCDEFGH");
-        _updateWindowPricing(COUNT_UnitWeight);
+
+        _updateWindowCOUNT(COUNT);
         break;
       case 'T':
-        //        handleTareCommand( (char *)temp.c_str() );
+        // handleTareCommand( (char *)temp.c_str() );
         break;
 
       default : break;
@@ -310,24 +311,25 @@ void  WeighingHandle :: updateTotalPcsWindow()
   static int8_t cnt_1 = 0;
   int8_t leadingZero = 0;
   uint8_t dotpos = 0;
-   
+
   //3. check with previous Value
   // one index ahead due to one leading Zero.
   // Find Raw double Value and then reverse it
   // find dotposition so that you can eleminate all other
   sprintf( FromMachineArray[COUNT], "%lf", FromMachine[COUNT]);
-  String temp = String( FromMachineArray[COUNT]);
+  if ( FromMachineArray[COUNT][0] == '-' ) return;
+  String temp = String( FromMachineArray[COUNT] );
   reverse(temp.begin(), temp.end());
- 
+
   findDotPosition(  temp.c_str(), dotpos);
- 
+
   strcpy(showDigits.currentValue, temp.c_str() );
-   
+
   if ( !strcmp( showDigits.preValue[COUNT], showDigits.currentValue ) )  return;
 
   //check valid Dot position.
   /*
-     Bug Fix : showDigits.dotPosition was corrupting again again.
+     Bug Fix : showDigits.dotPosition was corrupting again & again.
   */
   showDigits.dotPosition = _getDecimal().c_str()[0] - '0';
   if (  !( showDigits.dotPosition < 5 &&  showDigits.dotPosition > 0 ) ) {
@@ -341,10 +343,15 @@ void  WeighingHandle :: updateTotalPcsWindow()
   tft.setTextSize( showDigits.digitFontSize );
   tft.setFreeFont( (const GFXfont *)showDigits.digitFontStyle );
 
+  // 2. remove all dots
+  for (uint8_t idx = 0; idx < 6; ++idx )
+  {
+    tft.fillCircle( 73 + ( idx * 65 ), 138, 8, TFT_BLACK);
+  }
+
+
   //6. draw Digits only,, Those digits which is different from previous Value.
-  SPL("Dot : " + String(dotpos) );
-  SPL("pre : " + String(showDigits.preValue[COUNT]) );
-  SPL("current : " + String(showDigits.currentValue) );
+
   tft.setTextColor( makeCustomColor(10, 10, 10), TFT_BLACK );
   for (uint8_t idx = dotpos, digitpos = 7; temp[idx] != NULL || showDigits.preValue[COUNT][idx] != NULL; ++idx, --digitpos )
   {
@@ -355,7 +362,7 @@ void  WeighingHandle :: updateTotalPcsWindow()
   }
 
 
- tft.setTextColor(TFT_GREEN, TFT_BLACK);
+  tft.setTextColor(TFT_GREEN, TFT_BLACK);
   for (uint8_t idx = dotpos, digitpos = 7; temp[idx] != NULL; ++idx, --digitpos )
   {
     if ( showDigits.preValue[COUNT][idx] !=  showDigits.currentValue[idx] )
@@ -366,6 +373,6 @@ void  WeighingHandle :: updateTotalPcsWindow()
 
   // end : update preVlaue
   strcpy( showDigits.preValue[COUNT], temp.c_str() );
- 
+  showDigits.preValue[COUNT][strlen( showDigits.preValue[COUNT]) ] = '\0';
 
 }

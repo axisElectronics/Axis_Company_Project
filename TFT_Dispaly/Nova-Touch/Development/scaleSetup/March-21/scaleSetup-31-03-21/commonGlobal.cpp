@@ -186,11 +186,13 @@ void WeighingHandle :: windowThree( )
   static int8_t cnt_3 = 3;
   int8_t leadingZero = 0;
   //  check with previous Value
-  if ( !strcmp( showDigits.preValue[2] , showDigits.currentValue ) ) return;
-
+  SPL("w2 three : " + String( showDigits.currentValue ) );
   /*
-    Bug Fix : showDigits.dotPosition was corrupting again again.
-  */
+   *   Bug Fix : showDigits.dotPosition was corrupting again again.
+   */
+  if ( !strcmp( showDigits.preValue[2] , showDigits.currentValue ) ) return;
+  SPL("w3 three : " + String( showDigits.currentValue ) );
+  
   showDigits.dotPosition = _getDecimal().c_str()[0] - '0';
   if (  !( showDigits.dotPosition < 5 &&  showDigits.dotPosition > 0 ) ) {
     SPL("Error : showDigits.dotPosition : " + String( showDigits.dotPosition ));

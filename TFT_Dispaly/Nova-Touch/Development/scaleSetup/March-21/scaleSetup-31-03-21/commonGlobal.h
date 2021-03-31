@@ -48,12 +48,12 @@
   }
 
 
-#define bufferWithoutDot(dest, src)  {   \
-    for(uint8_t i=0, j=0; i < 7; i++ )   \
-    {                                    \
-      if( src[i] != '.' )                \
-        dest[j++] = src[i];              \
-    }                                    \
+#define bufferWithoutDot(dest, src)  {         \
+    for(uint8_t i=0, j=0; i < 7; ++i)    \
+    {                                          \
+      if( src[i] != '.' )                      \
+        dest[j++] = src[i];                      \
+    }                                          \
   }
 
 
@@ -369,10 +369,11 @@ class WeighingHandle : public settings
     int8_t   handleTouchFuncationality_CHECK();
     String _readbufCHECK( );
     void _updateWeightMaxWindow( char *Temp );
-    
+
     void _maxWin(char * maxValue );
     void _minWin(char * minValue );
 };
+
 
 
 char nullfunc();
