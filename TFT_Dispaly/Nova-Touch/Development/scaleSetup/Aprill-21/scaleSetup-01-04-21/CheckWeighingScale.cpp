@@ -116,12 +116,16 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
     }//end-if(field-Three)
     else if ( Zerotouch )
     {
-     CMD_ZERODATA
+      CMD_ZERODATA
+    }
+    else if ( Taretouch_Auto )
+    {
+      CMD_AUTOTARE
     }
     else if ( ESC_Touch )
     {
       SPL("ESCTouch...\n");
-       CMD_STOPDATA
+      CMD_STOPDATA
       EMPTY_SERIALBUFFER
       return -1;
     }
@@ -189,8 +193,8 @@ void  WeighingHandle :: _updateWeightWindowCHECK( char *Temp, uint8_t win)
   strcpy( FromMachineArray[win], temp );
 
   FromMachineArray[win][7] = '\0';
-  if ( win == MAX )  SPL("MAX### : " + String( FromMachineArray[win] ) );
-  else  SPL("MIN### : " + String( FromMachineArray[win] ) );
+  //  if ( win == MAX )  SPL("MAX### : " + String( FromMachineArray[win] ) );
+  //  else  SPL("MIN### : " + String( FromMachineArray[win] ) );
 
 }
 
@@ -247,6 +251,7 @@ void WeighingHandle :: windowOneCHECK( )
 
 
   eliminateLeadingZeros( showDigits.currentValue, ( 7 - showDigits.dotPosition ), leadingZero )
+ 
 
   //4. draw blank rectangle only those digits which is different from previous Value.
   if ( ( cnt_1++) > 20 )
@@ -281,10 +286,24 @@ void WeighingHandle :: windowOneCHECK( )
   tft.fillCircle( 73 + ( dotPosition * 65), 138, 8, TFT_RED );
 
   //6. draw Digits only,, Those digits which is different from previous Value.
-  if( ( FromMachine[CHECK_NetWeight] < FromMachine[MIN] ) )   tft.setTextColor(TFT_YELLOW, TFT_BLACK);     
-  else if( ( FromMachine[CHECK_NetWeight] > FromMachine[MAX] ) )  tft.setTextColor(TFT_RED, TFT_BLACK);
+  if ( ( FromMachine[CHECK_NetWeight] < FromMachine[MIN] ) )   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+  else if ( ( FromMachine[CHECK_NetWeight] > FromMachine[MAX] ) )  tft.setTextColor(TFT_RED, TFT_BLACK);
   else tft.setTextColor(TFT_GREEN, TFT_BLACK);
- 
+
+  // find '-'ve sign if draw all digit.
+ uint8_t i=0;
+  while ( FromMachineArray[CHECK_NetWeight][i] )
+  {
+    if ( FromMachineArray[CHECK_NetWeight][i++] == '-' )
+    {
+     // leadingZero = 0;
+      strcpy( showDigits.preValue[0], "ABCDEFGH" );
+      break;
+    }
+  }
+
+
+
   for (uint8_t idx = leadingZero; idx < 7; ++idx )
   {
     if ( showDigits.preValue[0][idx] !=  showDigits.currentValue[idx] )
@@ -319,12 +338,17 @@ HERE :
     switch (ch)
     {
       case '1':
-        FromMachine[GROSS] = 0.00;
-        FromMachine[PRICE] = 0.00;
-        FromMachine[perPCS] = 1.00;
+        FromMachine[CHECK_NetWeight] = 0.00;
+        FromMachine[MIN] = 0.00;
+        FromMachine[MAX] = 1.00;
         _updateWeightperCOUNT( "1.00" );
-        strcpy(showDigits.preValue[perPCS], "ABCDEFGH");
-        _updateWindowPricing(perPCS);
+        strcpy(showDigits.preValue[CHECK_NetWeight], "ABCDEFGH");
+        strcpy(showDigits.preValue[MIN], "ABCDEFGH");
+        strcpy(showDigits.preValue[MAX], "ABCDEFGH");
+
+        _updateWindowCHECK(CHECK_NetWeight);
+        _updateWindowCHECK(MIN);
+        _updateWindowCHECK(MAX);
         break;
       case 'T':
         //        handleTareCommand( (char *)temp.c_str() );

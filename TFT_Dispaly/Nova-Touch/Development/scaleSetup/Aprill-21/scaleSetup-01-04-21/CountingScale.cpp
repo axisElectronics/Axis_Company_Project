@@ -202,8 +202,7 @@ int8_t  WeighingHandle :: handleTouchFuncationality_COUNT()
     else if ( Zerotouch )
     {
 
-      char cmd[20] = "\2Z\3";
-      Serial2.print(cmd);
+      CMD_ZERODATA
     }
     else if ( ESC_Touch )
     {
