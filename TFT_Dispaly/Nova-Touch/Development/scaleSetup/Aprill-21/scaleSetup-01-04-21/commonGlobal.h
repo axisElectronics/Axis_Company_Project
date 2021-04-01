@@ -110,7 +110,15 @@
     String StopCMD = "\2DT#0\3";  \
     Serial2.print(StopCMD);       \
   }
+#define CMD_ZERODATA {                              \
+    String StopCMD = "\2Z\3";  \
+    Serial2.print(StopCMD);       \
+  }
 
+#define CMD_AUTOTARE {                              \
+    String StopCMD = "\2T\3";  \
+    Serial2.print(StopCMD);       \
+  }
 
 #define CMD_GETTARE {                               \
     String StartCMD = "\2GT\3";    \
@@ -372,6 +380,8 @@ class WeighingHandle : public settings
     void  _updateTotalWeightCHECK( char *Temp );
     void _maxWin(char * maxValue );
     void _minWin(char * minValue );
+    bool printStringCHECK( );
+    void windowOneCHECK( );
 };
 
 
