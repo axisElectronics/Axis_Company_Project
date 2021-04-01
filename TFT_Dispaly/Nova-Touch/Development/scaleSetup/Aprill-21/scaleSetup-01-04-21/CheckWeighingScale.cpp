@@ -33,7 +33,8 @@ int8_t WeighingHandle :: startCheckWeighing()
   {
     if ( handleTouchFuncationality_CHECK() == -1 )
     {
-      CMD_STOPDATA
+      //      CMD_STOPDATA
+      STOP_SERIAL2
       EMPTY_SERIALBUFFER
       return -1;
     }
@@ -251,7 +252,7 @@ void WeighingHandle :: windowOneCHECK( )
 
 
   eliminateLeadingZeros( showDigits.currentValue, ( 7 - showDigits.dotPosition ), leadingZero )
- 
+
 
   //4. draw blank rectangle only those digits which is different from previous Value.
   if ( ( cnt_1++) > 20 )
@@ -291,12 +292,12 @@ void WeighingHandle :: windowOneCHECK( )
   else tft.setTextColor(TFT_GREEN, TFT_BLACK);
 
   // find '-'ve sign if draw all digit.
- uint8_t i=0;
+  uint8_t i = 0;
   while ( FromMachineArray[CHECK_NetWeight][i] )
   {
     if ( FromMachineArray[CHECK_NetWeight][i++] == '-' )
     {
-     // leadingZero = 0;
+      // leadingZero = 0;
       strcpy( showDigits.preValue[0], "ABCDEFGH" );
       break;
     }

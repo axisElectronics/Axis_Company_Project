@@ -125,6 +125,8 @@
     Serial2.print( StartCMD );     \
   }
 
+#define STOP_SERIAL2   Serial2.end();
+#define START_SERIAL2   Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2); // Weight Mechine
 
 #define EMPTY_SERIALBUFFER {                                                \
     while ( Serial2.available() )  Serial2.read();  \

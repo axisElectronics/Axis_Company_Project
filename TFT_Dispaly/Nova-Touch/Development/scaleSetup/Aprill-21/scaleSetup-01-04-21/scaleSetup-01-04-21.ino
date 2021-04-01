@@ -43,7 +43,8 @@ HERE :
       {
         if ( userSetting.weighingMode ) {
           Mode = 2;
-          CMD_STARTDATA
+          //          CMD_STARTDATA
+          START_SERIAL2
           break;
         }
       }
@@ -51,7 +52,8 @@ HERE :
       {
         if ( userSetting.countingMode ) {
           Mode = 3;
-          CMD_STARTDATA
+          //          CMD_STARTDATA
+          START_SERIAL2
           break;
         }
       }
@@ -60,14 +62,16 @@ HERE :
         if ( userSetting.pricecomputing )
         {
           Mode = 4;
-          CMD_STARTDATA
+          //          CMD_STARTDATA
+          START_SERIAL2
           break;
         }
       }
       else if ( CheckingModeTouchEnable() )
       {
         Mode = 5;
-        CMD_STARTDATA
+        //        CMD_STARTDATA
+        START_SERIAL2
         break;
       }
     }//end-if(touch)

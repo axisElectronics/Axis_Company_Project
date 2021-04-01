@@ -57,7 +57,7 @@ extern class userKeyBoard kbd;
 int8_t  WeighingHandle :: startPriceComputing()
 {
   char src[12];
- 
+
 
   //  initWeighingTFT( );
   initTFTHandler ( );
@@ -69,16 +69,17 @@ int8_t  WeighingHandle :: startPriceComputing()
   _updateWindowPricing(perPCS);
 
   while (1)
-  {    
+  {
     if ( handleTouchFuncationality_PRICE() == -1 ) {
-      CMD_STOPDATA
+      //      CMD_STOPDATA
+      STOP_SERIAL2
       EMPTY_SERIALBUFFER
       return -1;
     }
 
     memset(src, '\0', 10);
     strcpy(src, _readbufPrice( ).c_str() );   src[7] = '\0';
-   
+
     if ( strlen(src) > 5 )
     {
       _updateTotalWeight( src );
@@ -100,8 +101,8 @@ int8_t  WeighingHandle :: handleTouchFuncationality_PRICE()
   {
     if ( Taretouch_Auto )
     {
-            char cmd[20] = "\2T\3";
-            Serial2.print(cmd);
+      char cmd[20] = "\2T\3";
+      Serial2.print(cmd);
     }
     else if ( Zerotouch )
     {
@@ -136,7 +137,7 @@ int8_t  WeighingHandle :: handleTouchFuncationality_PRICE()
       _updateWindowPricing(perPCS);
 
       showDigits.dotPosition = tempDot;
-      delete[] kbd.userInput.userInputArray; 
+      delete[] kbd.userInput.userInputArray;
     }
   }
 }
@@ -144,7 +145,7 @@ int8_t  WeighingHandle :: handleTouchFuncationality_PRICE()
 
 void  WeighingHandle ::_updateWindowPricing( uint8_t win )
 {
-  bufferWithoutDot(  showDigits.currentValue,  FromMachineArray[win] );  
+  bufferWithoutDot(  showDigits.currentValue,  FromMachineArray[win] );
   showDigits.currentValue[6] = '\0';
 
   switch (win)
@@ -279,7 +280,7 @@ HERE :
         _updateWindowPricing( perPCS );
         break;
       case 'T':
-             //   handleTareCommand( (char *)temp.c_str() );
+        //   handleTareCommand( (char *)temp.c_str() );
         break;
 
       default : break;
@@ -308,11 +309,11 @@ bool  WeighingHandle :: printStringPrice( )
 
   tft.setFreeFont( (const GFXfont *)EUROSTILE_B13 );
   tft.setCursor(18, 50);  tft.print("TOTAL Price");
-//  tft.setCursor(400, 50);  tft.print(weightUnit);
+  //  tft.setCursor(400, 50);  tft.print(weightUnit);
 
   tft.setFreeFont( (const GFXfont *)EUROSTILE_B10 );
   tft.setCursor(18, 173);  tft.print("Unit Price");
-    tft.setCursor(180, 173);   tft.print(weightUnit);
+  tft.setCursor(180, 173);   tft.print(weightUnit);
 
   tft.setCursor(260, 173);  tft.print("Total WT");
   tft.setCursor(420, 173);  tft.print(weightUnit);

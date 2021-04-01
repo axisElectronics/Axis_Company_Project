@@ -42,7 +42,8 @@ int8_t  WeighingHandle :: startCountComputing()
   {
     if ( handleTouchFuncationality_COUNT() == -1 )
     {
-      CMD_STOPDATA
+      //      CMD_STOPDATA
+      STOP_SERIAL2
       EMPTY_SERIALBUFFER
       return -1;
     }
@@ -51,7 +52,7 @@ int8_t  WeighingHandle :: startCountComputing()
     strcpy(src, _readbufCOUNT( ).c_str() );
     src[7] = '\0';
     if ( strlen(src) > 5 )
-    {     
+    {
       _updateTotalWeightCOUNT( src );
 
       _updateWindowCOUNT( COUNT_NetWeight );
@@ -68,12 +69,12 @@ void  WeighingHandle ::_updateWindowCOUNT( uint8_t win )
   if (win == COUNT_NetWeight)
   {
     /*
-     * Bug Fix : variable curruption .i.e FromMachineArray[win]
-     */
-//    SPL("NetWeight : " + String(netWeight) );
+       Bug Fix : variable curruption .i.e FromMachineArray[win]
+    */
+    //    SPL("NetWeight : " + String(netWeight) );
     bufferWithoutDot( showDigits.currentValue,  netWeight );
     showDigits.currentValue[6] = '\0';
-//    SPL("NetWeight current : " + String(showDigits.currentValue) );
+    //    SPL("NetWeight current : " + String(showDigits.currentValue) );
   }
   else
   {
@@ -83,7 +84,7 @@ void  WeighingHandle ::_updateWindowCOUNT( uint8_t win )
 
   switch (win)
   {
-    case COUNT_NetWeight   :  windowThree( );  break;    
+    case COUNT_NetWeight   :  windowThree( );  break;
     case COUNT             :  updateTotalPcsWindow(); break;
     case COUNT_UnitWeight  :  windowTwo( );   break;
   }
@@ -126,8 +127,8 @@ void  WeighingHandle :: _updateTotalWeightCOUNT( char *Temp )
 
   FromMachineArray[COUNT_NetWeight][7] = '\0';
   /*
-   * Bug Fix : netWeight need to store explicitly.
-   */
+     Bug Fix : netWeight need to store explicitly.
+  */
   strcpy(netWeight,  FromMachineArray[COUNT_NetWeight] );
   //  SPL("Count-GROSS### : " + String( FromMachineArray[COUNT_NetWeight] ) );
   //SPL("Count-Netweight### : " + String( netWeight ) );
@@ -211,9 +212,9 @@ int8_t  WeighingHandle :: handleTouchFuncationality_COUNT()
     }
     else if ( Field_Two_Touch  )
     {
-        
+
       CMD_STOPDATA
-     
+
       kbd.userInput.userInputArray_Size = 25;
       kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
       kbd.init(  );
@@ -234,7 +235,7 @@ int8_t  WeighingHandle :: handleTouchFuncationality_COUNT()
 
       delete[]  kbd.userInput.userInputArray;
 
-        CMD_STARTDATA
+      CMD_STARTDATA
     }
   }
 }

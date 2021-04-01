@@ -79,7 +79,8 @@ int8_t  WeighingHandle :: startWeighing()
 
     if ( handleTouchFuncationality_Weight() == -1 )
     {
-      CMD_STOPDATA
+      //      CMD_STOPDATA
+      STOP_SERIAL2
       EMPTY_SERIALBUFFER
       return -1;
     }
