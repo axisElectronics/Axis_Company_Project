@@ -150,7 +150,7 @@ void WeighingHandle :: initWeighingTFT( )
   // Initialise SPIFFS
   if (!SPIFFS.begin()) {
     Serial.println("SPIFFS initialisation failed!");
-    while (1) yield(); // Stay here twiddling thumbs waiting
+//    while (1) yield(); // Stay here twiddling thumbs waiting
   }
   Serial.println("\r\nInitialisation done.");
   tft.setSwapBytes(true); // We need to swap the colour bytes (endianess)
