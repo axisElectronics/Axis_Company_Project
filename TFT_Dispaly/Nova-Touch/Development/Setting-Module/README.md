@@ -31,3 +31,12 @@
 
 > 1. implement Tare command in Counting Mode.
 > 2. 
+
+@ Date : 01-04-2020
+
+1. Some times error occured which says that we don't have heap anymore.
+   HEAP !=NULL && free() .......
+
+   Solution : Please erase esp32 chip using ESP-IDF
+  
+   C:\Users\Usewr\esp\esp-idf\components\esptool_py\esptool>esptool.py --chip esp32 -p com3 erase_flash
