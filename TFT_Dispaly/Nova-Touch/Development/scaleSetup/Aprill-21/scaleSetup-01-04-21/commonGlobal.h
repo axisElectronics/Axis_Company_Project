@@ -248,8 +248,7 @@ char CmdWrite( struct task_list *CmdTaskHandler );
 
 
 
-#define MAX 4
-#define MIN 5
+
 
 class WeighingHandle : public settings
 
@@ -361,6 +360,7 @@ class WeighingHandle : public settings
     String _readbufCOUNT( );
     bool printStringCOUNT( );
     bool countStripImage();
+
     /******************************************
       >>>> Check Weighing function <<<<
      ******************************************/
@@ -368,8 +368,8 @@ class WeighingHandle : public settings
     void   _updateWindowCHECK( uint8_t win );
     int8_t   handleTouchFuncationality_CHECK();
     String _readbufCHECK( );
-    void _updateWeightMaxWindow( char *Temp );
-
+    void  _updateWeightWindowCHECK( char *Temp, uint8_t win);
+    void  _updateTotalWeightCHECK( char *Temp );
     void _maxWin(char * maxValue );
     void _minWin(char * minValue );
 };

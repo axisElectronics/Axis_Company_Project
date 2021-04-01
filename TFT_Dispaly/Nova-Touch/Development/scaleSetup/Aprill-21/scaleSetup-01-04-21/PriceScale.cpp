@@ -57,7 +57,7 @@ extern class userKeyBoard kbd;
 int8_t  WeighingHandle :: startPriceComputing()
 {
   char src[12];
-  char dest[10];
+ 
 
   //  initWeighingTFT( );
   initTFTHandler ( );
@@ -69,21 +69,17 @@ int8_t  WeighingHandle :: startPriceComputing()
   _updateWindowPricing(perPCS);
 
   while (1)
-  {
-    memset(dest, '\0', 10);
-    memset(src, '\0', 10);
-    strcpy(src, _readbufPrice( ).c_str() );
-
+  {    
     if ( handleTouchFuncationality_PRICE() == -1 ) {
       CMD_STOPDATA
       EMPTY_SERIALBUFFER
       return -1;
     }
 
-    bufferWithoutDot(dest, src);
-    src[7] = '\0';
-
-    if ( strlen(dest) > 5 )
+    memset(src, '\0', 10);
+    strcpy(src, _readbufPrice( ).c_str() );   src[7] = '\0';
+   
+    if ( strlen(src) > 5 )
     {
       _updateTotalWeight( src );
 

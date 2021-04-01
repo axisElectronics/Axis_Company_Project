@@ -4,7 +4,9 @@
 
 extern class userKeyBoard kbd;
 
-#define COUNT             1
+#define CHECK_NetWeight 1
+#define MAX   0
+#define MIN   2
 
 /****************************************************************************
                       ---->> Check Weighing <<----
@@ -16,23 +18,19 @@ extern class userKeyBoard kbd;
 int8_t WeighingHandle :: startCheckWeighing()
 {
   char src[12];
-  char dest[10];
 
   //  initWeighingTFT( );
   initTFTHandler ( );
   // printStringCOUNT( );
   showDigits.dotPosition = _getDecimal().c_str()[0] - 48;
 
-  _updateWeightperCOUNT( "1.00" );
-  _updateWindowCOUNT(perPCS);
-
+   _updateWeightWindowCHECK(  "10.00", MAX );
+   _updateWeightWindowCHECK(  "0.00", MIN );
+   _updateWindowCHECK(MIN);
+   _updateWindowCHECK(MAX);
 
   while (1)
   {
-    memset(dest, '\0', 10);
-    memset(src, '\0', 10);
-    strcpy(src, _readbufCHECK( ).c_str() );
-
     if ( handleTouchFuncationality_CHECK() == -1 )
     {
       CMD_STOPDATA
@@ -40,21 +38,23 @@ int8_t WeighingHandle :: startCheckWeighing()
       return -1;
     }
 
-    bufferWithoutDot(dest, src);
-    src[7] = '\0';
+    memset(src, '\0', 10);
+    strcpy(src, _readbufCHECK( ).c_str() );  src[7] = '\0';
 
-    if ( strlen(dest) > 5 )
+    if ( strlen( src ) > 5 )
     {
-      _updateTotalWeightCOUNT( src );
+      _updateTotalWeightCHECK( src );
 
-      _updateWindowCHECK(GROSS);
-      _updateWindowCHECK(COUNT);
-
-    }
+      _updateWindowCHECK(CHECK_NetWeight);
+      _updateWindowCHECK(MIN);
+      _updateWindowCHECK(MAX);
+    }//end-if
     yield();
-  }
+  }//end-while()
 
 }
+
+
 
 
 int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
@@ -69,6 +69,31 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
     {
       SPL("Field Two Touch \nxAxis : " + String(xAxis ) + "\nyAxis : " + String(yAxis) );
 
+      kbd.userInput.userInputArray_Size = 25;
+      kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
+      kbd.init(  );
+      kbd.userInput.numericSwitchFlag = 1;
+
+      kbd.takeUserInput( NULL );
+      SPL("keyboard : " + String( kbd.userInput.userInputArray ) );
+      if ( strlen( kbd.userInput.userInputArray ) > 0 )
+      {
+        strcpy( FromMachineArray[MAX],  kbd.userInput.userInputArray );
+        _updateWeightWindowCHECK(  FromMachineArray[MAX], MAX );
+        
+      }
+
+      initTFTHandler();
+      printStringCOUNT( );
+      _updateWindowCHECK(MAX);
+      showDigits.dotPosition = tempDot;
+
+      delete[] kbd.userInput.userInputArray;
+    }//end-if( field-Two )
+
+    else if ( Field_three_Touch  )
+    {
+      int8_t tempDot = showDigits.dotPosition;
 
       kbd.userInput.userInputArray_Size = 25;
       kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
@@ -79,86 +104,93 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
       SPL("keyboard : " + String( kbd.userInput.userInputArray ) );
       if ( strlen( kbd.userInput.userInputArray ) > 0 )
       {
-        strcpy( maxvalue,  kbd.userInput.userInputArray );
-        _updateWeightMaxWindow( kbd.userInput.userInputArray );
+        strcpy(  FromMachineArray[MIN],  kbd.userInput.userInputArray );
+        _updateWeightWindowCHECK(  FromMachineArray[MIN], MIN );
       }
 
-      strcpy(src, _readbufPrice( ).c_str() );
-
       initTFTHandler();
-      printStringCOUNT( );
-      _updateWindowCHECK(MAX);
+      //      printStringCOUNT( );
+      _updateWindowCHECK(MIN);
       showDigits.dotPosition = tempDot;
-
-      delete[] kbd.userInput.userInputArray;
+      delete[]  kbd.userInput.userInputArray;
+    }//end-if(field-Three)
+    else if ( Zerotouch )
+    {
+      char cmd[20] = "\2Z\3";
+      Serial2.print(cmd);
     }
-  }
-  else if ( Field_three_Touch  )
-  {
-    int8_t tempDot = showDigits.dotPosition;
+    else if ( ESC_Touch )
+    {
+      SPL("ESCTouch...\n");
+      return -1;
+    }
+    else
+    {
+      SPL("xAxis : " + String(xAxis ) + "\nyAxis : " + String(yAxis) );
+    }
 
-    kbd.userInput.userInputArray_Size = 25;
-    kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
-    kbd.init(  );
-    kbd.userInput.numericSwitchFlag = 1;
-
-    kbd.takeUserInput( NULL );
-    SPL("keyboard : " + String( kbd.userInput.userInputArray ) );
-    strcpy( minvalue,  kbd.userInput.userInputArray );
-
-    _updateWeightperPrice( kbd.userInput.userInputArray );
-
-    strcpy(src, _readbufPrice( ).c_str() );
-
-    initTFTHandler();
-    printStringCOUNT( );
-
-    _updateWindowPricing(perPCS);
-
-    showDigits.dotPosition = tempDot;
-    delete[]  kbd.userInput.userInputArray;
-  }
-  else if ( Zerotouch )
-  {
-
-    char cmd[20] = "\2Z\3";
-    Serial2.print(cmd);
-  }
-  else if ( ESC_Touch )
-  {
-    SPL("ESCTouch...\n");
-    return -1;
-  }
-  else
-  {
-    // SPL("xAxis : " + String(xAxis ) + "\nyAxis : " + String(yAxis) );
-  }
-
+  }//end-if( TFT_Touch )
 }
 
-void  WeighingHandle :: _updateWeightMaxWindow( char *Temp )
+void  WeighingHandle :: _updateTotalWeightCHECK( char *Temp )
 {
-  FromMachine[GROSS] = strtod( Temp, NULL);
+  FromMachine[CHECK_NetWeight] = strtod( Temp, NULL);
   uint8_t dotpos = 0;
   char temp[8];
   for (int i = 0; i < 8 ; temp[i++] = '0');  temp[7] = '\0';
 
   // convert double value into char Array
-  memset( FromMachineArray[GROSS], '\0' , 10);
-  sprintf( FromMachineArray[GROSS], "%lf", FromMachine[GROSS]);
+  memset( FromMachineArray[CHECK_NetWeight], '\0' , 10);
+  sprintf( FromMachineArray[CHECK_NetWeight], "%lf", FromMachine[CHECK_NetWeight]);
   // Adjust dot postion in Array
-  findDotPosition( FromMachineArray[GROSS], dotpos);
+  findDotPosition( FromMachineArray[CHECK_NetWeight], dotpos);
+
+  //check valid Dot position.
+  /*
+     Bug Fix : showDigits.dotPosition was corrupting again & again.
+  */
+  showDigits.dotPosition = _getDecimal().c_str()[0] - '0';
 
   for (int8_t i = 0, j = ( 6 - showDigits.dotPosition - dotpos); ( i < 7 ) && ( j < 7 ) ; i++, j++ )
   {
-    temp[ j ] = FromMachineArray[GROSS][i];
+    temp[ j ] = FromMachineArray[CHECK_NetWeight][i];
   }
 
   temp[7] = '\0';
-  strcpy( FromMachineArray[GROSS], temp );
+  strcpy( FromMachineArray[CHECK_NetWeight], temp );
 
-  FromMachineArray[GROSS][7] = '\0';
-  SPL("MAX### : " + String( FromMachineArray[GROSS] ) );
+  FromMachineArray[CHECK_NetWeight][7] = '\0';
+
+  // SPL("CHECK_NetWeight### : " + String( FromMachineArray[CHECK_NetWeight] ) );
+}
+
+
+
+
+void  WeighingHandle :: _updateWeightWindowCHECK( char *Temp, uint8_t win)
+{
+  FromMachine[win] = strtod( Temp, NULL);
+  uint8_t dotpos = 0;
+  char temp[8];
+  for (int i = 0; i < 8 ; temp[i++] = '0');  temp[7] = '\0';
+
+  // convert double value into char Array
+  memset( FromMachineArray[win], '\0' , 10);
+  sprintf( FromMachineArray[win], "%lf", FromMachine[win]);
+  // Adjust dot postion in Array
+  findDotPosition( FromMachineArray[win], dotpos);
+
+  for (int8_t i = 0, j = ( 6 - showDigits.dotPosition - dotpos); ( i < 7 ) && ( j < 7 ) ; i++, j++ )
+  {
+    temp[ j ] = FromMachineArray[win][i];
+  }
+  temp[7] = '\0';
+  strcpy( FromMachineArray[win], temp );
+
+  FromMachineArray[win][7] = '\0';
+  if ( win == MAX )  SPL("MAX### : " + String( FromMachineArray[win] ) );
+  else  SPL("MIN### : " + String( FromMachineArray[win] ) );
+
 }
 
 
@@ -166,30 +198,15 @@ void  WeighingHandle :: _updateWeightMaxWindow( char *Temp )
 
 void WeighingHandle ::  _updateWindowCHECK( uint8_t win )
 {
-  char dest[10];
 
-  if ( win != perPCS )
-  {
-    bufferWithoutDot( dest,  FromMachineArray[win] );
-    strcpy( showDigits.currentValue, dest);
-    showDigits.currentValue[6] = '\0';
-  }
+  bufferWithoutDot( showDigits.currentValue,  FromMachineArray[win] );
+  showDigits.currentValue[6] = '\0';
 
   switch (win)
   {
-    case GROSS   :  windowOne( ); break;
-    case COUNT   :  windowTwo( ); break;
-    case perPCS  :
-
-      bufferWithoutDot( dest,  FromMachineArray[perPCS] );
-      dest[7] = '\0';
-      for (uint8_t idx = 0;  showDigits.currentValue[idx] = dest[idx]; ++idx );
-      showDigits.currentValue[6] = '\0';
-      windowThree( );
-      break;
-
-    case MAX  : windowTwo( );    break;
-    case MIN  : windowThree( );  break;
+    case CHECK_NetWeight   :  windowOne( );    break;
+    case MAX               :  windowTwo( );    break;
+    case MIN               :  windowThree( );  break;
   }
 
 
