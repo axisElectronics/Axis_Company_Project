@@ -14,7 +14,6 @@ extern class userKeyBoard kbd;
 
 ****************************************************************************/
 
-
 int8_t WeighingHandle :: startCheckWeighing()
 {
   char src[12];
@@ -33,9 +32,10 @@ int8_t WeighingHandle :: startCheckWeighing()
   {
     if ( handleTouchFuncationality_CHECK() == -1 )
     {
-      //      CMD_STOPDATA
-      STOP_SERIAL2
+      CMD_STOPDATA
       EMPTY_SERIALBUFFER
+      STOP_SERIAL2
+
       return -1;
     }
 
@@ -126,8 +126,6 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
     else if ( ESC_Touch )
     {
       SPL("ESCTouch...\n");
-      CMD_STOPDATA
-      EMPTY_SERIALBUFFER
       return -1;
     }
     else
@@ -223,7 +221,7 @@ void WeighingHandle ::  _updateWindowCHECK( uint8_t win )
 
 void WeighingHandle :: windowOneCHECK( )
 {
-  static int8_t cnt_1 = 0;
+  static int8_t cnt_1 = 0, Hi = 1, Low = 1, Norm = 1;;
   int8_t leadingZero = 0;
 
   //3. check with previous Value
@@ -237,6 +235,27 @@ void WeighingHandle :: windowOneCHECK( )
   if (  !( showDigits.dotPosition < 5 &&  showDigits.dotPosition > 0 ) ) {
     SPL("Error : showDigits.dotPosition : " + String( showDigits.dotPosition ));
     return;
+  }
+  /*
+     Bug Fix :
+  */
+  if ( ( FromMachine[CHECK_NetWeight] < FromMachine[MIN] ) && Low ) {
+    strcpy( showDigits.preValue[0], "ABCDEFGH" );
+    Low = 0;
+    Hi = 1;
+    Norm = 1;
+  }
+  else if ( ( FromMachine[CHECK_NetWeight] > FromMachine[MAX] ) && Hi) {
+    strcpy( showDigits.preValue[0], "ABCDEFGH" );
+    Low = 1;
+    Hi = 0;
+    Norm = 1;
+  }
+  else if ( ( (FromMachine[CHECK_NetWeight] <= FromMachine[MAX]) && (FromMachine[CHECK_NetWeight] >= FromMachine[MIN]) ) && Norm ) {
+    strcpy( showDigits.preValue[0], "ABCDEFGH" );
+    Low = 1;
+    Hi = 1;
+    Norm = 0;
   }
 
   // 1. Set Font Size & Style
@@ -287,9 +306,15 @@ void WeighingHandle :: windowOneCHECK( )
   tft.fillCircle( 73 + ( dotPosition * 65), 138, 8, TFT_RED );
 
   //6. draw Digits only,, Those digits which is different from previous Value.
-  if ( ( FromMachine[CHECK_NetWeight] < FromMachine[MIN] ) )   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-  else if ( ( FromMachine[CHECK_NetWeight] > FromMachine[MAX] ) )  tft.setTextColor(TFT_RED, TFT_BLACK);
-  else tft.setTextColor(TFT_GREEN, TFT_BLACK);
+  if ( ( FromMachine[CHECK_NetWeight] < FromMachine[MIN] ) ) {
+    tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+  }
+  else if ( ( FromMachine[CHECK_NetWeight] > FromMachine[MAX] ) ) {
+    tft.setTextColor(TFT_RED, TFT_BLACK);
+  }
+  else {
+    tft.setTextColor(TFT_GREEN, TFT_BLACK);
+  }
 
   // find '-'ve sign if draw all digit.
   uint8_t i = 0;

@@ -5,7 +5,6 @@
 
 extern class userKeyBoard kbd;
 
-
 /*****************************************************************************
    @ startWeighing :
     - This funcation is main starting point for user.
