@@ -386,12 +386,12 @@ HERE :
     {
       case '1':
         FromMachine[CHECK_NetWeight] = 0.00;
-        FromMachine[MIN] = 0.00;
-        FromMachine[MAX] = 1.00;
-        _updateWeightperCOUNT( "1.00" );
+//        FromMachine[MIN] = 0.00;
+//        FromMachine[MAX] = 1.00;
+       
         strcpy(showDigits.preValue[CHECK_NetWeight], "ABCDEFGH");
-        strcpy(showDigits.preValue[MIN], "ABCDEFGH");
-        strcpy(showDigits.preValue[MAX], "ABCDEFGH");
+//        strcpy(showDigits.preValue[MIN], "ABCDEFGH");
+//        strcpy(showDigits.preValue[MAX], "ABCDEFGH");
 
         _updateWindowCHECK(CHECK_NetWeight);
         _updateWindowCHECK(MIN);
