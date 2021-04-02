@@ -58,7 +58,6 @@ int8_t  WeighingHandle :: startPriceComputing()
 {
   char src[12];
 
-
   //  initWeighingTFT( );
   initTFTHandler ( );
   printStringPrice();
@@ -86,7 +85,6 @@ int8_t  WeighingHandle :: startPriceComputing()
 
       _updateWindowPricing(GROSS);
       _updateWindowPricing(PRICE);
-
     }
     yield();
   }
@@ -260,15 +258,15 @@ void WeighingHandle :: _updateWeightperPrice( char *Temp )
 
 String  WeighingHandle :: _readbufPrice( )
 {
-
-  String temp =  "";;
+  String temp =  "";
 HERE :
   // 1. Get data from weighing machine
   if ( Serial2.available() > 12  )
   {
     temp = Serial2.readStringUntil('=');
   }
-  if ( temp.length() > 50 ) {
+
+  if ( temp.length() > 50 )  {
     temp = "";
     goto HERE;
   }
@@ -312,6 +310,7 @@ bool  WeighingHandle :: priceStripImage()
 bool  WeighingHandle :: printStringPrice( )
 {
   String weightUnit = "kg";
+  priceStripImage();
   tft.setTextSize( 1 );
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
 

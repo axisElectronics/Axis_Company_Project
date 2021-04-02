@@ -13,7 +13,7 @@ extern class userKeyBoard kbd;
 
 
 ****************************************************************************/
-
+static uint32_t readSkipCount = 1;
 int8_t WeighingHandle :: startCheckWeighing()
 {
   char src[12];
@@ -27,7 +27,7 @@ int8_t WeighingHandle :: startCheckWeighing()
   _updateWeightWindowCHECK( "0.00", MIN );
   _updateWindowCHECK(MIN);
   _updateWindowCHECK(MAX);
-
+  uint32_t tout = millis();
   while (1)
   {
     if ( handleTouchFuncationality_CHECK() == -1 )
@@ -35,20 +35,22 @@ int8_t WeighingHandle :: startCheckWeighing()
       CMD_STOPDATA
       EMPTY_SERIALBUFFER
       STOP_SERIAL2
-
       return -1;
     }
 
     memset(src, '\0', 10);
     strcpy(src, _readbufCHECK( ).c_str() );  src[7] = '\0';
-
+    
     if ( strlen( src ) > 5 )
     {
-      _updateTotalWeightCHECK( src );
+      if ( readSkipCount++ >= 2 ) {
+        _updateTotalWeightCHECK( src );
 
-      _updateWindowCHECK(CHECK_NetWeight);
-      _updateWindowCHECK(MIN);
-      _updateWindowCHECK(MAX);
+        _updateWindowCHECK(CHECK_NetWeight);
+        _updateWindowCHECK(MIN);
+        _updateWindowCHECK(MAX);
+        readSkipCount = 1;
+      }
     }//end-if
     yield();
   }//end-while()
@@ -87,14 +89,14 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
 
       STOP_SERIAL1
       START_SERIAL2
-      
+
       initTFTHandler();
       printStringCHECK( );
-      
+
       _updateWindowCHECK(CHECK_NetWeight);
       _updateWindowCHECK(MAX);
       _updateWindowCHECK(MIN);
-      
+
       showDigits.dotPosition = tempDot;
 
       delete[] kbd.userInput.userInputArray;
@@ -321,10 +323,10 @@ void WeighingHandle :: windowOneCHECK( )
   //5. remove all previous dots and redraw at given position;
   for (uint8_t idx = 0; idx < 6; ++idx )
   {
-    tft.fillCircle( 73 + ( idx * 65 ), 138, 8, TFT_BLACK);
+    tft.fillCircle( 73 + ( idx * 65 ), 138, 6, TFT_BLACK);
   }
   int8_t dotPosition = 6 - showDigits.dotPosition;
-  tft.fillCircle( 73 + ( dotPosition * 65), 138, 8, TFT_RED );
+  tft.fillCircle( 73 + ( dotPosition * 65), 138, 6, TFT_RED );
 
   //6. draw Digits only,, Those digits which is different from previous Value.
   if ( ( FromMachine[CHECK_NetWeight] < FromMachine[MIN] ) ) {
@@ -366,6 +368,7 @@ void WeighingHandle :: windowOneCHECK( )
 
 String WeighingHandle ::  _readbufCHECK( )
 {
+
   String temp =  "";
 HERE :
   // 1. Get data from weighing machine
@@ -373,10 +376,10 @@ HERE :
   {
     temp = Serial2.readStringUntil('=');
   }
-  if ( temp.length() > 50 ) {
-    temp = "";
-    goto HERE;
-  }
+  //  if ( temp.length() > 50 ) {
+  //    temp = "";
+  //    goto HERE;
+  //  }
   //2. check, is String temp contains <STX> <ETX> ??
   int8_t stx = temp.indexOf(2);
   if ( stx >= 0 )
@@ -386,12 +389,12 @@ HERE :
     {
       case '1':
         FromMachine[CHECK_NetWeight] = 0.00;
-//        FromMachine[MIN] = 0.00;
-//        FromMachine[MAX] = 1.00;
-       
+        //        FromMachine[MIN] = 0.00;
+        //        FromMachine[MAX] = 1.00;
+
         strcpy(showDigits.preValue[CHECK_NetWeight], "ABCDEFGH");
-//        strcpy(showDigits.preValue[MIN], "ABCDEFGH");
-//        strcpy(showDigits.preValue[MAX], "ABCDEFGH");
+        //        strcpy(showDigits.preValue[MIN], "ABCDEFGH");
+        //        strcpy(showDigits.preValue[MAX], "ABCDEFGH");
 
         _updateWindowCHECK(CHECK_NetWeight);
         _updateWindowCHECK(MIN);
@@ -407,7 +410,8 @@ HERE :
     goto HERE;
   }
 
-  handleFlags( (char *)temp.c_str() );
+    handleFlags( (char *)temp.c_str() );
+
   return temp;
 }
 
