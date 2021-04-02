@@ -17,7 +17,6 @@ static uint32_t readSkipCount = 1;
 int8_t WeighingHandle :: startCheckWeighing()
 {
   char src[12];
-
   //  initWeighingTFT( );
   initTFTHandler ( );
   printStringCHECK( );
@@ -37,20 +36,23 @@ int8_t WeighingHandle :: startCheckWeighing()
       STOP_SERIAL2
       return -1;
     }
-
+      
     memset(src, '\0', 10);
     strcpy(src, _readbufCHECK( ).c_str() );  src[7] = '\0';
-    
+
     if ( strlen( src ) > 5 )
     {
-      if ( readSkipCount++ >= 2 ) {
+      if ( readSkipCount++ >= 2 ) {       
         _updateTotalWeightCHECK( src );
-
+         readSkipCount = 1;
+         SPL("SKIP : " + String( millis() - tout) );
+         tout = millis();
+      }
+      
         _updateWindowCHECK(CHECK_NetWeight);
         _updateWindowCHECK(MIN);
         _updateWindowCHECK(MAX);
-        readSkipCount = 1;
-      }
+      
     }//end-if
     yield();
   }//end-while()
@@ -372,14 +374,11 @@ String WeighingHandle ::  _readbufCHECK( )
   String temp =  "";
 HERE :
   // 1. Get data from weighing machine
-  if ( Serial2.available() > 12  )
-  {
-    temp = Serial2.readStringUntil('=');
-  }
-  //  if ( temp.length() > 50 ) {
-  //    temp = "";
-  //    goto HERE;
-  //  }
+    //if( Serial2.available() > 0 )
+      temp = Serial2.readStringUntil('=');
+
+ // SPL("temp Length : " + String( temp.length() ) );
+  
   //2. check, is String temp contains <STX> <ETX> ??
   int8_t stx = temp.indexOf(2);
   if ( stx >= 0 )
@@ -410,7 +409,7 @@ HERE :
     goto HERE;
   }
 
-    handleFlags( (char *)temp.c_str() );
+  handleFlags( (char *)temp.c_str() );
 
   return temp;
 }
