@@ -23,7 +23,7 @@
 #include "EurostileBold20pt7b.h"
 #include "EurostileBold13pt7b.h"
 #include "EurostileBold10pt7b.h"
-
+#include "EuroStyle_Normal8pt7b.h"
 
 using namespace std; 
 
@@ -35,8 +35,9 @@ using namespace std;
 #define LED7SEG_STD10   &LED7SEG_Standard10pt7b
 #define LED7SEG_STD18   &LED7SEG_Standard18pt7b
 #define EUROSTILE_B20   &EurostileBold20pt7b
+
 #define EUROSTILE_B13   &EurostileBold13pt7b
 #define EUROSTILE_B10   &EurostileBold10pt7b 
-
+#define EUROSTILE_BN8   &EuroStyle_Normal8pt7b 
 
 #endif
