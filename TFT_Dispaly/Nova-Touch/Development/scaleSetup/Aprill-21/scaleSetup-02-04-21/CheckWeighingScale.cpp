@@ -68,7 +68,8 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
   {
     if ( Field_Two_Touch  )
     {
-      SPL("Field Two Touch \nxAxis : " + String(xAxis ) + "\nyAxis : " + String(yAxis) );
+      STOP_SERIAL2
+      START_SERIAL1
 
       kbd.userInput.userInputArray_Size = 25;
       kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
@@ -84,17 +85,28 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
 
       }
 
+      STOP_SERIAL1
+      START_SERIAL2
+      
       initTFTHandler();
       printStringCHECK( );
+      
+      _updateWindowCHECK(CHECK_NetWeight);
       _updateWindowCHECK(MAX);
+      _updateWindowCHECK(MIN);
+      
       showDigits.dotPosition = tempDot;
 
       delete[] kbd.userInput.userInputArray;
+
     }//end-if( field-Two )
 
     else if ( Field_three_Touch  )
     {
       int8_t tempDot = showDigits.dotPosition;
+
+      STOP_SERIAL2
+      START_SERIAL1
 
       kbd.userInput.userInputArray_Size = 25;
       kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
@@ -111,9 +123,17 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
 
       initTFTHandler();
       printStringCHECK( );
+
+      STOP_SERIAL1
+      START_SERIAL2
+
+      _updateWindowCHECK(CHECK_NetWeight);
+      _updateWindowCHECK(MAX);
       _updateWindowCHECK(MIN);
+
       showDigits.dotPosition = tempDot;
       delete[]  kbd.userInput.userInputArray;
+
     }//end-if(field-Three)
     else if ( Zerotouch )
     {
@@ -194,6 +214,7 @@ void  WeighingHandle :: _updateWeightWindowCHECK( char *Temp, uint8_t win)
   FromMachineArray[win][7] = '\0';
   //  if ( win == MAX )  SPL("MAX### : " + String( FromMachineArray[win] ) );
   //  else  SPL("MIN### : " + String( FromMachineArray[win] ) );
+
 
 }
 

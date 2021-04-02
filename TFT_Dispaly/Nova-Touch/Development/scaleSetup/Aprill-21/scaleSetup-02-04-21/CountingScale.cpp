@@ -69,12 +69,13 @@ void  WeighingHandle ::_updateWindowCOUNT( uint8_t win )
   if (win == COUNT_NetWeight)
   {
     /*
-       Bug Fix : variable curruption .i.e FromMachineArray[win]
-    */
-    //    SPL("NetWeight : " + String(netWeight) );
+     * Bug Fix : variable curruption .i.e FromMachineArray[win]
+     * SPL("NetWeight : " + String(netWeight) );
+     * SPL("NetWeight current : " + String(showDigits.currentValue) );
+     */
     bufferWithoutDot( showDigits.currentValue,  netWeight );
     showDigits.currentValue[6] = '\0';
-    //    SPL("NetWeight current : " + String(showDigits.currentValue) );
+    
   }
   else
   {
@@ -197,12 +198,10 @@ int8_t  WeighingHandle :: handleTouchFuncationality_COUNT()
   {
     if ( Taretouch_Auto )
     {
-      char cmd[20] = "\2T\3";
-      Serial2.print(cmd);
+      CMD_AUTOTARE
     }
     else if ( Zerotouch )
     {
-
       CMD_ZERODATA
     }
     else if ( ESC_Touch )
@@ -213,7 +212,8 @@ int8_t  WeighingHandle :: handleTouchFuncationality_COUNT()
     else if ( Field_Two_Touch  )
     {
 
-      CMD_STOPDATA
+      STOP_SERIAL2
+      START_SERIAL1
 
       kbd.userInput.userInputArray_Size = 25;
       kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
@@ -227,15 +227,20 @@ int8_t  WeighingHandle :: handleTouchFuncationality_COUNT()
       _updateWeightperCOUNT( kbd.userInput.userInputArray );
 
       // Load screen images again.
+      START_SERIAL2
+      STOP_SERIAL1
+
       initTFTHandler();
       printStringCOUNT( );
 
       // Show updated unitWeight value on Screen.
       _updateWindowCOUNT( COUNT_UnitWeight );
-
+      _updateWindowCOUNT( COUNT_NetWeight );
+      _updateWindowCOUNT( COUNT );
+     
       delete[]  kbd.userInput.userInputArray;
 
-      CMD_STARTDATA
+
     }
   }
 }

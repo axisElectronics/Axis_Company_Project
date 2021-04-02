@@ -119,6 +119,9 @@ int8_t  WeighingHandle :: handleTouchFuncationality_PRICE()
     {
       int8_t tempDot = showDigits.dotPosition;
 
+      STOP_SERIAL2
+      START_SERIAL1
+
       kbd.userInput.userInputArray_Size = 25;
       kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
       kbd.init(  );
@@ -129,15 +132,20 @@ int8_t  WeighingHandle :: handleTouchFuncationality_PRICE()
 
       _updateWeightperPrice( kbd.userInput.userInputArray );
 
-      strcpy(src, _readbufPrice( ).c_str() );
+      STOP_SERIAL1
+      START_SERIAL2
 
       initTFTHandler();
       printStringPrice( );
 
+      _updateWindowPricing(GROSS);
+      _updateWindowPricing(PRICE);
       _updateWindowPricing(perPCS);
 
       showDigits.dotPosition = tempDot;
       delete[] kbd.userInput.userInputArray;
+
+
     }
   }
 }

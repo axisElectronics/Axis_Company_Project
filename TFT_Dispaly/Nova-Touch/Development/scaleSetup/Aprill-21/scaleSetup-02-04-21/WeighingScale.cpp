@@ -327,6 +327,9 @@ int8_t  WeighingHandle :: handleTouchFuncationality_Weight()
     }
     else if ( Field_three_Touch  )
     {
+      STOP_SERIAL2
+      START_SERIAL1
+
       kbd.userInput.userInputArray_Size = 25;
       kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
       kbd.init( );
@@ -342,7 +345,8 @@ int8_t  WeighingHandle :: handleTouchFuncationality_Weight()
       Serial2.print(cmd);
       SPL("Manual Tare : " + String(cmd) );
 
-      strcpy(src, _readbufWeight( ).c_str() );
+      STOP_SERIAL1
+      START_SERIAL2
 
       initTFTHandler();
       printStringWeight( );
@@ -351,6 +355,7 @@ int8_t  WeighingHandle :: handleTouchFuncationality_Weight()
       _readbufWeight( );
 
       delete[]  kbd.userInput.userInputArray;
+
     }
   }
 }
