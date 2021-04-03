@@ -445,6 +445,6 @@ bool  WeighingHandle :: printStringCHECK( )
             + " e: " + String(1) + String("g") \
             + " class: " + String("ll") \
             + "  " + String("02/04/21") \    
-            + "  " + String("11.30pm" ) );  
+            + "  " + String("11.30pm" ) );
 
 }
