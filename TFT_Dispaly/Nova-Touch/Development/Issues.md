@@ -17,7 +17,7 @@ it is For developer purpose.
 3. Need to interface Real time clock module. 
 4. Battery level Indicator
 5. Flip the Price window -->> Need approval from Sir  
-
+6. update clock at real time
 
 # Close Issues
 ----------------
@@ -31,7 +31,7 @@ it is For developer purpose.
 
 
 ## Date : 1/4/2021
-------
+---------
 
 1. Some times error occured which says that we don't have heap anymore.
    HEAP !=NULL && free() .......

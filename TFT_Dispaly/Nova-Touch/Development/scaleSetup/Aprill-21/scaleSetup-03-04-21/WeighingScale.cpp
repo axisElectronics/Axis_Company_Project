@@ -102,6 +102,7 @@ void WeighingHandle ::handleTareCommand( char *Weight  )
 {
   String cmdBuf = "";
   String temp = Weight;
+ 
   int8_t stx = temp.indexOf(2);
   int8_t etx = temp.indexOf(3);
 
@@ -117,26 +118,15 @@ void WeighingHandle ::handleTareCommand( char *Weight  )
 
 void WeighingHandle ::_updateWindow( uint8_t win )
 {
-  char dest[10];
-  if ( win != TARE )
-  {
-    bufferWithoutDot( dest,  FromMachineArray[win] );
-    strcpy( showDigits.currentValue, dest);
+   
+    bufferWithoutDot( showDigits.currentValue,  FromMachineArray[win] );  
     showDigits.currentValue[6] = '\0';
-  }
-
 
   switch (win)
   {
-    case NET   :   windowOne( ); break;
-    case GROSS :   windowTwo( ); break;
-    case TARE  :
-      bufferWithoutDot( dest,  FromMachineArray[TARE] );
-
-      strcpy( showDigits.currentValue, dest);
-      showDigits.currentValue[6] = '\0';
-      windowThree( );
-      break;
+    case NET   :   windowOne( );   break;
+    case GROSS :   windowTwo( );   break;
+    case TARE  :   windowThree( ); break;   
   }
 
 }
@@ -242,19 +232,35 @@ bool  WeighingHandle :: printStringWeight( )
 {
   String weightUnit = _getWeighingUnit();
   weightStripImage();
-  SPL("weightUnit : " + String(weightUnit) );
+//  SPL("weightUnit : " + String(weightUnit) );
   tft.setTextSize( 1 );
+  
+  // Window -1 
   tft.setFreeFont( (const GFXfont *)EUROSTILE_B13 );
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
   tft.setCursor(18, 50);  tft.print("NET WT");
   tft.setCursor(400, 50);  tft.print(weightUnit);
+
+   // Window -2
   tft.setFreeFont( (const GFXfont *)EUROSTILE_B10 );
   tft.setCursor(18, 173);  tft.print("GROSS WT");
   tft.setCursor(180, 173);   tft.print(weightUnit);
+
+   // Window -3
   tft.setCursor(260, 173);  tft.print("TARE WT");
   tft.setCursor(420, 173);  tft.print(weightUnit);
-  tft.setTextColor(TFT_RED, TFT_BLACK);
-  tft.setCursor(18, 310);  tft.print(weightUnit);
+  
+  // Bottom strip flags.
+  tft.setFreeFont( (const GFXfont *)EUROSTILE_B7 );
+  tft.setTextColor(TFT_BLACK, TFT_BLACK);
+  tft.setCursor(5, 310);
+  tft.print( "Model: " + String("TAX")\
+            + " Max: " + String( 30 ) + String( weightUnit) \
+            + " Min: " + String( 10 ) + String( weightUnit) \
+            + " e: " + String(1) + String("g") \
+            + " class: " + String("ll") \
+            + "  " + String("02/04/21") \    
+            + "  " + String("11.30pm" ) );
 }
 
 
@@ -306,18 +312,15 @@ int8_t  WeighingHandle :: handleTouchFuncationality_Weight()
   {
     if ( Taretouch_Auto )
     {
-      char cmd[20] = "\2T\3";
-      Serial2.print(cmd);
+      CMD_AUTOTARE
     }
     else if ( Zerotouch )
     {
-      char cmd[20] = "\2Z\3";
-      Serial2.print(cmd);
+      CMD_ZERODATA
     }
     else if ( ESC_Touch )
     {
-      SPL("ESCTouch...\n");
-      //delay(250);
+      SPL("ESCTouch...\n");  
       return -1;
     }
     else if ( Field_three_Touch  )
@@ -331,18 +334,17 @@ int8_t  WeighingHandle :: handleTouchFuncationality_Weight()
       kbd.userInput.numericSwitchFlag = 1;
 
       kbd.takeUserInput(  NULL );
-      SPL("keyboard : " + String( kbd.userInput.userInputArray ) );
+ //     SPL("keyboard : " + String( kbd.userInput.userInputArray ) );
 
+      START_SERIAL2
+      
       char cmd[20] = "\2T#";
       strcat(cmd, kbd.userInput.userInputArray );
       cmd[strlen(cmd)] = 3;
 
       Serial2.print(cmd);
-      SPL("Manual Tare : " + String(cmd) );
-
-      STOP_SERIAL1
-      START_SERIAL2
-
+    //  SPL("Manual Tare : " + String(cmd) );
+       
       initTFTHandler();
       printStringWeight( );
 
@@ -350,7 +352,7 @@ int8_t  WeighingHandle :: handleTouchFuncationality_Weight()
       _readbufWeight( );
 
       delete[]  kbd.userInput.userInputArray;
-
+      STOP_SERIAL1
     }
   }
 }

@@ -320,9 +320,17 @@ bool  WeighingHandle :: printStringCOUNT( )
   tft.setCursor(420, 173);  tft.print(weightUnit);
 
   // Bottom strip flags.
-  tft.setTextColor(TFT_RED, TFT_BLACK);
-  tft.setCursor(18, 310);  tft.print(weightUnit);
-
+ // Bottom strip flags.
+  tft.setFreeFont( (const GFXfont *)EUROSTILE_B7 );
+  tft.setTextColor(TFT_BLACK, TFT_BLACK);
+  tft.setCursor(5, 310);
+  tft.print( "Model: " + String("TAX")\
+            + " Max: " + String( 30 ) + String( weightUnit) \
+            + " Min: " + String( 10 ) + String( weightUnit) \
+            + " e: " + String(1) + String("g") \
+            + " class: " + String("ll") \
+            + "  " + String("02/04/21") \    
+            + "  " + String("11.30pm" ) );
 
 }
 
