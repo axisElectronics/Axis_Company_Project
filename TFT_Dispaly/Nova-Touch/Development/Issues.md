@@ -18,16 +18,19 @@ it is For developer purpose.
 4. Battery level Indicator
 5. Flip the Price window -->> Need approval from Sir  
 6. update clock at real time
+7. 
 
 # Close Issues
 ----------------
-1.  Time lag while updating digit. 
-2.  Reduce window dot radius.
+
+
+
 
 # Under Development
 ---------------------
 1. Lower Strip Text with various Kind of imformation.  
-
+2.  Time lag while updating digit. 
+3.    Reduce window dot radius.
 
 
 ## Date : 1/4/2021
