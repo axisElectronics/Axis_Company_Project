@@ -14,23 +14,22 @@ it is For developer purpose.
 ---------------
 1. Sampling in Counting Mode.
 2. price computing need previous data value. 
-3. Need to interface Real time clock module. 
+3. Need to interface Real time clock module. update clock at real time. [RTC Module is not available ]
 4. Battery level Indicator
 5. Flip the Price window -->> Need approval from Sir  
-6. update clock at real time
-7. 
+6. 
 
 # Close Issues
 ----------------
-
+1. Lower Strip Text with various Kind of imformation.  
+2. Time lag while updating digit. 
+3.  Reduce window dot radius.
 
 
 
 # Under Development
 ---------------------
-1. Lower Strip Text with various Kind of imformation.  
-2.  Time lag while updating digit. 
-3.    Reduce window dot radius.
+
 
 
 ## Date : 1/4/2021
