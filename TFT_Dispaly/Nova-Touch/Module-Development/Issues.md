@@ -14,10 +14,9 @@ it is For developer purpose.
 ---------------
 1. Sampling in Counting Mode.
 2. price computing need previous data value. 
-3. Need to interface Real time clock module. update clock at real time. [RTC Module is not available ]
-4. Battery level Indicator
-5. Flip the Price window -->> Need approval from Sir  
-6. 
+3. Battery level Indicator
+4. Flip the Price window -->> Need approval from Sir  
+ 
 
 # Close Issues
 ----------------
@@ -29,7 +28,7 @@ it is For developer purpose.
 
 # Under Development
 ---------------------
-
+1.  Need to interface Real time clock module. update clock at real time. [RTC Module is not available ]
 
 
 ## Date : 1/4/2021
