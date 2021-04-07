@@ -251,6 +251,10 @@ bool  WeighingHandle :: printStringWeight( )
   //  SPL("weightUnit : " + String(weightUnit) );
   tft.setTextSize( 1 );
 
+  char dateArray[10];
+  parshDateformat(dateArray, getRTCDate().c_str() );
+
+
   // Window -1
   tft.setFreeFont( (const GFXfont *)EUROSTILE_B13 );
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
@@ -275,8 +279,7 @@ bool  WeighingHandle :: printStringWeight( )
              + " Min: " + String( 10 ) + String( weightUnit) \
              + " e: " + String(1) + String("g") \
              + " class: " + String("ll") \
-             + "  " + String("02/04/21") \
-             + "  " + String("11.30pm" ) );
+             + "  " + String(dateArray));         
 }
 
 

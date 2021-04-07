@@ -321,6 +321,9 @@ bool  WeighingHandle :: printStringCOUNT( )
   tft.setTextSize( 1 );
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
 
+   char dateArray[10];
+  parshDateformat(dateArray, getRTCDate().c_str() );
+  
   // Window-1
   tft.setFreeFont( (const GFXfont *)EUROSTILE_B13 );
   tft.setCursor(18, 50);  tft.print("TOTAL PCs");
@@ -345,9 +348,8 @@ bool  WeighingHandle :: printStringCOUNT( )
              + " Min: " + String( 10 ) + String( weightUnit) \
              + " e: " + String(1) + String("g") \
              + " class: " + String("ll") \
-             + "  " + String("02/04/21") \
-             + "  " + String("11.30pm" ) );
-
+             + "  " + String(dateArray) );
+           
 }
 
 void  WeighingHandle :: updateTotalPcsWindow()

@@ -332,6 +332,9 @@ bool  WeighingHandle :: printStringPrice( )
   tft.setTextSize( 1 );
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
 
+ char dateArray[10];
+  parshDateformat(dateArray, getRTCDate().c_str() );
+
   tft.setFreeFont( (const GFXfont *)EUROSTILE_B13 );
   tft.setCursor(18, 50);  tft.print("TOTAL Price");
   //  tft.setCursor(400, 50);  tft.print(weightUnit);
@@ -352,6 +355,5 @@ bool  WeighingHandle :: printStringPrice( )
             + " Min: " + String( 10 ) + String( weightUnit) \
             + " e: " + String(1) + String("g") \
             + " class: " + String("ll") \
-            + "  " + String("02/04/21") \    
-            + "  " + String("11.30pm" ) );
+            + "  " + String(dateArray));    
 }

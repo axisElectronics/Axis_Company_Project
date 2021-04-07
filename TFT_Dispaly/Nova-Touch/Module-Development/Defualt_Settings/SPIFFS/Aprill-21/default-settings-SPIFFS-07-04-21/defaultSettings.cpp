@@ -575,8 +575,12 @@ int8_t defaultSettings::_setDecimal( char decimal )
 
 String defaultSettings::_getTime() {
 
-
-
+  File settingFile;
+  settingFile = SPIFFS.open(userSettingFilePath, "r+");
+  settingFile.read((byte *)&userScaleSetup, sizeof( userScaleSetup ));
+  String temp = String( userScaleSetup.timeArr );
+  settingFile.close();
+  return temp;
 
 }
 int8_t defaultSettings::_setTime() {
