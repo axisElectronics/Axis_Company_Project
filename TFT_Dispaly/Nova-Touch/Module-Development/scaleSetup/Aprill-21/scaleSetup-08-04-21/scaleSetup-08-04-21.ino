@@ -32,9 +32,9 @@ HERE :
 
   while (1)
   {
-  uint8_t datereg = 0x02;
-  Serial.print(" readRegister >>> " );
-  Serial.println(  readRegister(datereg) );
+//  uint8_t datereg = 0x02;
+//  Serial.print(" readRegister >>> " );
+//  Serial.println(  readRegister(datereg) );
 
     if ( tft.getTouch( &xAxis, &yAxis, threshold) )
     {

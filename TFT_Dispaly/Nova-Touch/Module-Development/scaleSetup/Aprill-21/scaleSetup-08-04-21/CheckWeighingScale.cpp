@@ -41,6 +41,7 @@ int8_t WeighingHandle :: startCheckWeighing()
       CMD_STOPDATA
       EMPTY_SERIALBUFFER
       STOP_SERIAL2
+      
       return -1;
     }
 
@@ -49,7 +50,8 @@ int8_t WeighingHandle :: startCheckWeighing()
 
     if ( strlen( src ) > 5 )
     {
-      if ( readSkipCount++ >= 2 ) {
+      if ( readSkipCount++ >= 2 ) 
+{
         _updateTotalWeightCHECK( src );
         readSkipCount = 1;
         // SPL("SKIP : " + String( millis() - tout) );
@@ -72,9 +74,8 @@ int8_t WeighingHandle :: startCheckWeighing()
       tft.fillRect(400, 295, 50, 20, TFT_WHITE);
       tft.setCursor(400, 310);
       tft.print("  " + String(timeArray) + String("pm") );
-      SPL("  " + String(timeArray) + String("pm") );
-      strcpy( preTime, timeArray );
-     
+//    SPL("  " + String(timeArray) + String("pm") );
+      strcpy( preTime, timeArray );     
     }
     //======================================================
 
