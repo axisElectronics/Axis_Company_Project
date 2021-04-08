@@ -10,8 +10,8 @@ void WeighingHandle :: readyAxisScales()
   int Mode = 0;
   uint16_t xAxis = 0, yAxis = 0, threshold = 1000;
 
- initWeighingTFT( );
-  
+  initWeighingTFT( );
+
 HERE :
   settingPageInit( ); // import default settings
 
@@ -32,9 +32,10 @@ HERE :
 
   while (1)
   {
-//   SPL(" ==>>>> " + getRTCTime() );
-//   SPL(" +++>>> " + getRTCDate() );
-      
+   uint8_t datereg = 0x04;
+  Serial.print(" readRegister >>> " );
+  Serial.println(  readRegister(datereg) );
+
     if ( tft.getTouch( &xAxis, &yAxis, threshold) )
     {
       if ( SettingTouchEnable() )
@@ -132,7 +133,7 @@ HERE :
 }//end- readyAsixScales
 
 
- void setup() {
+void setup() {
 
   Wtft.readyAxisScales();
 

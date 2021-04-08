@@ -314,7 +314,6 @@ char CmdWrite( struct task_list *CmdTaskHandler );
 
 
 class WeighingHandle : public settings
-
 {
 
   public :
