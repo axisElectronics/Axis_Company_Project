@@ -40,7 +40,7 @@ String customRTC :: getRTCTime()
     // Error: RTC read failed
     SPLErr("gettime failed");
   }
-  //  Serial.println("Time = " + String(RTCHandler.hour) + ": " + String(RTCHandler.minute) + ": " + String( RTCHandler.second ) );
+  Serial.println("getTime = " + String(RTCHandler.hour) + ": " + String(RTCHandler.minute) + ": " + String( RTCHandler.second ) );
   if (  RTCHandler.hour > 12 ) {
     RTCHandler.hour -= 12;
     if ( RTCHandler.hour == 11 && RTCHandler.minute == 59 && RTCHandler.second == 59 ) {
@@ -57,6 +57,7 @@ String customRTC :: getRTCTime()
 void  customRTC :: setRTCTime()
 {
   // Write time to RTC
+  Serial.println("setTime = " + String(RTCHandler.hour) + ": " + String(RTCHandler.minute) + ": " + String( RTCHandler.second ) );
   if (!rtc.setTime( RTCHandler.hour, RTCHandler.minute,  RTCHandler.second )) {
     // Error: Set time failed
     SPLErr("settime failed");

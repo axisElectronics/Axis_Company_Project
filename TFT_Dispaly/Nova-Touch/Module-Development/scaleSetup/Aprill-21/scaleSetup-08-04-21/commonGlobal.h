@@ -66,7 +66,7 @@ if ( src[1] == ':' ) {\
     dest[4] = src[2];\
     dest[5] = '\0';\    
   }else  if ( src[4] == ':' ){\
-    dest[3] = '0';\
+    dest[3] = src[2];\
     dest[4] = src[3];\
     dest[5] = '\0';\    
   }else if( src[5] == ':' ){\

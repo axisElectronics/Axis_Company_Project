@@ -74,6 +74,7 @@ int8_t WeighingHandle :: startCheckWeighing()
       tft.print("  " + String(timeArray) + String("pm") );
       SPL("  " + String(timeArray) + String("pm") );
       strcpy( preTime, timeArray );
+     
     }
     //======================================================
 
