@@ -15,7 +15,8 @@ it is For developer purpose.
 1. Sampling in Counting Mode.
 2. price computing need previous data value. 
 3. Battery level Indicator
-4. Flip the Price window -->> Need approval from Sir  
+4. Flip the Price window -->> Need approval from Sir 
+
  
 
 # Close Issues
@@ -29,7 +30,7 @@ it is For developer purpose.
 # Under Development
 ---------------------
 1.  Need to interface Real time clock module. update clock at real time. [RTC Module is not available ]
-
+2. Date didn't update  automatically.
 
 ## Date : 1/4/2021
 ---------
