@@ -5,6 +5,7 @@
 
 #include "FS.h"
 #include "SD.h"
+#include "SD_MMC.h"
 
 TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 
@@ -39,13 +40,6 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels) {
   }
 }
 
-
-
-
-
-
-
-
 void setup() {
   //========================================================
   //         Serial Begin
@@ -54,34 +48,31 @@ void setup() {
 
   //========================================================
   //         TFT Begin
+  //  TFT and SD_MMC card is not work on SPI pins.
   //========================================================
-  tft.init();
-  tft.setRotation(3);
-  tft.fillScreen(TFT_BLACK);
-
-  tft.setTextSize(1);
-  tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+//  tft.init();
+//  tft.setRotation(3);
+//  tft.fillScreen(TFT_BLACK);
+//
+//  tft.setTextSize(1);
+//  tft.setTextColor(TFT_YELLOW, TFT_BLACK);
 
   //========================================================
   //        SD card Begin
-  //  we are using HSPI for fetching data from SD card.
   //========================================================
 
-  SPIClass SPI1 = SPIClass(HSPI);
-  SPI1.begin(); 
-   
-  if (!SD.begin(15, SPI1)) {
+  if (!SD_MMC.begin()) {
     Serial.println("Card Mount Failed");
     return;
   }
-  uint8_t cardType = SD.cardType();
+  uint8_t cardType = SD_MMC.cardType();
 
   if (cardType == CARD_NONE) {
-    Serial.println("No SD card attached");
+    Serial.println("No SD_MMC card attached");
     return;
   }
 
-  Serial.print("SD Card Type: ");
+  Serial.print("SD_MMC Card Type: ");
   if (cardType == CARD_MMC) {
     Serial.println("MMC");
   } else if (cardType == CARD_SD) {
@@ -92,29 +83,18 @@ void setup() {
     Serial.println("UNKNOWN");
   }
 
-  uint64_t cardSize = SD.cardSize() / (1024 * 1024);
-  Serial.printf("SD Card Size: %lluMB\n", cardSize);
+  uint64_t cardSize = SD_MMC.cardSize() / (1024 * 1024);
+  Serial.printf("SD_MMC Card Size: %lluMB\n", cardSize);
 
   //========================================================
   //       List SD card Files
   //========================================================
- listDir(SD, "/", 0);
- 
-  File root = SD.open("/sun1.png", "r+");
-  Serial.println("Size : " + String( root.size() ) );
-  root = SD.open("/horse.jpg", "r+");
-  Serial.println("Size horse : " + String( root.size() ) );
 
- // Include the jpeg decoder library
-#include <TJpg_Decoder.h> 
+  listDir(SD_MMC, "/", 0);
 
 }
 
 void loop() {
-  tft.setRotation(1);  // landscape
-  tft.fillScreen(TFT_BLACK);
-  drawSdJpeg("/horse.jpg", 0, 0);     // This draws a jpeg pulled off the SD Card
-  
-  delay(2000);
+  // put your main code here, to run repeatedly:
 
 }
