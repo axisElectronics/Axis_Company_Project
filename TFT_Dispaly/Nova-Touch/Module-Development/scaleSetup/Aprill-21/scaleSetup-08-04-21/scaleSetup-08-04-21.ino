@@ -27,14 +27,12 @@ HERE :
 
   uint32_t tout = millis();
   //  TJpgDec.drawFsJpg(0, 0, "/jpg-3001.jpg");
-  Wtft.startUPImage();
+//  Wtft.startUPImage();
+  startUPImage();
   SPL("Time Delay : " + String(millis() - tout) );
 
   while (1)
   {
-//  uint8_t datereg = 0x02;
-//  Serial.print(" readRegister >>> " );
-//  Serial.println(  readRegister(datereg) );
 
     if ( tft.getTouch( &xAxis, &yAxis, threshold) )
     {

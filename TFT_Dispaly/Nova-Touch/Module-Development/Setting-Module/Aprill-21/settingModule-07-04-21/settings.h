@@ -258,9 +258,6 @@ class settings : public userKeyBoard, public defaultSettings, public customRTC
     int8_t handleESCButton(  );
     bool settingscalibrationImage();
 
-
-
-
     friend int8_t  nullFunc(  class settings *settings );
 
     friend int8_t weighingMode( class settings *settings );

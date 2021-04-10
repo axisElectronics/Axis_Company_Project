@@ -316,7 +316,7 @@ char CmdWrite( struct task_list *CmdTaskHandler );
 class WeighingHandle : public settings
 {
 
-  public :
+    public :
     uint8_t flags;
     double FromMachine[3];
     char FromMachineArray[3][10];
