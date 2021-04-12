@@ -90,7 +90,7 @@ void setup() {
   //SPIClass SPI1 = SPIClass(HSPI);
  // SPI1.begin(); 
    
-  if (!SD.begin(15)) {
+  if (!SD.begin(4)) { // using D4 GPIO for SD_card
     Serial.println("Card Mount Failed");
     return;
   }
@@ -135,17 +135,17 @@ void setup() {
 
   // The decoder must be given the exact name of the rendering function above
   TJpgDec.setCallback(tft_output);
-
+ tft.setRotation(1);  // landscape
 }
 
 void loop() {
-  tft.setRotation(1);  // landscape
+ 
   tft.fillScreen(TFT_BLACK);
   
 // Get the width and height in pixels of the jpeg if you wish
   uint16_t w = 0, h = 0;
   TJpgDec.getSdJpgSize(&w, &h, "/flower-1.jpg");
-  Serial.print("Width = "); Serial.print(w); Serial.print(", height = "); Serial.println(h);
+//  Serial.print("Width = "); Serial.print(w); Serial.print(", height = "); Serial.println(h);
 
   // Draw the image, top left at 0,0
   TJpgDec.drawSdJpg(0, 0, "/flower-1.jpg");
@@ -155,10 +155,19 @@ void loop() {
 
   // Get the width and height in pixels of the jpeg if you wish
   TJpgDec.getSdJpgSize(&w, &h, "/try-2.jpg");
-  Serial.print("Width = "); Serial.print(w); Serial.print(", height = "); Serial.println(h);
+//  Serial.print("Width = "); Serial.print(w); Serial.print(", height = "); Serial.println(h);
 
   // Draw the image, top left at 0,0
   TJpgDec.drawSdJpg(0, 0, "/try-2.jpg");
+
+  delay(2000);
+
+  // Get the width and height in pixels of the jpeg if you wish
+  TJpgDec.getSdJpgSize(&w, &h, "/test-1F.jpg");
+//  Serial.print("Width = "); Serial.print(w); Serial.print(", height = "); Serial.println(h);
+
+  // Draw the image, top left at 0,0
+  TJpgDec.drawSdJpg(0, 0, "/test-1F.jpg");
 
   delay(2000);
 
