@@ -1,0 +1,12 @@
+
+
+1  ) 
+	> One 3.5" SPI TFT LCD
+	> One 2.8" SPI TFT LCD
+	> One 3.5" Parrel TFT LCD
+	> One Soldering Iron
+	> One Discovery Board with ST-Link
+	> one ESp32
+	> One MultiMeter
+	> SD card with Holder
+	
