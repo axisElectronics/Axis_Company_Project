@@ -51,7 +51,15 @@ Differnts fonts of differnet sizes are available here.*
 
   
 
+#HardWare Connections :
 
+ 1. We are using 3 Serial( UART ) of ESP32.
+	Serial_0 ===>>
+	Serial_1 ===>>
+	Serial_2 ===>>
+	
+ 2. We are using SPI lines to operate TFT.
+ 3. We are using I2C line for getting data.
 
 
 

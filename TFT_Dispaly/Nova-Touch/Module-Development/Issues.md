@@ -28,9 +28,9 @@ it is For developer purpose.
 ----------------
 1. Lower Strip Text with various Kind of imformation.  
 2. Time lag while updating digit. 
-3.  Reduce window dot radius.
-4.  Need to interface Real time clock module. update clock at real time.
-5.  
+3. Reduce window dot radius.
+4. Need to interface Real time clock module. update clock at real time.
+5. RTC-DS1307 has been replaced with RTC-R8025 and Libary is supporting.
 
 
 
