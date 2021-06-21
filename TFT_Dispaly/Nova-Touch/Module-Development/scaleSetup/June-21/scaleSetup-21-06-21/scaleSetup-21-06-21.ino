@@ -25,35 +25,44 @@ class WeighingHandle Wtft;
 int Mode = 0;
 bool flag = 1;
 
-boolean pressed;
-uint32_t TimeOut = 0;
-uint16_t xAxis = 0, yAxis = 0;
-int8_t ISR_dtech = 0;
+volatile boolean pressed;
+volatile uint32_t TimeOut = 0;
+ uint16_t xAxis = 0, yAxis = 0;
+volatile int8_t ISR_dtech = 0;
 
-static void IRAM_ATTR myfastfunction() {
+portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-  if ( ( millis() - TimeOut ) > 500) {
-    if ( ( pressed = tft.getTouch( &xAxis, &yAxis) ) ) {
-      detachInterrupt(digitalPinToInterrupt(GPIOPin_TIRQ));
+
+void IRAM_ATTR myfastfunction() {
+
+  portENTER_CRITICAL_ISR(&mux);
+
+  if ( millis() - TimeOut > 500 ) {
+    pressed = tft.getTouch( &xAxis, &yAxis, 20);
+    if ( pressed ){
+      detachInterrupt(GPIOPin_TIRQ);
       TimeOut = millis();
-    } else {
-      xAxis = 0;
-      yAxis = 0;
-      ISR_dtech = 0;
-    }//end-else
-  }//end-debounching
- // SPL("\n------ISR------");
+    }
+  }else  if ( ++ISR_dtech > 10 ) {
+    detachInterrupt(GPIOPin_TIRQ);
+    SPL("\nISR called more then 10");
+  }
+  // SPL("\npressed : " + String(pressed) );
+  portEXIT_CRITICAL_ISR(&mux);
 }//end-ISR
-
 
 
 void setup() {
   Wtft.initWeighingTFT( );
-  pinMode(GPIOPin_TIRQ, INPUT_PULLUP);
+  pinMode(GPIOPin_TIRQ, INPUT);
   TimeOut = millis();
 }
 
 void loop() {
+  if( ISR_dtech > 10 ){
+     ATTACH_TOUCH_INTERRUPT
+     ISR_dtech = 0;
+  }
   Wtft.readyAxisScales();
   yield();
 }
@@ -64,11 +73,9 @@ void WeighingHandle :: readyAxisScales()
 {
 
   if ( !flag && !pressed ) return;
-
-  Serial.println("\n1: ++++++++++");
+ 
 HERE :
-  if ( flag ) {
-
+  if (flag) {
     settingPageInit( ); // import default settings
 
     uint8_t tempdot = _getDecimal().c_str()[0];
@@ -83,13 +90,14 @@ HERE :
 
     startUPImage();
     STOP_SERIAL2
+    ATTACH_TOUCH_INTERRUPT
 
     flag = 0;
     pressed = 0;
-    ATTACH_TOUCH_INTERRUPT
+    yield();
   }
 
-  Serial.println("\n2: ++++++++++");
+
   if ( pressed )
   {
     if ( SettingTouchEnable() )
@@ -132,7 +140,7 @@ HERE :
     }
   }//end-if( getTouch() )
 
-  Serial.println("\n3: ++++++++++");
+
   switch (Mode)
   {
     case 1:
@@ -151,7 +159,6 @@ HERE :
 
 
     case 2:
-
       if ( startWeighing()  == -1 )
       {
         Mode = 0;
@@ -205,6 +212,6 @@ HERE :
       break;
 
   }//end- switch mode
-  Serial.println("\n4: ++++++++++");
+ 
   yield();
 }//end- readyAsixScales

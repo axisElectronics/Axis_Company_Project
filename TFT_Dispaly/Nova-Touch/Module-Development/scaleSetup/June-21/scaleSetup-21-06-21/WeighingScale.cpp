@@ -1,18 +1,23 @@
 
-
+#define ESP32
 
 #include "commonGlobal.h"
 
+
+
 extern class userKeyBoard kbd;
 
-extern boolean pressed;
-extern uint32_t TimeOut;
-extern uint16_t xAxis, yAxis;
-extern int8_t ISR_dtech;
+extern void IRAM_ATTR myfastfunction();
+
+extern volatile boolean pressed;
+extern volatile uint32_t TimeOut;
+extern  uint16_t xAxis, yAxis;
+extern volatile int8_t ISR_dtech;
 
 extern volatile int *int_status;
 extern volatile int *int_clear;
 extern volatile int *int_SET;
+
 
 /*****************************************************************************
    @ startWeighing :
@@ -65,6 +70,23 @@ extern volatile int *int_SET;
 
 class  WeighingHandle weightClass;
 
+#define FUN_CheckOut     if( checkTouch() ) return -1;
+
+
+bool checkTouch() {
+
+  if ( weightClass.handleTouchFuncationality_Weight() == -1 )
+  {
+    //    STOP_SERIAL1
+    STOP_SERIAL2
+    EMPTY_SERIALBUFFER
+    pressed = 0;
+    return -1;
+  }
+
+  return 0;
+}
+
 
 static uint32_t readSkipCount = 1;
 int8_t  WeighingHandle :: startWeighing()
@@ -83,24 +105,11 @@ int8_t  WeighingHandle :: startWeighing()
   CMD_GETTARE
   _readbufWeight( );
   pressed = 0;
-  ATTACH_TOUCH_INTERRUPT
-
+ 
   while (1)
   {
-    if ( handleTouchFuncationality_Weight() == -1 )
-    {
-      //      CMD_STOPDATA
-      detachInterrupt(digitalPinToInterrupt(GPIOPin_TIRQ));
-      STOP_SERIAL2
-      EMPTY_SERIALBUFFER
-      pressed = 0;
-      return -1;
-    }else{
-      if( ISR_dtech ){
-         ATTACH_TOUCH_INTERRUPT_Weight
-         ISR_dtech = 0; 
-      }
-    }
+    
+    FUN_CheckOut
 
     memset(src, '\0', 10);
     strcpy(src, _readbufWeight( ).c_str() );  src[7] = '\0';
@@ -113,13 +122,7 @@ int8_t  WeighingHandle :: startWeighing()
       }
       _updateWindow( NET );
 
-      if ( handleTouchFuncationality_Weight() == -1 )
-      {
-        //      CMD_STOPDATA
-        STOP_SERIAL2
-        EMPTY_SERIALBUFFER
-        return -1;
-      }
+      FUN_CheckOut
 
       _updateWindow( GROSS );
     }//end-if
@@ -138,6 +141,9 @@ int8_t  WeighingHandle :: startWeighing()
       strcpy( preTime, timeArray );
     }
     //======================================================
+
+    FUN_CheckOut
+
     yield();
   }//end- while
 }//end-startweighing
@@ -379,33 +385,39 @@ int8_t  WeighingHandle :: handleTouchFuncationality_Weight()
 {
   char src[12] = {0};
 
+  switch (  getactiveMachineKeyMapping() )
+  {
+    case map_CmdESC   : pressed = 0; return -1;
+    case map_CmdUnits : break; // as per requirement
+    case map_CmdPrint : break; // as per requirement
+    case map_CmdZero  : CMD_ZERODATA break;
+    case map_CmdTare  : CMD_AUTOTARE break;
+  }//end-switch
+
+   if ( ( pressed = tft.getTouch(&xAxis, &yAxis) ) == 0 ) return 0;
+
+//  if ( pressed == 0 ) return 0;
+
   if ( pressed )
   {
     SPL("pressed : " + String(pressed));
-    
+
     if ( Taretouch_Auto )
     {
       CMD_AUTOTARE
-      xAxis = 0;
-      yAxis = 0;
-      pressed = 0;
-      ATTACH_TOUCH_INTERRUPT_Weight
+      return 0;
     }
     else if ( Zerotouch )
     {
       CMD_ZERODATA
-      xAxis = 0;
-      yAxis = 0;
-      pressed = 0;
-      ATTACH_TOUCH_INTERRUPT_Weight
+      return 0;
     }
     else if ( ESC_Touch )
     {
       SPL("ESCTouch...>>X:  " + String(xAxis) + "Y : " + String(yAxis) );
       xAxis = 0;
       yAxis = 0;
-      pressed = 0;
-      pressed =  -1;
+      return -1;
     }
     else if ( Field_three_Touch  )
     {
@@ -436,24 +448,8 @@ int8_t  WeighingHandle :: handleTouchFuncationality_Weight()
       _readbufWeight( );
 
       delete[]  kbd.userInput.userInputArray;
-    } else {
-      xAxis = 0;
-      yAxis = 0;
-      pressed = 0;
-      ATTACH_TOUCH_INTERRUPT_Weight
     }
   }//end-if
-  else
-  {
-    switch (  getactiveMachineKeyMapping() )
-    {
-      case map_CmdESC   : pressed = 0; return -1;
-      case map_CmdUnits : break; // as per requirement
-      case map_CmdPrint : break; // as per requirement
-      case map_CmdZero  : CMD_ZERODATA break;
-      case map_CmdTare  : CMD_AUTOTARE break;
-    }//end-switch
-  }//end-else
 
   return 0;
 }//end-handleTouch
