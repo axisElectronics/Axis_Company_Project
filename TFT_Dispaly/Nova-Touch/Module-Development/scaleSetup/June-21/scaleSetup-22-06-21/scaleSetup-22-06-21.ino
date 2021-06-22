@@ -1,13 +1,12 @@
+//#if CONFIG_FREERTOS_UNICORE
+//static const BaseType_t app_cpu = 0;
+//#else
+//static const BaseType_t app_cpu = 1;
+//#endif
+
 
 #include "commonGlobal.h"
 
-
-#include "freertos/xtensa_context.h"
-#include "esp_panic.h"
-#include "sdkconfig.h"
-#include "soc/soc.h"
-#include "soc/dport_reg.h"
-#include "soc/gpio_reg.h"
 
 
 unsigned long gpio_status;
@@ -27,43 +26,41 @@ bool flag = 1;
 
 volatile boolean pressed;
 volatile uint32_t TimeOut = 0;
- uint16_t xAxis = 0, yAxis = 0;
-volatile int8_t ISR_dtech = 0;
-
-portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+uint16_t xAxis = 0, yAxis = 0;
+static int8_t ISR_dtech = 0;
 
 
-void IRAM_ATTR myfastfunction() {
 
-  portENTER_CRITICAL_ISR(&mux);
+static void IRAM_ATTR myfastfunction() {
 
   if ( millis() - TimeOut > 500 ) {
     pressed = tft.getTouch( &xAxis, &yAxis, 20);
-    if ( pressed ){
+    if ( pressed ) {
       detachInterrupt(GPIOPin_TIRQ);
       TimeOut = millis();
     }
-  }else  if ( ++ISR_dtech > 10 ) {
+  } else  if ( ++ISR_dtech > 10 ) {
     detachInterrupt(GPIOPin_TIRQ);
     SPL("\nISR called more then 10");
   }
   // SPL("\npressed : " + String(pressed) );
-  portEXIT_CRITICAL_ISR(&mux);
+
 }//end-ISR
 
 
 void setup() {
   Wtft.initWeighingTFT( );
-  pinMode(GPIOPin_TIRQ, INPUT);
+  pinMode(GPIOPin_TIRQ, INPUT_PULLUP);
   TimeOut = millis();
 }
 
 void loop() {
-  if( ISR_dtech > 10 ){
-     ATTACH_TOUCH_INTERRUPT
-     ISR_dtech = 0;
-  }
+    if ( ISR_dtech > 10 ) {
+      ATTACH_TOUCH_INTERRUPT
+      ISR_dtech = 0;
+    }
   Wtft.readyAxisScales();
+
   yield();
 }
 
@@ -73,7 +70,7 @@ void WeighingHandle :: readyAxisScales()
 {
 
   if ( !flag && !pressed ) return;
- 
+
 HERE :
   if (flag) {
     settingPageInit( ); // import default settings
@@ -210,6 +207,6 @@ HERE :
       }
       break;
   }//end- switch mode
- 
+
   yield();
 }//end- readyAsixScales
