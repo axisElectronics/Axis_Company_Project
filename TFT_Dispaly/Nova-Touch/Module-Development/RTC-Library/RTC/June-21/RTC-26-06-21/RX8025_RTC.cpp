@@ -123,5 +123,3 @@ int RX8025_RTC::_fromBCD(byte bcd){
   i1 = (bcd >> 4) * 10;
   return i0 + i1;
 }
-
-

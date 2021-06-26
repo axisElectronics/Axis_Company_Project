@@ -16,7 +16,7 @@
  ***********************************************************/
 
 //#define DS1307_RTC
-#define R8025_RTC
+#define R8025_RTC 1
 
 
 // Enable RTC DS1307
@@ -59,6 +59,9 @@ class customRTC : public ErriezDS1307
 class customRTC : public RX8025_RTC 
 #endif
 {
+  private :
+  tmElements_t tm2; 
+  
   public :
  
   struct rtcvar {

@@ -63,6 +63,7 @@ HERE :
     STOP_SERIAL2
     TouchInterrupt_ptr = INTER_resetPage;
     tft.getTouch(&xAxis, &yAxis);
+  
     while( xAxis || yAxis ){
       xAxis = yAxis = 0;
       tft.getTouch(&xAxis, &yAxis);
