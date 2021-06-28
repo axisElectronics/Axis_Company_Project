@@ -72,7 +72,7 @@ class defaultSettings
     defaultSettings() {};
 
     int8_t _setPassword();
-    char * _getPassword();
+    void _getPassword();
     
     void updateDefaultSettings( );
     int8_t initDefaultSettings( );

@@ -7,7 +7,7 @@ SoftwareSerial kpdSerial(9, 8); // RX, TX
 //const byte COLS = 4; //three columns
 
 const byte ROWS = 4; //four rows
-const byte COLS = 5; //three columns
+const byte COLS = 5; //three columns 
 
 //char keys[ROWS][COLS] = {
 //{1,  2,  3,  4},

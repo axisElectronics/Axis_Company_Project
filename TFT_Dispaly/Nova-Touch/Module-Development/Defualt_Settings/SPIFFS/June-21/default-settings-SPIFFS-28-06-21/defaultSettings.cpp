@@ -586,7 +586,6 @@ int8_t defaultSettings::_setDecimal( char decimal )
 }
 
 String defaultSettings::_getTime() {
-
   File settingFile;
   settingFile = SPIFFS.open(userSettingFilePath, "r+");
   settingFile.read((byte *)&userScaleSetup, sizeof( userScaleSetup ));
@@ -605,13 +604,19 @@ int8_t defaultSettings::_setTime() {
   return  1;
 }
 
-int8_t  defaultSettings:: _setPassword(){
-  
+ int8_t  defaultSettings::_setPassword(){
   File settingFile;
   settingFile = SPIFFS.open(userSettingFilePath, "r+");
   settingFile.write((byte *)&userScaleSetup, sizeof(userScaleSetup));
   settingFile.close();
   return  1;
+ }
 
-    
+void defaultSettings::_getPassword(){
+  File settingFile;
+  settingFile = SPIFFS.open(userSettingFilePath, "r+");
+  settingFile.read((byte *)&userScaleSetup, sizeof( userScaleSetup ));
+ // String temp = String( userScaleSetup.password );
+  settingFile.close();
+ // return  temp;
 }

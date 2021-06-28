@@ -6,34 +6,6 @@
 //++            Defination                                       ++
 //<<===========================================================>>//
 
-//class GenericKeypad *kbd_ptr;
-boolean GenericKeypad :: ISR_Called = 0;
-
-void GenericKeypad :: ISR_Keypad_Touch(void) {
-  // kbd_ptr->disableInterrupt();
-  noInterrupts();
-  //  kbd_ptr->ISR_Called = 1;
-  ISR_Called = 1;
-  interrupts();
-}
-
-/* There is no use as of now */
-void GenericKeypad :: enableInterrupt( void (*UserISR_fptr)(void) = NULL, int8_t interruptPin = 27, int interruptEdge = FALLING ) {
-
-  _interruptPin = interruptPin;
-  pinMode(_interruptPin, INPUT);
-
-  if ( *int_status ) (*int_clear) |= ( 1 << _interruptPin );
-
-  if ( UserISR_fptr )
-    attachInterrupt(digitalPinToInterrupt(_interruptPin), UserISR_fptr, interruptEdge);
-  else
-    attachInterrupt(digitalPinToInterrupt(_interruptPin), ISR_Keypad_Touch, interruptEdge);
-
-  ISR_Called = 0;
-}
-
-
 
 int8_t GenericKeypad ::getInput() {
   _key = xAxis = yAxis = 0;
@@ -46,15 +18,49 @@ int8_t GenericKeypad ::getInput() {
   }
   
 /* Interrupt is not working as of now.
- *  
-  if ( ISR_Called ) {
-    ISR_Called = 0;
-    tft.getTouch(&xAxis, &yAxis, 20);
-    enableInterrupt();
-    return findkey;
-  } else if ( _key  ) {
-    return _key;
-  }
+
+ 
+//  if ( ISR_Called ) {
+//    ISR_Called = 0;
+//    tft.getTouch(&xAxis, &yAxis, 20);
+//    enableInterrupt();
+//    return findkey;
+//  } else if ( _key  ) {
+//    return _key;
+//  }
+
+
+
+////class GenericKeypad *kbd_ptr;
+//boolean GenericKeypad :: ISR_Called = 0;
+//void GenericKeypad :: ISR_Keypad_Touch(void) {
+//  // kbd_ptr->disableInterrupt();
+//  noInterrupts();
+//  //  kbd_ptr->ISR_Called = 1;
+//  ISR_Called = 1;
+//  interrupts();
+//}
+
+///* There is no use as of now */
+//void GenericKeypad :: enableInterrupt( void (*UserISR_fptr)(void) = NULL, int8_t interruptPin = 27, int interruptEdge = FALLING ) {
+//
+//  _interruptPin = interruptPin;
+//  pinMode(_interruptPin, INPUT);
+//
+//  if ( *int_status ) (*int_clear) |= ( 1 << _interruptPin );
+//
+//  if ( UserISR_fptr )
+//    attachInterrupt(digitalPinToInterrupt(_interruptPin), UserISR_fptr, interruptEdge);
+//  else
+//    attachInterrupt(digitalPinToInterrupt(_interruptPin), ISR_Keypad_Touch, interruptEdge);
+//
+//  ISR_Called = 0;
+//}
+
+*/  
+  
+  
+  
   */
   
   return keepRunning;
