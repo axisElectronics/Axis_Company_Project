@@ -1,5 +1,5 @@
 
-#include "newKeypad.h"
+#include "Gkeypad.h"
 
 class GenericKeypad kbd;
 
@@ -9,7 +9,7 @@ void setup() {
 
   /* it will just show image */
   kbd.showKeypadImage();
-//  kbd.enableInterrupt();
+
 }
 
 void loop() {

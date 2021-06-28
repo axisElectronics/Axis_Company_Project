@@ -1,75 +1,6 @@
 
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-
-#include <SPI.h>
-#include <TFT_eSPI.h>
-#include <String.h>
-#include <vector>
-
+#include "Gkeypad.h"
 #include "keyBoardImage.h"
-#include "MACROs.h"
-
-
-
-
-
-class GenericKeypad {
-
-  private :
-    TFT_eSPI tft = TFT_eSPI();
-
-    int8_t _interruptPin = 27; //for Rpi, set accordingly
-    int8_t _key;
-    uint16_t xAxis, yAxis;
-    boolean pressed;
-
-    boolean ISR_dtech;
-    uint32_t TimeOut;
-
-    volatile int *int_status = (int *)( INT_STATUS ) ;
-    volatile int *int_clear = (int *)( INT_CLEAR ) ;
-    volatile int *int_SET = (int *)( INT_SET  );
-
-    char _keyArray[10][4] = {
-      {'0', ' ', '/', '@' },
-      {'1', 'A', 'B', 'C' },
-      {'2', 'D', 'E', 'F' },
-      {'3', 'G', 'H', 'I' },
-      {'4', 'J', 'K', 'L' },
-      {'5', 'M', 'N', 'O' },
-      {'6', 'P', 'Q', 'R' },
-      {'7', 'S', 'T', 'U' },
-      {'8', 'V', 'W', 'X' },
-      {'9', 'Y', 'Z', '-' },
-    };
-
-    int8_t _initkeypad();
-    void _getPhysicalKey();
-    int8_t _getVirtualKey();
-
-
-  public :
-    static boolean ISR_Called;
-    static void IRAM_ATTR ISR_Keypad_Touch(void);
-    void enableInterrupt( void (*UserISR_fptr)(void), int8_t interruptPin, int interruptEdge );
-    void disableInterrupt();
-    void showKeypadImage();
-    int8_t getInput();
-
-    GenericKeypad() {
-      _initkeypad();
-    }
-
-    ~GenericKeypad() {
-      disableInterrupt();
-    }
-
-};
-
-
 
 //<<===========================================================>>//
 //++            Defination                                       ++
@@ -77,6 +8,7 @@ class GenericKeypad {
 
 //class GenericKeypad *kbd_ptr;
 boolean GenericKeypad :: ISR_Called = 0;
+
 void GenericKeypad :: ISR_Keypad_Touch(void) {
   // kbd_ptr->disableInterrupt();
   noInterrupts();
@@ -85,6 +17,7 @@ void GenericKeypad :: ISR_Keypad_Touch(void) {
   interrupts();
 }
 
+/* There is no use as of now */
 void GenericKeypad :: enableInterrupt( void (*UserISR_fptr)(void) = NULL, int8_t interruptPin = 27, int interruptEdge = FALLING ) {
 
   _interruptPin = interruptPin;
@@ -106,6 +39,14 @@ int8_t GenericKeypad ::getInput() {
   _key = xAxis = yAxis = 0;
   _getPhysicalKey();
 
+  if(  tft.getTouch(&xAxis, &yAxis, 20) ){
+    return findkey
+  } else if ( _key  ) {
+    return _key;
+  }
+  
+/* Interrupt is not working as of now.
+ *  
   if ( ISR_Called ) {
     ISR_Called = 0;
     tft.getTouch(&xAxis, &yAxis, 20);
@@ -114,6 +55,8 @@ int8_t GenericKeypad ::getInput() {
   } else if ( _key  ) {
     return _key;
   }
+  */
+  
   return keepRunning;
 }
 

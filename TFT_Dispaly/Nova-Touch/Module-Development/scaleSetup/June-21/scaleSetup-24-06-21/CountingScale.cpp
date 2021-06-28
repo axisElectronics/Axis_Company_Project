@@ -324,6 +324,7 @@ bool  WeighingHandle :: countStripImage()
   tft.pushImage( 10, 0, CountingModeStripWidth, CountingModeStripHeight, CountingModeStrip );
 }
 
+
 bool  WeighingHandle :: printStringCOUNT( )
 {
   countStripImage();

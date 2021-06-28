@@ -76,7 +76,7 @@ int8_t WeighingHandle :: startCheckWeighing()
       strcpy( preTime, timeArray );
     }
 
-      Check_CheckOut(Mode)
+    Check_CheckOut(Mode)
     //======================================================
 
     yield();
@@ -92,16 +92,16 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
   char src[12] = {0};
   int8_t tempDot = showDigits.dotPosition;
 
-    switch (  getactiveMachineKeyMapping() )
-    {
-      case map_CmdESC   :  pressed =0; return -1;
-      case map_CmdUnits : break; // as per requirement
-      case map_CmdPrint : break; // as per requirement
-      case map_CmdZero  : CMD_ZERODATA break;
-      case map_CmdTare  : CMD_AUTOTARE break;
-    }//end-switch
+  switch (  getactiveMachineKeyMapping() )
+  {
+    case map_CmdESC   :  pressed = 0; return -1;
+    case map_CmdUnits : break; // as per requirement
+    case map_CmdPrint : break; // as per requirement
+    case map_CmdZero  : CMD_ZERODATA break;
+    case map_CmdTare  : CMD_AUTOTARE break;
+  }//end-switch
 
-//  if ( ( pressed = tft.getTouch(&xAxis, &yAxis) ) == 0 ) return 0;
+  //  if ( ( pressed = tft.getTouch(&xAxis, &yAxis) ) == 0 ) return 0;
 
   if ( pressed == 0 ) return 0;
 
@@ -109,7 +109,7 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
   if ( pressed )
   {
     pressed = 0;
-    
+
     if ( Field_Two_Touch  )
     {
       STOP_SERIAL2
@@ -179,15 +179,22 @@ int8_t WeighingHandle :: handleTouchFuncationality_CHECK()
       delete[]  kbd.userInput.userInputArray;
 
     }//end-if(field-Three)
-    else if ( Zerotouch )     {  CMD_ZERODATA  }
-    else if ( Taretouch_Auto ){   CMD_AUTOTARE }
-    else if ( ESC_Touch ){  SPL("ESCTouch...\n");   return -1; }
+    else if ( Zerotouch )     {
+      CMD_ZERODATA
+    }
+    else if ( Taretouch_Auto ) {
+      CMD_AUTOTARE
+    }
+    else if ( ESC_Touch ) {
+      SPL("ESCTouch...\n");
+      return -1;
+    }
     else
       SPL("xAxis : " + String(xAxis ) + "\nyAxis : " + String(yAxis) );
 
 
   }//end-if( TFT_Touch )
- 
+
   return 0;
 }
 
@@ -237,6 +244,7 @@ void  WeighingHandle :: _updateWeightWindowCHECK( char *Temp, uint8_t win)
   memset( FromMachineArray[win], '\0' , 10);
   sprintf( FromMachineArray[win], "%lf", FromMachine[win]);
   // Adjust dot postion in Array
+  if ( win == MAX )  SPL("MAX### : " + String( FromMachineArray[win] ) );
   findDotPosition( FromMachineArray[win], dotpos);
 
   for (int8_t i = 0, j = ( 6 - showDigits.dotPosition - dotpos); ( i < 7 ) && ( j < 7 ) ; i++, j++ )
@@ -247,7 +255,7 @@ void  WeighingHandle :: _updateWeightWindowCHECK( char *Temp, uint8_t win)
   strcpy( FromMachineArray[win], temp );
 
   FromMachineArray[win][7] = '\0';
-  //  if ( win == MAX )  SPL("MAX### : " + String( FromMachineArray[win] ) );
+  //    if ( win == MAX )  SPL("MAX### : " + String( FromMachineArray[win] ) );
   //  else  SPL("MIN### : " + String( FromMachineArray[win] ) );
 
 
@@ -445,9 +453,18 @@ HERE :
   return temp;
 }
 
+
+bool  WeighingHandle :: checkStripImage()
+{
+  tft.setSwapBytes(true);
+  tft.pushImage( 10, 0, checkingModeStripWidth, checkingModeStripHeight, checkingModeStrip );
+}
+
+
+
 bool  WeighingHandle :: printStringCHECK( )
 {
-  countStripImage();
+  checkStripImage();
   String weightUnit = _getWeighingUnit();
   tft.setTextSize( 1 );
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
@@ -485,5 +502,4 @@ bool  WeighingHandle :: printStringCHECK( )
   parshTimeFormat(timeArray, getRTCTime() )
   tft.setCursor(400, 310);
   tft.print("  " + String(timeArray) + String("pm") );
-
 }

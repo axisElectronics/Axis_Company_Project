@@ -483,6 +483,7 @@
       void _maxWin(char * maxValue );
       void _minWin(char * minValue );
       bool printStringCHECK( );
+      bool checkStripImage();
       void windowOneCHECK( );
 
       /*******************************************
