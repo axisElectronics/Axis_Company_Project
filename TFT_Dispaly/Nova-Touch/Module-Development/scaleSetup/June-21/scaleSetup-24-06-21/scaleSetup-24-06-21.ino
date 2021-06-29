@@ -62,18 +62,17 @@ HERE :
     startUPImage();
     STOP_SERIAL2
     TouchInterrupt_ptr = INTER_resetPage;
-    tft.getTouch(&xAxis, &yAxis);
-  
-    while( xAxis || yAxis ){
+    flag = 0;
+    pressed = 0;
+    xAxis = yAxis = 0;
+    while ( !( xAxis || yAxis ) ) {
       xAxis = yAxis = 0;
-      tft.getTouch(&xAxis, &yAxis);
+      pressed = tft.getTouch(&xAxis, &yAxis);
+      SPL("Waiting : " + String(xAxis) + ", " + String(yAxis));
       yield();
     }
     ATTACH_TOUCH_INTERRUPT
 
-    flag = 0;
-    pressed = 0;
-    
     yield();
   }
 
@@ -114,7 +113,8 @@ HERE :
       Mode = 5;
       START_SERIAL2
       CMD_STARTDATA
-    } else {
+    } 
+    else {
       pressed =  0;
       ATTACH_TOUCH_INTERRUPT
     }
@@ -133,13 +133,13 @@ HERE :
         Mode = 0;
         flag = 1;
         pressed = 0;
-        
         goto HERE;
       }
       break;
 
 
     case 2:
+   //  SPL("startWeighing() : " + String(xAxis) + ", " + String(yAxis));
       if ( startWeighing()  == -1 )
       {
         Mode = 0;
@@ -174,7 +174,7 @@ HERE :
           Mode = 0;
           flag = 1;
           pressed = 0;
-         delay(100);
+          delay(100);
           goto HERE;
         }
       }
@@ -187,7 +187,7 @@ HERE :
         Mode = 0;
         flag = 1;
         pressed = 0;
-     delay(100);
+        delay(100);
         goto HERE;
       }
       break;

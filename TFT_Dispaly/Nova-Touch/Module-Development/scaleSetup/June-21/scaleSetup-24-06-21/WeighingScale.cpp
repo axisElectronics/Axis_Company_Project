@@ -276,7 +276,7 @@ bool  WeighingHandle :: printStringWeight( )
 {
   String weightUnit = _getWeighingUnit();
   weightStripImage();
-  //  SPL("weightUnit : " + String(weightUnit) );
+   SPL("weightUnit : " + String(weightUnit) );
   tft.setTextSize( 1 );
 
   char dateArray[10];

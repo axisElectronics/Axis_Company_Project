@@ -20,6 +20,7 @@ void setup() {
 
   kbd.init();
   kbd.userInput.numericSwitchFlag = ALPHANUM; 
+//   kbd.userInput.fixFormatstruct->fixFormatFlag = 1;
 }
 
 
