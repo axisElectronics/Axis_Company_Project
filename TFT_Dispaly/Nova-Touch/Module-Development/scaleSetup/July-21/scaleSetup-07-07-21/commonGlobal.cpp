@@ -174,6 +174,9 @@ void WeighingHandle :: initWeighingTFT( )
 
   // The decoder must be given the exact name of the rendering function above
   TJpgDec.setCallback(tft_output);
+
+  //RTC initilise
+  initRTC();
 }
 
 

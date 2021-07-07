@@ -294,7 +294,7 @@ bool  checkWeighing :: printStringCHECK( ){
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
 
   char dateArray[10];
-  parshDateformat(dateArray, _getDate().c_str() );
+  parshDateformat(dateArray, getRTCDate().c_str() );
 
   // Window-1
   tft.setFreeFont( (const GFXfont *)EUROSTILE_B13 );

@@ -308,8 +308,8 @@ bool  weight :: printStringWeight( ) {
   tft.setTextSize( 1 );
 
   char dateArray[10];
-  SPL("getDate+  : " + _getDate() );
-  parshDateformat(dateArray,  _getDate().c_str() );
+  SPL("getDate+  : " + getRTCDate() );
+  parshDateformat(dateArray,  getRTCDate().c_str() );
   SPL("parseDate  : " + String( dateArray ) );
 
   // Window -1

@@ -22,7 +22,8 @@ class countingMachine: public WeighingHandle {
     void onScreen(uint8_t showMeAt );
     bool printStringCOUNT( );
     bool countStripImage();
-     
+    void DateNTimeHandler();
+    
   public :
     class WeighingHandle commFun;
     class userKeyBoard kbd;
@@ -43,9 +44,27 @@ class countingMachine: public WeighingHandle {
 };
 
 
-void  countingMachine:: _calculateCounts() {
+void  countingMachine :: DateNTimeHandler() {
+  char timeArray[10];
+  char preTime[10];
 
+  //======================================================
+  // write only when pre and current values of Time are different
+  // memset(timeArray, '\0', 10);
+  parshTimeFormat(timeArray, getRTCTime().c_str() )
+  if ( strcmp( preTime, timeArray ) ) {
+    tft.setFreeFont( (const GFXfont *)EUROSTILE_B7 );
+    tft.setTextColor(TFT_BLACK, TFT_BLACK);
+    tft.fillRect(400, 295, 50, 20, TFT_WHITE);
+    tft.setCursor(400, 310);
+    tft.print("  " + String(timeArray) + String("pm") );
+    //    SPL("  " + String(timeArray) + String("pm") );
+    strcpy( preTime, timeArray );
+  }
+  //======================================================
 }
+
+
 
 int8_t countingMachine:: activityBasedOnTouch() {
 
@@ -209,6 +228,7 @@ void countingMachine:: countHandler() {
     onScreen( COUNT_NetWeight );
     onScreen(COUNT );
   }
+  DateNTimeHandler();
 }//end-countHandler
 
 
@@ -293,22 +313,20 @@ void countingMachine:: _start() {
 
 
 
-bool  countingMachine :: countStripImage()
-{
+bool  countingMachine :: countStripImage(){
   tft.setSwapBytes(true);
   tft.pushImage( 10, 0, CountingModeStripWidth, CountingModeStripHeight, CountingModeStrip );
 }
 
 
-bool  countingMachine :: printStringCOUNT( )
-{
+bool  countingMachine :: printStringCOUNT( ){
   countStripImage();
   String weightUnit = _getWeighingUnit();
   tft.setTextSize( 1 );
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
 
   char dateArray[10];
-  parshDateformat(dateArray, _getDate().c_str() );
+  parshDateformat(dateArray, getRTCDate().c_str() );
 
   // Window-1
   tft.setFreeFont( (const GFXfont *)EUROSTILE_B13 );
@@ -337,8 +355,6 @@ bool  countingMachine :: printStringCOUNT( )
              + "  " + String(dateArray) );
 
 }
-
-
 
 
 
