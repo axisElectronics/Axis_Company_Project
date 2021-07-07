@@ -1,6 +1,9 @@
 #include "commonGlobal.h"
 #include "InterruptHandler.h"
 
+
+
+
 void IRAM_ATTR INTER_resetPage() {
   noInterrupts();
   if ( millis() - TimeOut > 500 ) {
@@ -90,9 +93,9 @@ bool checkTouch(uint8_t touchMode ) {
       break;
 
     case 4 :
-      if ( weightClass.handleTouchFuncationality_PRICE() == -1 ) {
-        return 1;
-      }
+//      if ( weightClass.handleTouchFuncationality_PRICE() == -1 ) {
+//        return 1;
+//      }
       break;
 
 
