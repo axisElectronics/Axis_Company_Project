@@ -57,6 +57,8 @@ int8_t countingMachine:: activityBasedOnTouch() {
     case map_CmdPrint : break; // as per requirement
     case map_CmdZero  : CMD_ZERODATA break;
     case map_CmdTare  : CMD_AUTOTARE break;
+    case open_unitWeightWin : goto UNIT_WEIGHT; break;
+    case open_countWin :      goto COUNT; break;
   }//end-switch
 
   // if ( ( pressed = tft.getTouch(&xAxis, &yAxis) ) == 0 ) return 0;
@@ -79,21 +81,23 @@ int8_t countingMachine:: activityBasedOnTouch() {
       return -1;
     }
     else if ( Field_Two_Touch  ){
+      UNIT_WEIGHT :
+      
       STOP_SERIAL2
       START_SERIAL1
 
       kbd.userInput.userInputArray_Size = 25;
       kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
       kbd.init(  );
-      kbd.userInput.numericSwitchFlag = 1;
-
+      kbd.userInput.numericSwitchFlag = 1; 
+      strcpy( kbd.userInput.fieldLable, "UnitWeight" );     
       kbd.takeUserInput( NULL );
       SPL("1-keyboard : " + String( kbd.userInput.userInputArray ) );
 
       // update unite weight fields
       updateField = COUNT_UnitWeight;
       strcpy( asciiTemp,  kbd.userInput.userInputArray );
-      
+     strcpy( kbd.userInput.unitbuf, "gm" );     
       _rawCalculation();
       numericValues[updateField] /=  1000;
       _rawCalculation();
@@ -117,14 +121,16 @@ int8_t countingMachine:: activityBasedOnTouch() {
     }
     else  if ( Field_One_Touch  ) {
       SPL("X : " + String(xAxis) + ", Y : " + String( yAxis ) );
+      COUNT :
+      
       STOP_SERIAL2
       START_SERIAL1
 
       kbd.userInput.userInputArray_Size = 25;
       kbd.userInput.userInputArray = new char[kbd.userInput.userInputArray_Size];
       kbd.init(  );
-      kbd.userInput.numericSwitchFlag = 1;
-
+      kbd.userInput.numericSwitchFlag = 1;    
+      strcpy( kbd.userInput.fieldLable, "COUNT" );      
       kbd.takeUserInput( NULL );
       SPL("1-keyboard : " + String( kbd.userInput.userInputArray ) );
 
@@ -388,7 +394,6 @@ bool  countingMachine :: printStringCOUNT( ) {
   tft.setCursor(420, 173);  tft.print(weightUnit);
 
   // Bottom strip flags.
-  // Bottom strip flags.
   tft.setFreeFont( (const GFXfont *)EUROSTILE_B7 );
   tft.setTextColor(TFT_BLACK, TFT_BLACK);
   tft.setCursor(5, 310);
@@ -398,6 +403,7 @@ bool  countingMachine :: printStringCOUNT( ) {
              + " e: " + String(1) + String("g") \
              + " class: " + String("ll") \
              + "  " + String(dateArray) );
+             
 
 }
 
@@ -604,8 +610,6 @@ void  countingMachine :: updateUnitWindow() {
 
   // end : update preVlaue
  // strcpy( showDigits.preValue[1], showDigits.currentValue );
-
-
 }
 
 
