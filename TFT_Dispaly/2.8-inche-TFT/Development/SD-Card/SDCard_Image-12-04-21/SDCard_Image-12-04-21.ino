@@ -87,8 +87,8 @@ void setup() {
   //  we are using HSPI for fetching data from SD card.
   //========================================================
 
-  //SPIClass SPI1 = SPIClass(HSPI);
- // SPI1.begin(); 
+  SPIClass SPI1 = SPIClass(HSPI);
+  SPI1.begin(); 
    
   if (!SD.begin(4)) { // using D4 GPIO for SD_card
     Serial.println("Card Mount Failed");
