@@ -88,8 +88,6 @@ void  weight :: weightHandler() {
   memset(asciiTemp, '\0', 10);
   strcpy( asciiTemp, _readbuf( ).c_str() );  asciiTemp[7] = '\0';
 
-  SP(">>>> "); SPL(asciiTemp);
-
   if ( strlen(asciiTemp) > 5 ) {
     _rawCalculation();
 
@@ -113,13 +111,6 @@ void weight:: _start() {
   initTFTHandler ( );
   printStringWeight( );
 
-  /* This is command which is responsibale for starting continuous data from machine */
-  class command cmd;
-  if ( cmd.sendCommand(STARTDATA) ) {
-    SPL("Ok Recevied ....!!!");
-  } else {
-    SPL("Ok Not Recevied ....!!!");
-  }
 
 
   uint8_t tempdot = _getDecimal().c_str()[0];

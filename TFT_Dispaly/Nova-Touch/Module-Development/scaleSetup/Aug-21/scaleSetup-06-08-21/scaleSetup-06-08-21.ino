@@ -24,18 +24,21 @@ volatile int *int_SET = (int *)( INT_SET  );
 
 void (*TouchInterrupt_ptr)(void) ;
 
+#define EN_TOUCH 1
+
 TaskHandle_t xHandleTouch;
+SemaphoreHandle_t xSemaphore_Touch;
 
 void TouchMonitor( void * pvParameters ) {
-  uint16_t xAisx=0, yAisx=0; 
+ 
   for(;;){
 
-   if( tft.getTouch(&xAisx, &yAisx, 20) ){
-    SPL("Hello new task...!!!");
-    SP("X: ");SPL(xAisx);
-    SP("Y : ");SPL(yAisx);
+   if( tft.getTouch(&xAxis, &yAxis, 20)  ){
+    pressed = 1;
    }
-    
+ 
+ }
+    SPL("hello");
     //==============================================
     //        STOP this Thread for some Time
     //==============================================
@@ -43,13 +46,10 @@ void TouchMonitor( void * pvParameters ) {
     yield();
 
   }
-}
 
 void setup() {
-  Wtft.initWeighingTFT( );
+  Wtft.initWeighingTFT( );  
   pinMode(GPIOPin_TIRQ, INPUT_PULLUP);
-  TimeOut = millis();
-
 
 //   xTaskCreate(   TouchMonitor,
 //                "TouchMonitor",
@@ -58,16 +58,18 @@ void setup() {
 //                 1,
 //                 &xHandleTouch );
 
-
+ TimeOut = millis();
 }
 
 
 void loop() {
+  
 
   if ( ISR_dtech > 10 ) {
     ATTACH_TOUCH_INTERRUPT
     ISR_dtech = 0;
   }
+
   Wtft.readyAxisScales();
 yield();
 
@@ -82,6 +84,7 @@ void WeighingHandle :: readyAxisScales(){
   
 HERE :
   if (flag) {
+  
     settingPageInit( ); // import default settings
 
     uint8_t tempdot = _getDecimal().c_str()[0];
@@ -96,7 +99,9 @@ HERE :
 
     startUPImage();
     STOP_SERIAL2
+ 
     TouchInterrupt_ptr = INTER_resetPage;
+
     flag = 0;
     pressed = 0;
 //    xAxis = yAxis = 0;
@@ -109,11 +114,13 @@ HERE :
 
    ATTACH_TOUCH_INTERRUPT
     yield();
-  }
-
+   
+   }
+  
 
   if ( pressed )
   {
+   
     if ( SettingTouchEnable() )
     {
       Mode = 1;
@@ -121,10 +128,12 @@ HERE :
       if ( userSetting.weighingMode ) {
         Mode = 2;
         START_SERIAL2
-    
+        CMD_STARTDATA
       } else {
         pressed =  0;
+      
         ATTACH_TOUCH_INTERRUPT
+        
       }
     }else if (  CountingModeTouchEnable()  ){
       if ( userSetting.countingMode ) {
@@ -133,7 +142,9 @@ HERE :
         CMD_STARTDATA
       } else {
         pressed =  0;
+       
         ATTACH_TOUCH_INTERRUPT
+       
       }
     }else if (  PriceingModeTouchEnable() ){
       if ( userSetting.pricecomputing )
@@ -143,7 +154,9 @@ HERE :
         CMD_STARTDATA
       } else {
         pressed =  0;
+       
         ATTACH_TOUCH_INTERRUPT
+        
       }
     }else if (  CheckingModeTouchEnable() ) {
       Mode = 5;
@@ -151,9 +164,11 @@ HERE :
       CMD_STARTDATA
     }else {
       pressed =  0;
-      ATTACH_TOUCH_INTERRUPT
+      
+        ATTACH_TOUCH_INTERRUPT
+        
     }
-  }//end-if( getTouch() )
+  }//end-if( pressed )
 
 
   switch (Mode)
@@ -227,6 +242,6 @@ HERE :
       }
       break;
   }//end- switch mode
-
+ 
   yield();
 }//end- readyAsixScales

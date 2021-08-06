@@ -63,22 +63,30 @@ class SEPL328_customKeypad
     char mappedKey;
 
   public :
+  /*
+   * 
+   */
     void intiSEPL328_Keypad() {
       Serial1.begin(9600, SERIAL_8N1, RXD1, TXD1); // keypad
     }
+    /*
+     * 
+     */
     void stopSEPL328_Keypad() {
       Serial1.end();
     }
 
-
+/*
+ * 
+ */
     int8_t getKeyPressed() {
       if (Serial1.available() > 0 ) {
         memset(key, '\0', 2);
         keyNo = 0;
-        int8_t buffBytes = Serial1.readBytes(key, 2);
-              
-       if ( buffBytes != 0 )
-         Serial.print("rawkey : "); Serial.println(key);
+        String buffBytes = Serial1.readStringUntil('\r');
+        strcpy(key, buffBytes.c_str());      
+
+       // Serial.print("rawkey : "); Serial.println(key);
  
         if( isdigit(key[0]) ){
           if( !isdigit(key[1]) ) key[1] = '\0';
@@ -86,15 +94,19 @@ class SEPL328_customKeypad
             key[2] = '\0';           
           }
           sscanf(key, "%d", &keyNo);
-        }          
-        Serial.printf("keyNo : %d\n", keyNo);
+        }  
+         
+        sscanf(key, "%d", &keyNo);       
+       // Serial.printf("keyNo : %d\n", keyNo);
         return keyNo;
       }
       
       return keyNo=0;
     }
 
-
+/*
+ * 
+ */
 
     int8_t getMappedKey(  ) {
      
@@ -119,12 +131,14 @@ class SEPL328_customKeypad
           case 15 : return map_CmdClear;
           case 14 : return map_CmdMode_Switch;
           default :
-            Serial1.print("keyNo : "); Serial.println(keyNo);
+            Serial.print("default-keyNo : "); Serial.println(keyNo);
         }//end-switch
       }//end-if
       return -20; // keep running
     }//end-getmappedKey
-
+/*
+ * 
+ */
 
     int8_t navigationKeyMapping() {
       
@@ -142,6 +156,9 @@ class SEPL328_customKeypad
       return 5;
     }//emd-naviagtionKeyMapping
 
+/*
+ * 
+ */
     int8_t getactiveMachineKeyMapping() {
 
       if ( getKeyPressed() != 0 )
