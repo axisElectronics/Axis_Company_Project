@@ -55,7 +55,12 @@ void setup() {
   tft.setRotation(1);
   
   // Use this calibration code in setup():
+  #ifdef ILI9486_DRIVER
   uint16_t calData[5] = { 329, 3444, 448, 3193, 2 };
+  #endif
+  #ifdef ILI9488_DRIVER
+   uint16_t calData[5] = { 299, 3592, 256, 3464, 7 };
+  #endif
   tft.setTouch(calData);
                  
   //  set.info();

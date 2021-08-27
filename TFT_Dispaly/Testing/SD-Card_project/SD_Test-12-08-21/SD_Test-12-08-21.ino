@@ -14,7 +14,6 @@ void setup() {
   TFTinit();
   SDCardInit();
   startJPEGDecoder();
-
 }//end-setup
 
 
