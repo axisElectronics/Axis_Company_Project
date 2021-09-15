@@ -24,8 +24,7 @@ void setup() {
 
 
 void loop() {
-  Serial.println("Hello :");  
+ 
   kbd.takeUserInput("30000" );
-  Serial.println("World : " + String(kbd.userInput.fixFormatstruct->fixFormatArray));
-  kbd.userInput.fixFormatstruct->fixFormatFlag = 1;
+  Serial.println("==>>> " + String( kbd.userInput.userInputArray ) );
 }

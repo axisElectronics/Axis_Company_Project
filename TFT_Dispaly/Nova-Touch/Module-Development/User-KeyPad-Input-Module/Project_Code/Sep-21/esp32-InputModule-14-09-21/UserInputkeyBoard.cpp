@@ -104,6 +104,17 @@ bool switchFlag = 0;
  *                                                                *
  *******************************************************************/
 
+
+void userKeyBoard::tftInit(){
+ 
+  tft.init();
+  tft.fillScreen(TFT_BLACK);
+  tft.setRotation(1);
+  uint16_t calData[5] = { 329, 3444, 448, 3193, 2 };
+  tft.setTouch(calData);
+}
+
+
 void userKeyBoard::init( )
 {
   keypadParamInit(  );
@@ -445,14 +456,30 @@ void userKeyBoard ::  DrawfixFormatChar(char fixChar, int8_t idx )
 
 
 
+String userKeyBoard :: takeStringInput(){
+       
+      userInput.userInputArray_Size = 70;
+      userInput.userInputArray = new char[userInput.userInputArray_Size];
+      userInput.numericSwitchFlag = ALPHANUM; 
+
+      init();
+      String temp = takeUserInput( NULL );
+      delete[] userInput.userInputArray;
+      return  temp;
+}
 
 
 
 
+/* @ takeUserInput :
+ *  ----------------
+ *  1 -> This funcation is PUBLIC funcation. Which is responsible for taking user data into 
+ *       Predefine Array.  < userInput.userInputArray >
+ *       
+ *  2 -> It is madatory to free dynamic memory allocation if user has used dyanmic array.
+ */
 
-
-
-void  userKeyBoard :: takeUserInput( char *argc )
+char *userKeyBoard :: takeUserInput( char *argc )
 {
   uint8_t inc = 0;
   int8_t temp = keepRunning;
@@ -509,7 +536,8 @@ void  userKeyBoard :: takeUserInput( char *argc )
       case keepRunning : break;
       case back :
         step_back(temp, inc);
-        return;
+        goto EXIT;
+//        return;
 
       case clr :
         inc = step_clr( temp, inc);
@@ -522,8 +550,8 @@ void  userKeyBoard :: takeUserInput( char *argc )
         {
           userInput.fixFormatstruct->idx = 0;
         }
-
-        return;
+          goto EXIT;
+//        return;
 
       case del :
         inc = step_del( temp, inc);
@@ -542,7 +570,9 @@ void  userKeyBoard :: takeUserInput( char *argc )
     }//end-switch
 
   }//end-while
- // Serial.println("OUTPUT-->> ");
+
+  EXIT:
+  return userInput.userInputArray;
 }
 
 

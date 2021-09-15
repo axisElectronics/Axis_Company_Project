@@ -30,8 +30,7 @@ using namespace std;
 
 
 
-enum touchKey
-{
+enum touchKey{
   keepRunning = -20,
   sw = -6,
   back,
@@ -57,14 +56,10 @@ class userKeyBoard: public  SEPL328_customKeypad
   private :
   bool fixformat;
   
-  
-  
-    int8_t _findkeypadTouch( uint16_t xAxis, uint16_t yAxis);
-    void printCharArray( char printChar, int8_t idx );
-
-  
-  
-  
+   
+  int8_t _findkeypadTouch( uint16_t xAxis, uint16_t yAxis);
+  void printCharArray( char printChar, int8_t idx );
+  void moveUrDash( int8_t idx );
   
   public :
 
@@ -158,11 +153,13 @@ class userKeyBoard: public  SEPL328_customKeypad
     /********************************************************************************/
     /* userInputKeyBoard.h */
     void init(  ); // public
+    virtual void tftInit();
     
-	  int  handleKeyPad(  );
+	  int handleKeyPad(  );
     
-    void takeUserInput(  char *argc );
-
+    char *takeUserInput(  char *argc );
+    /*<! Take data from user as String >*/
+    String takeStringInput();
     void keypadParamInit( );
 
     void keypadDataparser( );
@@ -172,7 +169,7 @@ class userKeyBoard: public  SEPL328_customKeypad
 
     void userInputFixFormat(  );
     void DrawfixFormatChar(char fixChar, int8_t idx );
-    void moveUrDash( int8_t idx );
+    
     void noticBoard( uint16_t FGColor, uint16_t BGColor, bool switchFlag );
     void noticBoard_Unit( uint16_t FGColor, uint16_t BGColor, char *buf );
     void printkeypadLable(  );

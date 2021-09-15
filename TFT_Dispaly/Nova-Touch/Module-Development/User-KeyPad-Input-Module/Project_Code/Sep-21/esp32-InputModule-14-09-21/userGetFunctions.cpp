@@ -115,7 +115,7 @@ void userKeyBoard ::  userInputDate(   char temp ){
 
 char*  userKeyBoard :: getStringType( int8_t minLen, int8_t maxLen ){
   getPassword( minLen, maxLen );
- userInput.fixFormatstruct->switchFlag = 1;
+  userInput.fixFormatstruct->switchFlag = 1;
   strcpy(userInput.fieldLable, "String");
 }
 
