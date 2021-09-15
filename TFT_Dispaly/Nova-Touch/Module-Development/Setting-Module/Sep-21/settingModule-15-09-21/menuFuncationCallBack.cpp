@@ -1452,10 +1452,13 @@ int8_t priceComputing( class settings * settings ) {
 }
 
 
-
+/*<! ==================================================== >*/
 
 int8_t addHeaderOne( class settings *settings ){ 
-    settings->header[0] = String( settings->takeStringInput() );
+    char buff[70];
+    settings->takeStringInput( buff, 70 );   
+    strcpy( settings->userScaleSetup.saveHeader[0] , buff     );
+    settings->saveAsDefault();
     
   Enable_Text_Font()
   tft.fillScreen(TFT_BLACK);
@@ -1468,8 +1471,13 @@ int8_t addHeaderOne( class settings *settings ){
   return 1;
 }
 
+/*<! ==================================================== >*/
+
 int8_t addHeaderTwo( class settings *settings ){
-    settings->header[1] = String( settings->takeStringInput() );
+    char buff[70];
+    settings->takeStringInput(buff, 70); 
+    strcpy( settings->userScaleSetup.saveHeader[1] , buff     );
+    settings->saveAsDefault();
     
   Enable_Text_Font()
   tft.fillScreen(TFT_BLACK);
@@ -1482,10 +1490,15 @@ int8_t addHeaderTwo( class settings *settings ){
   
 }
 
+/*<! ==================================================== >*/
+
 int8_t addHeaderThree( class settings *settings ){
-    settings->header[2] = String( settings->takeStringInput() );
+    char buff[70];
+    settings->takeStringInput(buff, 70);
+    strcpy( settings->userScaleSetup.saveHeader[2] , buff     ); 
+    settings->saveAsDefault();
     
-    Enable_Text_Font()
+  Enable_Text_Font()
   tft.fillScreen(TFT_BLACK);
   settings->settingPageImage();
   FsettingIndexBlankFullCircle();
@@ -1495,10 +1508,16 @@ int8_t addHeaderThree( class settings *settings ){
   return 1;
 
 }
+
+/*<! ==================================================== >*/
+
 int8_t addHeaderFour( class settings *settings ){
-    settings->header[3] = String( settings->takeStringInput() );
+    char buff[70];
+    settings->takeStringInput(buff, 70);    
+    strcpy( settings->userScaleSetup.saveHeader[3] , buff     );  
+    settings->saveAsDefault();
     
-    Enable_Text_Font()
+  Enable_Text_Font()
   tft.fillScreen(TFT_BLACK);
   settings->settingPageImage();
   FsettingIndexBlankFullCircle();
@@ -1508,10 +1527,18 @@ int8_t addHeaderFour( class settings *settings ){
   return 1;
 
 }
+
+/*<! ==================================================== >*/
+
 int8_t addHeaderFive( class settings *settings ){
-    settings->header[4] = String( settings->takeStringInput() );
-    
-    Enable_Text_Font()
+    char buff[70];
+    settings->takeStringInput(buff, 70);   
+    strcpy( settings->userScaleSetup.saveHeader[4] , buff );
+    settings->saveAsDefault();
+
+    Serial.print("==>>> " + settings->getHeader() );
+         
+  Enable_Text_Font()
   tft.fillScreen(TFT_BLACK);
   settings->settingPageImage();
   FsettingIndexBlankFullCircle();
@@ -1521,9 +1548,12 @@ int8_t addHeaderFive( class settings *settings ){
   return 1;
 
 }
+
+
 
 int8_t addFooterOne( class settings *settings ){
-    settings->footer[0] = String( settings->takeStringInput() );
+    char buff[70];
+    settings->footer[0] = String( settings->takeStringInput(buff, 70) );
     
     Enable_Text_Font()
   tft.fillScreen(TFT_BLACK);
@@ -1536,7 +1566,8 @@ int8_t addFooterOne( class settings *settings ){
 
 }
 int8_t addFooterTwo( class settings *settings ){
-    settings->footer[1] = String( settings->takeStringInput() );
+    char buff[70];
+    settings->footer[1] = String( settings->takeStringInput(buff, 70) );
     
    Enable_Text_Font()
   tft.fillScreen(TFT_BLACK);
@@ -1549,7 +1580,8 @@ int8_t addFooterTwo( class settings *settings ){
 
 }
 int8_t addFooterThree( class settings *settings ){
-    settings->footer[2] = String( settings->takeStringInput() );
+    char buff[70];
+    settings->footer[2] = String( settings->takeStringInput(buff, 70) );
 
     
   Enable_Text_Font()
