@@ -5,6 +5,7 @@
 #include "commonGlobal.h"
 #include "InterruptHandler.h"
 
+extern class WeighingHandle Wtft;
 
 //enum {
 //  GROSS = 0,
@@ -175,6 +176,8 @@ int8_t  weight :: printerLevel(){
   //1. Start Serial-0 port
   Serial.println("Printer has been touched...!!!"); 
 
+  SP("H==>> " + getHeader() );
+  SP("F==>> " + getFooter() );
   char printlvl[1024] = { "^XA\
 ^SZ2^JMA\
 ^MCY^PMN\
