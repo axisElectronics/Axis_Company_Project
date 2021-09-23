@@ -45,7 +45,7 @@ SPI.beginTransaction(settingsA);
 //spiSD.setFrequency(freq);
 
 /* SD card Settings */
-if (!SD.begin( SD_CS, spiSD  )) {
+//if (!SD.begin( SD_CS, spiSD  )) {
   Serial.println("Card Mount Failed");
 }else{
   Serial.println("Card Mount Successed ....!!!");

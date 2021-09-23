@@ -5,14 +5,19 @@
 #include "commonGlobal.h"
 #include "InterruptHandler.h"
 
-#define GROSS 0
-#define NET   1
-#define TARE  2
+extern class WeighingHandle Wtft;
+
 //enum {
 //  GROSS = 0,
 //  NET   = 1,
 //  TARE  = 2
 //};
+
+#define  GROSS  0
+#define  NET    1
+#define  TARE   2
+
+
 
 class weight : public WeighingHandle {
   private :
@@ -171,6 +176,8 @@ int8_t  weight :: printerLevel(){
   //1. Start Serial-0 port
   Serial.println("Printer has been touched...!!!"); 
 
+  SP("H==>> " + getHeader() );
+  SP("F==>> " + getFooter() );
   char printlvl[1024] = { "^XA\
 ^SZ2^JMA\
 ^MCY^PMN\

@@ -4,18 +4,26 @@
 
 #include "commonGlobal.h"
 #include "InterruptHandler.h"
+#include "prtLabel.h"
 
-#define GROSS 0
-#define NET   1
-#define TARE  2
+
+extern class WeighingHandle Wtft;
+
 //enum {
 //  GROSS = 0,
 //  NET   = 1,
 //  TARE  = 2
 //};
 
+#define  GROSS  0
+#define  NET    1
+#define  TARE   2
+
+
+
 class weight : public WeighingHandle {
   private :
+    char dateArray[10];
     uint8_t digitSpeed = 0;
     uint8_t updateField = GROSS;
     String temp;
@@ -166,56 +174,83 @@ void   weight :: onScreen(uint8_t showMeAt ) {
   }
 }
 
-
+static int snum=0;
 int8_t  weight :: printerLevel(){
+ 
   //1. Start Serial-0 port
-  Serial.println("Printer has been touched...!!!"); 
+ // Serial.println("Printer has been touched...!!!");
+  
+  Wtft.updateLableVar( 2 , asciiValues[GROSS]);
+  Wtft.updateLableVar( 3 , asciiValues[TARE]);
+  Wtft.updateLableVar( 4 , asciiValues[NET]);
+  
+// sample bill print Format -1
+/*
+  SP( getHeader() );
+  SPL();
+  SP("S.no : "); SPL(snum++);
+  SP("Date : "); SPL(dateArray);
+  SP("Time : "); SPL(preTime);
+  SP("Product Code : "); SPL();
+  SP("NetWeight : "); SPL( Wtft.showMeLableVar(4)  );
+  SP("TareWeight : "); SPL( Wtft.showMeLableVar(3) );
+  SP("GrossWeight : "); SPL( Wtft.showMeLableVar(2) );
+  SP("Remark : "); SPL();
+  SP("Shift : "); SPL("2");
 
-  char printlvl[1024] = { "^XA\
-^SZ2^JMA\
-^MCY^PMN\
-^PW444\
-~JSN\
-^JZY\
-^LH0,0^LRN\
-^XZ\
-^XA\
-^FT41,57\
-^CI0\
-^A0N,59,62^FDPerfect Traders^FS\
-^FT26,118\
-^A0N,34,22^FDItem Name :^FS\
-^FT28,218\
-^A0N,20,27^FDDate :^FS\
-^FT226,218\
-^A0N,20,27^FDTime :^FS\
-^FT220,170\
-^A0N,37,34^FDWeight :^FS\
-^FT28,170\
-^A0N,37,28^FDSerial# :^FS\
-^FT100,218\
-^A0N,20,27^FD02/08/21^FS\
-^FT296,218\
-^A0N,20,27^FD11:25:00 AM^FS\
-^FO0,79\
-^GB444,0,3^FS\
-^FT158,118\
-^A0N,34,20^FDABCDEFGHIJKLMNOPQRSTUVWXY^FS\
-^FT341,170\
-^A0N,37,34^FD0.00Kg^FS\
-^FT134,170\
-^A0N,37,28^FD1234^FS\
-^FO0,191\
-^GB0,4,2^FS\
-^FO0,191\
-^GB444,0,3^FS\
-^FO0,192\
-^GB444,0,3^FS\
-^PQ1,0,1,Y\
-^XZ "
-};
+  SP( getFooter() );
+  SPL();
+  SPL();
+  SPL();
+*/
+
+// sample bill print Format -2
+static int count=1, sample2=1;
+//Header part must print Once 
+if( sample2 ){
+ SP( getHeader() );
+ SPL();
+
+#define adjustSpace(xx) for(uint8_t i=0; i < ( 15-strlen(xx) ); i++ ) SP(' ');
+
+SP("Product  : "); SP("Tablet");    adjustSpace("Tablet");     SP("Operator Name : "); SPL("Sriram "); 
+SP("Batch No : "); SP("123456789"); adjustSpace("123456789");  SP("Line No       : "); SPL("1");
+SP("Date     : "); SP(dateArray);   adjustSpace(dateArray);    SP("Shift         : "); SPL("B ");
+char tempbuff[] = "==================================================";
+//SPL( strlen(tempbuff) );//max length is 50
+SPL(tempbuff);
+SPL("S.no         Time           Gross Weight  ");
+SPL(tempbuff);
+sample2 =0;
+}
+
+//printable data
+if( count < 6 ){
+ SP(snum++);  SP("            ");
+ SP(preTime); SP("            ");
+ SPL( Wtft.showMeLableVar(2) );
+ count++;
+}else{
+  count = 1;
+  sample2 = 1;
+}
 
 
+// footer part must print after 5 print has been done.
+if( sample2 ){
+  SP( getFooter() );
+  SPL();
+  SPL();
+  SPL(); 
+}
+
+/* 1 -> It is tested on Gainscha Printer.
+ * 2 -> Here we are replacing variables with our machine real time values.
+ * 3 -> use this code to check,
+ * 
+ *     Wtft.printLebel();
+ */
+ 
   
 }
 
@@ -355,7 +390,7 @@ bool  weight :: printStringWeight( ) {
   SPL("weightUnit : " + String(weightUnit) );
   tft.setTextSize( 1 );
 
-  char dateArray[10];
+ 
   SPL("getDate+  : " + getRTCDate() );
   parshDateformat(dateArray,  getRTCDate().c_str() );
   SPL("parseDate  : " + String( dateArray ) );
