@@ -262,7 +262,7 @@ class prtLabel {
     void readLabelFile(const char *path, char *userBuff);
    
     void  updateLableVar(enum_LableVar varNum, char *varData);
-    char * showMeLableVar(int varNum);
+    char * showMeLableVar(enum_LableVar varNum);
     void  printLebel( );
     void  printLebelSD( char *labelFilePath );
     
