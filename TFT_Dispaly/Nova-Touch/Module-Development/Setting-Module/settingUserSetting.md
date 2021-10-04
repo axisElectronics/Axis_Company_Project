@@ -3,6 +3,8 @@
 ```mermaid
 flowchart TB
 settingUserPageHandler-->addUserMenuNode-->showOnTFT-->loadDisplayContent;
+addUserMenuNode-->userDefined_function-->addUserMenuNode;
+addUserMenuNode-->userdefineArray;
     showOnTFT-->whileLoop;
 	whileLoop-->switch;
 	switch{CheckButton}-- Yes -->Down;
@@ -18,4 +20,24 @@ settingUserPageHandler-->addUserMenuNode-->showOnTFT-->loadDisplayContent;
 	
     
 ```
+
+
+
+
+
+
+
+
+
+## How to add a Menu index into User Menu.
+
+```mermaid
+flowchart TB
+addUserMenuNode-->userDefined_function-->addUserMenuNode;
+addUserMenuNode-->userdefineArray;
+```
+
+
+
+
 

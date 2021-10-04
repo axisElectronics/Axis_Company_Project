@@ -79,15 +79,94 @@ int8_t countingMachine:: printerLevel(){
     Wtft.updateLableVar( Operator_Name, (char *)Wtft._getOperatorName().c_str() );
     Wtft.updateLableVar( SHIFT, (char *)Wtft._getShift().c_str() );
 
-    /* 1 -> It is tested on Gainscha Printer using ZPL printer Label.
-   2 -> Here we are replacing variables with our machine real time values.
-   3 -> use this code to check,
+  //check which printer is enabled....
+  int8_t checkprtLable;
+  for(int8_t i=0; i < 5; ++i){
+    if( Wtft._getPrtResponse(i) == '1' ){
+      checkprtLable = i;
+    }
+  }
+  
+  // sample bill print Format -1
+  switch(checkprtLable){
+    case 0:
+        SP( getHeader() );
+        SPL();
+        SP("S.no         : "); SPL( snum++ );
+        SP("Date         : "); SPL( Wtft.showMeLableVar( DATE ) );
+        SP("Time         : "); SPL( Wtft.showMeLableVar( TIME ) );
+        SP("Product Code : "); SPL( Wtft.showMeLableVar( PRODUCT_NAME ));
+        SP("NetWeight    : "); SPL( Wtft.showMeLableVar(Lvar_NET)  );
+        SP("TareWeight   : "); SPL( Wtft.showMeLableVar(Lvar_TARE) );
+        SP("GrossWeight  : "); SPL( Wtft.showMeLableVar(Lvar_GROSS) );
+        SP("Remark       : "); SPL();
+        SP("Shift        : "); SPL( Wtft.showMeLableVar(SHIFT) );
+    
+        SP( getFooter() );
+        SPL();
+        SPL();
+        SPL();
+ /* ===================================================================== */
+   // sample bill print Format -2
+  /*
+    static int count=1, sample2=1;
+    //Header part must print Once
+    if( sample2 ){
+    SP( getHeader() );
+    SPL();
 
-       Wtft.printLebel();
+    #define adjustSpace(xx) for(uint8_t i=0; i < ( 15-strlen(xx) ); i++ ) SP(' ');
+
+    SP("Product  : "); SP( Wtft.showMeLableVar(PRODUCT_NAME) );    adjustSpace( (  Wtft.showMeLableVar(PRODUCT_NAME) ) );     SP("Operator Name : "); SPL(Wtft.showMeLableVar(Operator_Name));
+    SP("Batch No : "); SP("123456789"); adjustSpace("123456789");  SP("Line No       : "); SPL("1");
+    SP("Date     : "); SP(dateArray);   adjustSpace(dateArray);    SP("Shift         : "); SPL(Wtft.showMeLableVar(SHIFT));
+    char tempbuff[] = "==================================================";
+    //SPL( strlen(tempbuff) );//max length is 50
+    SPL(tempbuff);
+    SPL("S.no         Time           Gross Weight  ");
+    SPL(tempbuff);
+    sample2 =0;
+    }
+
+    //printable data
+    if( count < 6 ){
+    SP(snum++);  SP("            ");
+    SP(preTime); SP("            ");
+    SPL( Wtft.showMeLableVar(2) );
+    count++;
+    }else{
+    count = 1;
+    sample2 = 1;
+    }
+
+
+    // footer part must print after 5 print has been done.
+    if( sample2 ){
+    SP( getFooter() );
+    SPL();
+    SPL();
+    SPL();
+}
 */
-  // sample print lable format -3
-   Wtft.printLebel();
+
+
+    break;
+
+    case 1 :
+    
+      /* 1 -> It is tested on Gainscha Printer using ZPL printer Label.
+         2 -> Here we are replacing variables with our machine real time values.
+         3 -> use this code to check,
+      
+             Wtft.printLebel();
+      */
+        // sample print lable format -3
+         Wtft.printLebel();
+    break;
+  }
  
+
+
 }
 
 
@@ -96,7 +175,7 @@ int8_t countingMachine:: activityBasedOnTouch() {
   switch (  getactiveMachineKeyMapping() ){
     case map_CmdESC   : pressed = 0; return -1;
     case map_CmdUnits : break; // as per requirement
-    case map_CmdPrint : break; // as per requirement
+    case map_CmdPrint : Wtft.popupButton(Xprint,Ybutton, TFT_GREEN); break; // as per requirement
     case map_CmdZero  : CMD_ZERODATA break;
     case map_CmdTare  : CMD_AUTOTARE break;
     case open_unitWeightWin : goto UNIT_WEIGHT; break;
@@ -110,16 +189,20 @@ int8_t countingMachine:: activityBasedOnTouch() {
     pressed = 0;
 
     if ( Taretouch_Auto ) {
+       Wtft.popupButton(Xtare,Ybutton, TFT_RED); 
       START_SERIAL2
       CMD_AUTOTARE
+       Wtft.popupButton(Xtare,Ybutton, TFT_BLACK); 
     }
     else if ( Zerotouch ) {
-      SPL("Zero Touch...!!!");
+       Wtft.popupButton(Xzero,Ybutton, TFT_RED); 
+    //  SPL("Zero Touch...!!!");
       START_SERIAL2
       CMD_ZERODATA
+      Wtft.popupButton(Xzero,Ybutton, TFT_BLACK);  
     }
     else if ( ESC_Touch ) {
-      SPL("ESCTouch...\n");
+    //  SPL("ESCTouch...\n");
       return -1;
     }
     else if ( Field_Two_Touch  ){
@@ -134,7 +217,7 @@ int8_t countingMachine:: activityBasedOnTouch() {
       kbd.userInput.numericSwitchFlag = 1; 
       strcpy( kbd.userInput.fieldLable, "UnitWeight" );     
       kbd.takeUserInput( NULL );
-      SPL("1-keyboard : " + String( kbd.userInput.userInputArray ) );
+ //     SPL("1-keyboard : " + String( kbd.userInput.userInputArray ) );
 
       // update unite weight fields
       updateField = COUNT_UnitWeight;
@@ -201,7 +284,9 @@ int8_t countingMachine:: activityBasedOnTouch() {
     }
     else if( PRT_Touch ){
       //Serial.printf("printer xAxis : %ld, yAxis : %ld\n", xAxis, yAxis);
+      Wtft.popupButton(Xprint,Ybutton, TFT_RED); 
       printerLevel();
+      Wtft.popupButton(Xprint,Ybutton, TFT_BLACK); 
     }
 
   }//end-if
@@ -428,9 +513,9 @@ void countingMachine:: _start() {
 
   class command cmd;
   if( cmd.sendCommand( HIGHDATA ) ){
-    SPL("High Precision has been set...!!!");
+//    SPL("High Precision has been set...!!!");
   }else{
-    SPL("High Precision has not set...!!!");
+//    SPL("High Precision has not set...!!!");
   }
   
 }

@@ -158,11 +158,12 @@ void weight:: _start() {
 #endif
 
   ISR_dtech = 0;
-  Wtft.popupButton(Xesc,  Ybutton, TFT_GREEN);
-  Wtft.popupButton(Xunit, Ybutton, TFT_GREEN);
-//  Wtft.popupButton(Xprint,Ybutton, TFT_GREEN);
-  Wtft.popupButton(Xzero, Ybutton, TFT_GREEN);
-  Wtft.popupButton(Xtare, Ybutton, TFT_GREEN);
+  
+//  Wtft.popupButton(Xesc,  Ybutton, TFT_GREEN);
+//  Wtft.popupButton(Xunit, Ybutton, TFT_GREEN);
+////  Wtft.popupButton(Xprint,Ybutton, TFT_GREEN);
+//  Wtft.popupButton(Xzero, Ybutton, TFT_GREEN);
+//  Wtft.popupButton(Xtare, Ybutton, TFT_GREEN);
 }
 
 
@@ -198,27 +199,35 @@ int8_t  weight :: printerLevel() {
     Wtft.updateLableVar( SHIFT, (char *)Wtft._getShift().c_str() );
   
 
+  //check which printer is enabled....
+  int8_t checkprtLable;
+  for(int8_t i=0; i < 5; ++i){
+    if( Wtft._getPrtResponse(i) == '1' ){
+      checkprtLable = i;
+    }
+  }
+  
   // sample bill print Format -1
-  
-    SP( getHeader() );
-    SPL();
-    SP("S.no         : "); SPL( snum++ );
-    SP("Date         : "); SPL( Wtft.showMeLableVar( DATE ) );
-    SP("Time         : "); SPL( Wtft.showMeLableVar( TIME ) );
-    SP("Product Code : "); SPL( Wtft.showMeLableVar( PRODUCT_NAME ));
-    SP("NetWeight    : "); SPL( Wtft.showMeLableVar(Lvar_NET)  );
-    SP("TareWeight   : "); SPL( Wtft.showMeLableVar(Lvar_TARE) );
-    SP("GrossWeight  : "); SPL( Wtft.showMeLableVar(Lvar_GROSS) );
-    SP("Remark       : "); SPL();
-    SP("Shift        : "); SPL( Wtft.showMeLableVar(SHIFT) );
-
-    SP( getFooter() );
-    SPL();
-    SPL();
-    SPL();
-  
-
-  // sample bill print Format -2
+  switch(checkprtLable){
+    case 0:
+        SP( getHeader() );
+        SPL();
+        SP("S.no         : "); SPL( snum++ );
+        SP("Date         : "); SPL( Wtft.showMeLableVar( DATE ) );
+        SP("Time         : "); SPL( Wtft.showMeLableVar( TIME ) );
+        SP("Product Code : "); SPL( Wtft.showMeLableVar( PRODUCT_NAME ));
+        SP("NetWeight    : "); SPL( Wtft.showMeLableVar(Lvar_NET)  );
+        SP("TareWeight   : "); SPL( Wtft.showMeLableVar(Lvar_TARE) );
+        SP("GrossWeight  : "); SPL( Wtft.showMeLableVar(Lvar_GROSS) );
+        SP("Remark       : "); SPL();
+        SP("Shift        : "); SPL( Wtft.showMeLableVar(SHIFT) );
+    
+        SP( getFooter() );
+        SPL();
+        SPL();
+        SPL();
+ /* ===================================================================== */
+   // sample bill print Format -2
   /*
     static int count=1, sample2=1;
     //Header part must print Once
@@ -261,15 +270,23 @@ int8_t  weight :: printerLevel() {
 */
 
 
+    break;
 
-/* 1 -> It is tested on Gainscha Printer using ZPL printer Label.
-   2 -> Here we are replacing variables with our machine real time values.
-   3 -> use this code to check,
+    case 1 :
+    
+      /* 1 -> It is tested on Gainscha Printer using ZPL printer Label.
+         2 -> Here we are replacing variables with our machine real time values.
+         3 -> use this code to check,
+      
+             Wtft.printLebel();
+      */
+        // sample print lable format -3
+         Wtft.printLebel();
+    break;
+  }
+ 
 
-       Wtft.printLebel();
-*/
-  // sample print lable format -3
-  // Wtft.printLebel();
+
 
 }
 
@@ -320,14 +337,14 @@ int8_t weight :: activityBasedOnTouch() {
       Wtft.popupButton(Xtare, Ybutton, TFT_RED);
       CMD_AUTOTARE
       delay(250);
-      Wtft.popupButton(Xtare, Ybutton, TFT_GREEN);
+      Wtft.popupButton(Xtare, Ybutton, TFT_BLACK);
       return 0;
     }
     else if ( Zerotouch ){
        Wtft.popupButton(Xzero, Ybutton, TFT_RED);
       CMD_ZERODATA
       delay(250);
-       Wtft.popupButton(Xzero, Ybutton, TFT_GREEN);
+       Wtft.popupButton(Xzero, Ybutton, TFT_BLACK);
       return 0;
     }
     else if ( Field_three_Touch  )
@@ -358,10 +375,10 @@ TARE_WEIGHT :
     }
     else if ( PRT_Touch ) {
       //Serial.printf("printer xAxis : %ld, yAxis : %ld\n", xAxis, yAxis);
-     Wtft.popupButton(Xprint, Ybutton, TFT_RED, 3);
+     Wtft.popupButton(Xprint, Ybutton, TFT_RED);
       printerLevel();
       delay(500);
-     Wtft.popupButton(Xprint, Ybutton, TFT_BLACK, 3);
+     Wtft.popupButton(Xprint, Ybutton, TFT_BLACK);
     }
 
   }//end-if
@@ -417,13 +434,13 @@ bool   weight :: weightStripImage() {
 bool  weight :: printStringWeight( ) {
   String weightUnit = _getWeighingUnit();
   weightStripImage();
-  SPL("weightUnit : " + String(weightUnit) );
+ // SPL("weightUnit : " + String(weightUnit) );
   tft.setTextSize( 1 );
 
 
-  SPL("getDate+  : " + getRTCDate() );
+//  SPL("getDate+  : " + getRTCDate() );
   parshDateformat(dateArray,  getRTCDate().c_str() );
-  SPL("parseDate  : " + String( dateArray ) );
+ // SPL("parseDate  : " + String( dateArray ) );
 
   // Window -1
   tft.setFreeFont( (const GFXfont *)EUROSTILE_B13 );

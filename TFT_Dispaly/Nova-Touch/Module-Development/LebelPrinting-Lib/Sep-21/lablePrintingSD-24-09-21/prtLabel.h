@@ -91,73 +91,73 @@ class prtLabel {
     global_config_t prtconfig;
 
     String temp = "^XA\n\
-                ^SZ2^JMA\n\
-                ^MCY^PMN\n\
-                ^PW779\n\
-                ~JSN\n\
-                ^JZY\n\
-                ^LH0,0^LRN\n\
-                ^XZ\n\
-                ^XA\n\
-                ^FT42,441\n\
-                ^CI0\n\
-                ^A0N,51,98^FDBOX^FS\n\
-                ^FT258,163\n\
-                ^A0N,20,27^FDBatch No.: $$$$$$$$$0,$$$$$$$$$1^FS\n\
-                ^FT512,161\n\
-                ^A0N,14,19^FDOperator : $$$$$$$$$2^FS\n\
-                ^FT258,197\n\
-                ^A0N,14,19^FDDate : 26/11/20^FS\n\
-                ^FT307,265\n\
-                ^A0N,31,42^FDCHEMICAL^FS\n\
-                ^FT557,268\n\
-                ^A0N,31,42^FDWEIGHT^FS\n\
-                ^FT327,310\n\
-                ^A0N,20,27^FDDCR - $$$$$$$$$3^FS\n\
-                ^FT589,310\n\
-                ^A0N,20,27^FD39.94^FS\n\
-                ^FT332,351\n\
-                ^A0N,20,27^FDPM - 40^FS\n\
-                ^FT595,351\n\
-                ^A0N,20,27^FD8.36^FS\n\
-                ^FT31,507\n\
-                ^A0N,42,57^FD001/100^FS\n\
-                ^FO261,228\n\
-                ^GB458,337,3^FS\n\
-                ^FO261,283\n\
-                ^GB454,0,3^FS\n\
-                ^FO529,228\n\
-                ^GB0,339,3^FS\n\
-                ^FO72,32\n\
-                ^BQN,2,6^FDLA,100012238100^FS\n\
-                ^FT45,237\n\
-                ^A0N,37,31^FD100012238100^FS\n\
-                ^FT587,197\n\
-                ^A0N,14,19^FDTime : 12:20:47^FS\n\
-                ^FT327,396\n\
-                ^A0N,20,27^FDDCR - 45^FS\n\
-                ^FT332,440\n\
-                ^A0N,20,27^FDPM - 40^FS\n\
-                ^FT589,396\n\
-                ^A0N,20,27^FD39.94^FS\n\
-                ^FT595,440\n\
-                ^A0N,20,27^FD8.36^FS\n\
-                ^FT327,486\n\
-                ^A0N,20,27^FDDCR - 45^FS\n\
-                ^FT332,530\n\
-                ^A0N,20,27^FDPM - 40^FS\n\
-                ^FT589,486\n\
-                ^A0N,20,27^FD39.94^FS\n\
-                ^FT595,530\n\
-                ^A0N,20,27^FD8.36^FS\n\
-                ^FT247,55\n\
-                ^A0N,23,44^FDPOLYMER FOR 238100CFMB^FS\n\
-                ^FT244,106\n\
-                ^A0N,23,44^FDPOLYMER FOR 238100CFMB^FS\n\
-                ^FT611,161\n\
-                ^A0N,14,19^FDSumit Kumar ^FS\n\
-                ^PQ1,0,1,Y\n\
-                ^XZ\n";
+^SZ2^JMA\n\
+^MCY^PMN\n\
+^PW779\n\
+~JSN\n\
+^JZY\n\
+^LH0,0^LRN\n\
+^XZ\n\
+^XA\n\
+^FT42,441\n\
+^CI0\n\
+^A0N,51,98^FDBOX^FS\n\
+^FT258,163\n\
+^A0N,20,27^FDBatch No.: $$$$$$$$$0,$$$$$$$$$1^FS\n\
+^FT512,161\n\
+^A0N,14,19^FDOperator : $$$$$$$$$2^FS\n\
+^FT258,197\n\
+^A0N,14,19^FDDate : 26/11/20^FS\n\
+^FT307,265\n\
+^A0N,31,42^FDCHEMICAL^FS\n\
+^FT557,268\n\
+^A0N,31,42^FDWEIGHT^FS\n\
+^FT327,310\n\
+^A0N,20,27^FDDCR - $$$$$$$$$3^FS\n\
+^FT589,310\n\
+^A0N,20,27^FD39.94^FS\n\
+^FT332,351\n\
+^A0N,20,27^FDPM - 40^FS\n\
+^FT595,351\n\
+^A0N,20,27^FD8.36^FS\n\
+^FT31,507\n\
+^A0N,42,57^FD001/100^FS\n\
+^FO261,228\n\
+^GB458,337,3^FS\n\
+^FO261,283\n\
+^GB454,0,3^FS\n\
+^FO529,228\n\
+^GB0,339,3^FS\n\
+^FO72,32\n\
+^BQN,2,6^FDLA,100012238100^FS\n\
+^FT45,237\n\
+^A0N,37,31^FD100012238100^FS\n\
+^FT587,197\n\
+^A0N,14,19^FDTime : 12:20:47^FS\n\
+^FT327,396\n\
+^A0N,20,27^FDDCR - 45^FS\n\
+^FT332,440\n\
+^A0N,20,27^FDPM - 40^FS\n\
+^FT589,396\n\
+^A0N,20,27^FD39.94^FS\n\
+^FT595,440\n\
+^A0N,20,27^FD8.36^FS\n\
+^FT327,486\n\
+^A0N,20,27^FDDCR - 45^FS\n\
+^FT332,530\n\
+^A0N,20,27^FDPM - 40^FS\n\
+^FT589,486\n\
+^A0N,20,27^FD39.94^FS\n\
+^FT595,530\n\
+^A0N,20,27^FD8.36^FS\n\
+^FT247,55\n\
+^A0N,23,44^FDPOLYMER FOR 238100CFMB^FS\n\
+^FT244,106\n\
+^A0N,23,44^FDPOLYMER FOR 238100CFMB^FS\n\
+^FT611,161\n\
+^A0N,14,19^FDSumit Kumar ^FS\n\
+^PQ1,0,1,Y\n\
+^XZ\n";
 
 
     /* Total varibales need to be replaced into Labels. */
@@ -261,8 +261,8 @@ class prtLabel {
 
     void readLabelFile(const char *path, char *userBuff);
    
-    void  updateLableVar(enum_LableVar varNum, char *varData);
-    char * showMeLableVar(enum_LableVar varNum);
+    void  updateLableVar(int varNum, char *varData);
+    char * showMeLableVar(int varNum);
     void  printLebel( );
     void  printLebelSD( char *labelFilePath );
     
