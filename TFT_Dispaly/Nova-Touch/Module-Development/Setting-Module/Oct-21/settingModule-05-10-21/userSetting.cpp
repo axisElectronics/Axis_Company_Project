@@ -8,6 +8,16 @@ int8_t mynull( class settings *settings ) {
   Serial.println("I am null call back");
 }
 
+int8_t showRect( class settings *settings ) {
+  int pId = settings->handlePage.temp[settings->handlePage.dot].id;
+ switch(pId){
+  case 13: 
+  case 14: 
+  default : Serial.printf("pid ==>> %d\n", pId); 
+  break;
+ }
+ return 0;
+}
 
 
 
@@ -125,24 +135,29 @@ void  settings :: showOnTFT() {
 
       case ENT:
         if ( handlePage.temp[handlePage.dot].subPage ) {
+          uint8_t showFlag=false;
           handlePage.arrPageIdx[handlePage.pageIdx++] =  handlePage.dot;
           handlePage.insertId =  handlePage.temp[ handlePage.dot].childNode;
-          //private value.
+          //Dynamically changed parent id for Enabling and Disabling
            _checkChildId    =   handlePage.insertId;     
            if(  _checkChildId == 15 ){
-       //      Serial.println("I found special child.....");
              _callingFunctionId = handlePage.temp[ handlePage.dot].id;
-        //     Serial.printf("callingFunId==> %d\n", _callingFunctionId);
              userMenu[15].ParentNode = _callingFunctionId;
              userMenu[16].ParentNode = _callingFunctionId;
-           }
+           }//end-if
           settingPageImage();// This is the base image of setting
-          loadDisplayContent(); 
-
-          //Dynamically changed ParentNode id..        
+          loadDisplayContent();  
           handlePage.dot = 0;
           settingIndexBlankFullCircle();
           settingIndexfillCircle( handlePage.dot );
+          // show enable and Disable option.
+            //1. check load structure into handPage.child has enable/disable id
+            for(handlePage.dot=0; handlePage.dot < handlePage.maxNodeIdx; ++handlePage.dot ){ 
+              if( handlePage.temp[handlePage.dot].childNode == 15 ){
+                handlePage.temp[handlePage.dot].userCallBack(this);
+              }//end-if
+            }//end-for
+            handlePage.dot=0;
         }//end-if
         else {
           handlePage.temp[handlePage.dot].userCallBack(this);
@@ -222,11 +237,11 @@ void  settings :: settingUserPageHandler() {
       {  11,       12,      10,          2,        -1, "Footer 2"            ,      NO,  addFooterTwo },
       {  12,       -1,      11,          2,        -1, "Footer 3"            ,      NO,  addFooterThree },
       /* id, nextNode, preNode, ParentNode, childNode, operationName         ,  subPage,  callBackFuncation */   
-      {  13,       14,      -1,          4,        15, "RP-45"               ,     YES,  mynull },
-      {  14,       -1,      13,          4,        15, "Gainscha"            ,     YES,  mynull },
+      {  13,       14,      -1,          4,        15, "RP-45"               ,     YES,  showRect },
+      {  14,       -1,      13,          4,        15, "Gainscha"            ,     YES,  showRect },
       /* id, nextNode, preNode, ParentNode, childNode, operationName         ,  subPage,  callBackFuncation */                               
-      {  15,       16,      -1,          -2,       -1, "Enable"             ,     NO,  en_saveResponse },
-      {  16,       -1,      15,          -2,       -1, "Disable"            ,     NO,  en_saveResponse },
+      {  15,       16,      -1,          -2,       -1, "Enable"              ,     NO,  en_saveResponse },
+      {  16,       -1,      15,          -2,       -1, "Disable"             ,     NO,  en_saveResponse },
     };
 
  

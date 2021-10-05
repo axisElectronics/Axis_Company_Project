@@ -181,7 +181,7 @@ void showCaliWeight(class settings *settings );
 
 int8_t saveAsDefault( class settings *settings  );
 int8_t factoryDefault( class settings *settings );
-
+int8_t showRect( class settings *settings );
 
 int8_t callBackFuncations( class settings *settings );
 
@@ -350,7 +350,7 @@ class settings : public userKeyBoard, public defaultSettings, public customRTC, 
     // These funcations are external becase it can be changed any time as per need.
     //
     friend int8_t  nullFunc(  class settings *settings );
-
+    friend int8_t showRect( class settings *settings );
     friend int8_t weighingMode( class settings *settings );
     friend int8_t countingMode( class settings *settings  );
     friend int8_t checkWeighing( class settings *settings  );

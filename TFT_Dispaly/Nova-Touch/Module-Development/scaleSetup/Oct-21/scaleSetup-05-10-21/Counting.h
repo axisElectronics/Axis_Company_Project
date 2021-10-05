@@ -64,7 +64,7 @@ int8_t countingMachine:: printerLevel(){
   //1. Start Serial-0 port
     static int snum = 0;
   //1. Start Serial-0 port
-//  Serial.println("Printer has been touched...!!!");
+  //  Serial.println("Printer has been touched...!!!");
   
   // Update Printer Variables
   
