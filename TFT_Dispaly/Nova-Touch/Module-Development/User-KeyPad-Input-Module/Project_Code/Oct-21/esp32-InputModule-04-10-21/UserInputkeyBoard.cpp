@@ -111,14 +111,14 @@ void userKeyBoard::tftInit(){
   tft.fillScreen(TFT_BLACK);
   tft.setRotation(1);
    #ifdef ILI9486_DRIVER
-    uint16_t calData[5] = { 331, 3456, 489, 3176, 2 };
+    uint16_t calData[5] ={ 262, 3565, 1319, 2532, 2 };
   #endif
   
   #ifdef ILI9488_DRIVER
      uint16_t calData[5] = { 299, 3592, 256, 3464, 7 };
   #endif
   tft.setTouch(calData);
-
+}
 
 void userKeyBoard::init( )
 {
