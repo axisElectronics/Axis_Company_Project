@@ -174,7 +174,7 @@ class userKeyBoard: public  SEPL328_customKeypad
     void userInputFixFormat(  );
     void DrawfixFormatChar(char fixChar, int8_t idx );
     
-    void noticBoard( uint16_t FGColor, uint16_t BGColor, bool switchFlag );
+    virtual void noticBoard( uint16_t FGColor, uint16_t BGColor, bool switchFlag );
     void noticBoard_Unit( uint16_t FGColor, uint16_t BGColor, char *buf );
     void printkeypadLable(  );
 
