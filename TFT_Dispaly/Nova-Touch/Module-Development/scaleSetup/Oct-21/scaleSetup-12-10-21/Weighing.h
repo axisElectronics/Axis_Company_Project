@@ -115,6 +115,26 @@ void  weight :: weightHandler() {
 
 
 
+void batteryAnimation(int blevel){
+    while(1){
+    uint16_t linecolor[4]={TFT_RED, TFT_YELLOW, TFT_GREEN, TFT_BLACK};
+    int8_t color=0;
+    
+    for( int xline=253, yline=5; xline < 295; ++xline ){
+      if( ( xline % 253 ) == 14 ){ 
+        color++;    
+      }
+     tft.drawFastVLine(xline ,yline, 16, linecolor[color]);
+      delay(10);
+      yield();
+    }
+ 
+ 
+    yield();
+  }//end-while(1)
+}//batteryAnimation()
+
+
 void weight:: _start() {
 
   char timeArray[10];
@@ -122,6 +142,9 @@ void weight:: _start() {
 
   initTFTHandler ( );
   printStringWeight( );
+
+  
+  batteryAnimation(100);
 
 
 
