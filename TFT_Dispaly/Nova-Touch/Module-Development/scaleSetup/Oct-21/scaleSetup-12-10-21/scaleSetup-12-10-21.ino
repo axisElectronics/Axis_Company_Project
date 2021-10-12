@@ -5,7 +5,7 @@
 TFT_eSPI tft = TFT_eSPI();
 
 class WeighingHandle Wtft;
-
+class headerInput headerStr;
 
 int Mode = 0;
 bool flag = 1;
