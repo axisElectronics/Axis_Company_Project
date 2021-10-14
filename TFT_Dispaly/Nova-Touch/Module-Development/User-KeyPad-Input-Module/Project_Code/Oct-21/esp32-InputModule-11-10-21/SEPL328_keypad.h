@@ -63,22 +63,16 @@ class SEPL328_customKeypad
     char mappedKey;
 
   public :
-  /*
-   * 
-   */
+
     void intiSEPL328_Keypad() {
       Serial1.begin(9600, SERIAL_8N1, RXD1, TXD1); // keypad
     }
-    /*
-     * 
-     */
+   
     void stopSEPL328_Keypad() {
       Serial1.end();
     }
 
-/*
- * 
- */
+
     int8_t getKeyPressed() {
       if (Serial1.available() > 0 ) {
         memset(key, '\0', 2);

@@ -5,11 +5,12 @@
 #include "commonGlobal.h"
 #include "InterruptHandler.h"
 #include "prtLabel.h"
-
+#include "errorHandle.h"
 
 extern class WeighingHandle Wtft;
+class classError errObj;
 
-typedef enum e_Weightkey{
+typedef enum e_Weightkey {
   GROSS = 0,
   NET   = 1,
   TARE  = 2
@@ -100,6 +101,21 @@ void  weight :: weightHandler() {
   memset(asciiTemp, '\0', 10);
   strcpy( asciiTemp, _readbuf( ).c_str() );  asciiTemp[7] = '\0';
 
+// it is on Alpha testing. I thing I am not getting data properly
+// on serial2 when we go higer than machine capacity.
+// Leave it for some time as it is and wait for NEERAJ Sir
+// firmware update.
+  if( errObj.checkError(numericValues[GROSS]) ){
+      uint32_t timeout = millis();
+      while( ( millis() - timeout ) < 500){
+       _readbuf( );
+     }//end-if
+     strcpy(preAsciiValues[GROSS], "ABCDEFGH");
+     strcpy(preAsciiValues[NET], "ABCDEFGH");
+     updateField = NET;
+  }//end-if
+ 
+  
   if ( strlen(asciiTemp) > 5 ) {
     _rawCalculation();
 
@@ -109,32 +125,14 @@ void  weight :: weightHandler() {
       digitSpeed = 0;
     }
   }
+  
+  
   DateNTimeHandler();
   esp_task_wdt_reset();
+
 }
 
 
-
-void batteryAnimation(int blevel){
-    while(1){
-    uint16_t linecolor[4]={TFT_RED, TFT_YELLOW, TFT_GREEN, TFT_BLACK};
-    int8_t color=0;
-    
-    for( int xline=253, yline=5; xline < 295; ++xline ){
-      
-      if( ( xline % 253 ) == 14 ){ 
-        color++;    
-      }
-      
-     tft.drawFastVLine(xline ,yline, 16, linecolor[color]);
-      delay(10);
-      yield();
-    }//end-for
- 
- 
-    yield();
-  }//end-while(1)
-}//batteryAnimation()
 
 
 void weight:: _start() {
@@ -144,10 +142,6 @@ void weight:: _start() {
 
   initTFTHandler ( );
   printStringWeight( );
-
-  
-  batteryAnimation(100);
-
 
 
   uint8_t tempdot = _getDecimal().c_str()[0];
@@ -183,12 +177,9 @@ void weight:: _start() {
 #endif
 
   ISR_dtech = 0;
-  
-//  Wtft.popupButton(Xesc,  Ybutton, TFT_GREEN);
-//  Wtft.popupButton(Xunit, Ybutton, TFT_GREEN);
-////  Wtft.popupButton(Xprint,Ybutton, TFT_GREEN);
-//  Wtft.popupButton(Xzero, Ybutton, TFT_GREEN);
-//  Wtft.popupButton(Xtare, Ybutton, TFT_GREEN);
+
+
+  errObj.errInit();
 }
 
 
@@ -208,108 +199,108 @@ void   weight :: onScreen(uint8_t showMeAt ) {
 int8_t  weight :: printerLevel() {
   static int snum = 0;
   //1. Start Serial-0 port
- // Serial.println("Printer has been touched...!!!");
-  
-  // Update Printer Variables
-  
-    Wtft.updateLableVar( DATE , dateArray );
-    Wtft.updateLableVar( TIME , preTime );
-     
-    Wtft.updateLableVar( Lvar_GROSS , asciiValues[GROSS]);
-    Wtft.updateLableVar( Lvar_TARE , asciiValues[TARE]);
-    Wtft.updateLableVar( Lvar_NET , asciiValues[NET]);
+  // Serial.println("Printer has been touched...!!!");
 
-    Wtft.updateLableVar( PRODUCT_NAME, (char *)Wtft._getProductName().c_str() );
-    Wtft.updateLableVar( Operator_Name, (char *)Wtft._getOperatorName().c_str() );
-    Wtft.updateLableVar( SHIFT, (char *)Wtft._getShift().c_str() );
-  
+  // Update Printer Variables
+
+  Wtft.updateLableVar( DATE , dateArray );
+  Wtft.updateLableVar( TIME , preTime );
+
+  Wtft.updateLableVar( Lvar_GROSS , asciiValues[GROSS]);
+  Wtft.updateLableVar( Lvar_TARE , asciiValues[TARE]);
+  Wtft.updateLableVar( Lvar_NET , asciiValues[NET]);
+
+  Wtft.updateLableVar( PRODUCT_NAME, (char *)Wtft._getProductName().c_str() );
+  Wtft.updateLableVar( Operator_Name, (char *)Wtft._getOperatorName().c_str() );
+  Wtft.updateLableVar( SHIFT, (char *)Wtft._getShift().c_str() );
+
 
   //check which printer is enabled....
   int8_t checkprtLable;
-  for(int8_t i=0; i < 5; ++i){
-    if( Wtft._getPrtResponse(i) == '1' ){
+  for (int8_t i = 0; i < 5; ++i) {
+    if ( Wtft._getPrtResponse(i) == '1' ) {
       checkprtLable = i;
     }
   }
-  
+
   // sample bill print Format -1
-  switch(checkprtLable){
+  switch (checkprtLable) {
     case 0:
+      SP( getHeader() );
+      SPL();
+      SP("S.no         : "); SPL( snum++ );
+      SP("Date         : "); SPL( Wtft.showMeLableVar( DATE ) );
+      SP("Time         : "); SPL( Wtft.showMeLableVar( TIME ) );
+      SP("Product Code : "); SPL( Wtft.showMeLableVar( PRODUCT_NAME ));
+      SP("NetWeight    : "); SPL( Wtft.showMeLableVar(Lvar_NET)  );
+      SP("TareWeight   : "); SPL( Wtft.showMeLableVar(Lvar_TARE) );
+      SP("GrossWeight  : "); SPL( Wtft.showMeLableVar(Lvar_GROSS) );
+      SP("Remark       : "); SPL();
+      SP("Shift        : "); SPL( Wtft.showMeLableVar(SHIFT) );
+
+      SP( getFooter() );
+      SPL();
+      SPL();
+      SPL();
+      /* ===================================================================== */
+      // sample bill print Format -2
+      /*
+        static int count=1, sample2=1;
+        //Header part must print Once
+        if( sample2 ){
         SP( getHeader() );
         SPL();
-        SP("S.no         : "); SPL( snum++ );
-        SP("Date         : "); SPL( Wtft.showMeLableVar( DATE ) );
-        SP("Time         : "); SPL( Wtft.showMeLableVar( TIME ) );
-        SP("Product Code : "); SPL( Wtft.showMeLableVar( PRODUCT_NAME ));
-        SP("NetWeight    : "); SPL( Wtft.showMeLableVar(Lvar_NET)  );
-        SP("TareWeight   : "); SPL( Wtft.showMeLableVar(Lvar_TARE) );
-        SP("GrossWeight  : "); SPL( Wtft.showMeLableVar(Lvar_GROSS) );
-        SP("Remark       : "); SPL();
-        SP("Shift        : "); SPL( Wtft.showMeLableVar(SHIFT) );
-    
+
+        #define adjustSpace(xx) for(uint8_t i=0; i < ( 15-strlen(xx) ); i++ ) SP(' ');
+
+        SP("Product  : "); SP( Wtft.showMeLableVar(PRODUCT_NAME) );    adjustSpace( (  Wtft.showMeLableVar(PRODUCT_NAME) ) );     SP("Operator Name : "); SPL(Wtft.showMeLableVar(Operator_Name));
+        SP("Batch No : "); SP("123456789"); adjustSpace("123456789");  SP("Line No       : "); SPL("1");
+        SP("Date     : "); SP(dateArray);   adjustSpace(dateArray);    SP("Shift         : "); SPL(Wtft.showMeLableVar(SHIFT));
+        char tempbuff[] = "==================================================";
+        //SPL( strlen(tempbuff) );//max length is 50
+        SPL(tempbuff);
+        SPL("S.no         Time           Gross Weight  ");
+        SPL(tempbuff);
+        sample2 =0;
+        }
+
+        //printable data
+        if( count < 6 ){
+        SP(snum++);  SP("            ");
+        SP(preTime); SP("            ");
+        SPL( Wtft.showMeLableVar(2) );
+        count++;
+        }else{
+        count = 1;
+        sample2 = 1;
+        }
+
+
+        // footer part must print after 5 print has been done.
+        if( sample2 ){
         SP( getFooter() );
         SPL();
         SPL();
         SPL();
- /* ===================================================================== */
-   // sample bill print Format -2
-  /*
-    static int count=1, sample2=1;
-    //Header part must print Once
-    if( sample2 ){
-    SP( getHeader() );
-    SPL();
-
-    #define adjustSpace(xx) for(uint8_t i=0; i < ( 15-strlen(xx) ); i++ ) SP(' ');
-
-    SP("Product  : "); SP( Wtft.showMeLableVar(PRODUCT_NAME) );    adjustSpace( (  Wtft.showMeLableVar(PRODUCT_NAME) ) );     SP("Operator Name : "); SPL(Wtft.showMeLableVar(Operator_Name));
-    SP("Batch No : "); SP("123456789"); adjustSpace("123456789");  SP("Line No       : "); SPL("1");
-    SP("Date     : "); SP(dateArray);   adjustSpace(dateArray);    SP("Shift         : "); SPL(Wtft.showMeLableVar(SHIFT));
-    char tempbuff[] = "==================================================";
-    //SPL( strlen(tempbuff) );//max length is 50
-    SPL(tempbuff);
-    SPL("S.no         Time           Gross Weight  ");
-    SPL(tempbuff);
-    sample2 =0;
-    }
-
-    //printable data
-    if( count < 6 ){
-    SP(snum++);  SP("            ");
-    SP(preTime); SP("            ");
-    SPL( Wtft.showMeLableVar(2) );
-    count++;
-    }else{
-    count = 1;
-    sample2 = 1;
-    }
+        }
+      */
 
 
-    // footer part must print after 5 print has been done.
-    if( sample2 ){
-    SP( getFooter() );
-    SPL();
-    SPL();
-    SPL();
-}
-*/
-
-
-    break;
+      break;
 
     case 1 :
-    
+
       /* 1 -> It is tested on Gainscha Printer using ZPL printer Label.
          2 -> Here we are replacing variables with our machine real time values.
          3 -> use this code to check,
-      
+
              Wtft.printLebel();
       */
-        // sample print lable format -3
-         Wtft.printLebel();
-    break;
+      // sample print lable format -3
+      Wtft.printLebel();
+      break;
   }
- 
+
 
 
 
@@ -320,7 +311,7 @@ int8_t  weight :: printerLevel() {
 int8_t weight :: activityBasedOnTouch() {
   char src[12] = {0};
 
-  switch (  getactiveMachineKeyMapping() ){
+  switch (  getactiveMachineKeyMapping() ) {
     case map_CmdESC   : pressed = 0; return -1;
     case map_CmdUnits : break; // as per requirement
     case map_CmdPrint : printerLevel(); break; // as per requirement
@@ -338,10 +329,10 @@ int8_t weight :: activityBasedOnTouch() {
     //  SPL("pressed : " + String(pressed));
     pressed = 0;
 
-    if ( ESC_Touch ){
+    if ( ESC_Touch ) {
       Wtft.popupButton(Xesc, Ybutton, TFT_RED);
-      delay(500); 
-     // SPL("ESCTouch...>>X:  " + String(xAxis) + "Y : " + String(yAxis) );
+      delay(500);
+      // SPL("ESCTouch...>>X:  " + String(xAxis) + "Y : " + String(yAxis) );
       xAxis = 0;
       yAxis = 0;
       STOP_SERIAL2
@@ -353,23 +344,23 @@ int8_t weight :: activityBasedOnTouch() {
       detachInterrupt(GPIOPin_TIRQ);
       ISR_dtech = 1;
 #endif
-     
+
       Wtft.popupButton(Xesc, Ybutton, TFT_GREEN);
       return -1;
     }
-    
-    else if ( Taretouch_Auto ){
+
+    else if ( Taretouch_Auto ) {
       Wtft.popupButton(Xtare, Ybutton, TFT_RED);
       CMD_AUTOTARE
       delay(250);
       Wtft.popupButton(Xtare, Ybutton, TFT_BLACK);
       return 0;
     }
-    else if ( Zerotouch ){
-       Wtft.popupButton(Xzero, Ybutton, TFT_RED);
+    else if ( Zerotouch ) {
+      Wtft.popupButton(Xzero, Ybutton, TFT_RED);
       CMD_ZERODATA
       delay(250);
-       Wtft.popupButton(Xzero, Ybutton, TFT_BLACK);
+      Wtft.popupButton(Xzero, Ybutton, TFT_BLACK);
       return 0;
     }
     else if ( Field_three_Touch  )
@@ -400,10 +391,10 @@ TARE_WEIGHT :
     }
     else if ( PRT_Touch ) {
       //Serial.printf("printer xAxis : %ld, yAxis : %ld\n", xAxis, yAxis);
-     Wtft.popupButton(Xprint, Ybutton, TFT_RED);
+      Wtft.popupButton(Xprint, Ybutton, TFT_RED);
       printerLevel();
       delay(500);
-     Wtft.popupButton(Xprint, Ybutton, TFT_BLACK);
+      Wtft.popupButton(Xprint, Ybutton, TFT_BLACK);
     }
 
   }//end-if
@@ -459,13 +450,13 @@ bool   weight :: weightStripImage() {
 bool  weight :: printStringWeight( ) {
   String weightUnit = _getWeighingUnit();
   weightStripImage();
- // SPL("weightUnit : " + String(weightUnit) );
+  // SPL("weightUnit : " + String(weightUnit) );
   tft.setTextSize( 1 );
 
 
-//  SPL("getDate+  : " + getRTCDate() );
+  //  SPL("getDate+  : " + getRTCDate() );
   parshDateformat(dateArray,  getRTCDate().c_str() );
- // SPL("parseDate  : " + String( dateArray ) );
+  // SPL("parseDate  : " + String( dateArray ) );
 
   // Window -1
   tft.setFreeFont( (const GFXfont *)EUROSTILE_B13 );
