@@ -463,10 +463,17 @@ bool  weight :: printStringWeight( ) {
   tft.setTextSize( 1 );
 
 
-  //  SPL("getDate+  : " + getRTCDate() );
-  parshDateformat(dateArray,  getRTCDate().c_str() );
-  // SPL("parseDate  : " + String( dateArray ) );
-
+  char dateArray[10];
+  parshDateformat(dateArray, getRTCDate().c_str() );
+  Serial.printf("==>> Date: %s\n", dateArray);
+//    strcpy(dateArray, (char *)getRTCDate().c_str());  
+//    int len = dateArray[len-2] = '\0'; 
+//    len = strlen(dateArray);
+//    dateArray[len-4] = dateArray[len-2]; 
+//    dateArray[len-3] = dateArray[len-1];  
+//    dateArray[len-2] = '\0'; 
+    
+  
   // Window -1
   tft.setFreeFont( (const GFXfont *)EUROSTILE_B13 );
   tft.setTextColor(TFT_WHITE, TFT_BLACK);

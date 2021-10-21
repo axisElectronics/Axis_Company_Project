@@ -83,8 +83,8 @@ enum{
         dest[3] = src[3];       \
         dest[4] = src[4];       \
         dest[5] = src[5];       \
-        dest[6] = src[6];       \
-        dest[7] = src[7];       \
+        dest[6] = src[8];       \
+        dest[7] = src[9];       \
         dest[8] = '\0';         \
       }                       \
     }                         \
