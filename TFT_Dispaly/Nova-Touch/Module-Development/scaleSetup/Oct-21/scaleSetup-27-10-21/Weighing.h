@@ -338,7 +338,7 @@ int8_t weight :: activityBasedOnTouch() {
     if ( ESC_Touch ) {
       Wtft.popupButton(Xesc, Ybutton, TFT_RED);
       delay(500);
-      // SPL("ESCTouch...>>X:  " + String(xAxis) + "Y : " + String(yAxis) );
+      SPL("ESCTouch...>>X:  " + String(xAxis) + "Y : " + String(yAxis) );
       xAxis = 0;
       yAxis = 0;
       STOP_SERIAL2
@@ -369,8 +369,7 @@ int8_t weight :: activityBasedOnTouch() {
       Wtft.popupButton(Xzero, Ybutton, TFT_BLACK);
       return 0;
     }
-    else if ( Field_three_Touch  )
-    {
+    else if ( Field_three_Touch  ){
 TARE_WEIGHT :
 
       STOP_SERIAL2

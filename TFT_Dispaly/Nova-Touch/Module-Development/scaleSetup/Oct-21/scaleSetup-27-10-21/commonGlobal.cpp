@@ -86,7 +86,7 @@ class weight weightObj;
 
 /******* Class declaration ********/
 extern TFT_eSPI tft;
-extern class DisplayInit distft;
+//extern class DisplayInit distft;
 
 /******* external function and variable **********/
 
@@ -303,7 +303,7 @@ void WeighingHandle :: initWeighingTFT( ) {
   Serial2.setRxBufferSize(500);
 
 
-  distft.RpiDisplayInit(typeOne); 
+  RpiDisplayInit(typeOne); 
   tft.fillScreen(TFT_BLACK);
 /*
   tft.init();

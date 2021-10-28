@@ -84,8 +84,8 @@ int8_t checkWeighing :: printerLevel(){
         SP("Time         : "); SPL( Wtft.showMeLableVar( TIME ) );
         SP("Product Code : "); SPL( Wtft.showMeLableVar( PRODUCT_NAME ));
         SP("NetWeight    : "); SPL( Wtft.showMeLableVar(Lvar_NET)  );
-        SP("TareWeight   : "); SPL( Wtft.showMeLableVar(Lvar_TARE) );
-        SP("GrossWeight  : "); SPL( Wtft.showMeLableVar(Lvar_GROSS) );
+        SP("Low Weight   : "); SPL( Wtft.showMeLableVar(L_WEIGHT) );
+        SP("High Weight  : "); SPL( Wtft.showMeLableVar(H_WEIGHT) );
         SP("Remark       : "); SPL();
         SP("Shift        : "); SPL( Wtft.showMeLableVar(SHIFT) );
     

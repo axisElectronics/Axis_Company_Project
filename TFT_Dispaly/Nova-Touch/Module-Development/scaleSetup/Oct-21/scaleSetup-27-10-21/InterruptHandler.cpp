@@ -41,8 +41,7 @@ int8_t findTouch() {
       ISR_dtech = 1;
       #endif
       
-      if ( ESC_Touch )
-      {
+      if ( ESC_Touch ){
         //  SPL("ESCTouch...>>X:  " + String(xAxis) + " Y : " + String(yAxis) );
         Wtft.popupButton(Xesc, Ybutton, TFT_RED);
         delay(500); 
@@ -52,7 +51,7 @@ int8_t findTouch() {
         EMPTY_SERIALBUFFER
         pressed = 0;
 //        detachInterrupt(GPIOPin_TIRQ);
-       Wtft.popupButton(Xesc, Ybutton, TFT_GREEN);
+        Wtft.popupButton(Xesc, Ybutton, TFT_GREEN);
         return -1;
       }
       

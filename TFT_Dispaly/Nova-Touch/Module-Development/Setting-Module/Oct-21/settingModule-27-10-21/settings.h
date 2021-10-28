@@ -202,7 +202,7 @@ struct su_settingMenu
  int8_t en_saveResponse( class settings *settings );
  int8_t dis_saveResponse( class settings *settings );
  
-class settings : public userKeyBoard, public defaultSettings, public customRTC, public prtLabel
+class settings : public userKeyBoard, public defaultSettings, public customRTC, public prtLabel, public DisplayInit
 {
   private :
     class novaSecurity novaSecure;

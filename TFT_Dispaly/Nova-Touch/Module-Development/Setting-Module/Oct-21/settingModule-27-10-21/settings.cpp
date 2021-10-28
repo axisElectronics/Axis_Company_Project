@@ -255,8 +255,8 @@ void settings ::  settingPageInit( )
 
   tft.setTouch(calData);
 */
-class DisplayInit distft;
-  distft.RpiDisplayInit(typeOne);
+//class DisplayInit distft;
+  RpiDisplayInit(typeOne);
 
   basesetting.baseStringIdx = basesetting.stringIdx = 10;
   basesetting.baseEndStringIdx = 20;

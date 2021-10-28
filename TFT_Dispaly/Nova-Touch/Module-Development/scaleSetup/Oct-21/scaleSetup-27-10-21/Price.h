@@ -100,8 +100,8 @@ int8_t  price ::  printerLevel(){
         SP("Time         : "); SPL( Wtft.showMeLableVar( TIME ) );
         SP("Product Code : "); SPL( Wtft.showMeLableVar( PRODUCT_NAME ));
         SP("NetWeight    : "); SPL( Wtft.showMeLableVar(Lvar_NET)  );
-        SP("TareWeight   : "); SPL( Wtft.showMeLableVar(Lvar_TARE) );
-        SP("GrossWeight  : "); SPL( Wtft.showMeLableVar(Lvar_GROSS) );
+        SP("Total Price  : "); SPL( Wtft.showMeLableVar(T_PRICE) );
+        SP("Unit Price   : "); SPL( Wtft.showMeLableVar(U_PRICE) );
         SP("Remark       : "); SPL();
         SP("Shift        : "); SPL( Wtft.showMeLableVar(SHIFT) );
     

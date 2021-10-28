@@ -9,7 +9,7 @@ TFT_eSPI tft = TFT_eSPI();
 
 class WeighingHandle Wtft;
 class headerInput headerStr;
-class DisplayInit distft;
+//class DisplayInit distft;
   
 int Mode = 0;
 bool flag = 1;
@@ -85,10 +85,10 @@ HERE :
   if (flag) {
 
     // import default settings
+
     settingPageInit( ); 
     // check 2 main parameters which are critical fot this
-    // 1. Dot 2. Capacity
-       
+    // 1. Dot 2. Capacity 
     uint8_t tempdot = _getDecimal().c_str()[0];
     showDigits.dotPosition = tempdot - 48;
 
@@ -101,14 +101,13 @@ HERE :
 
     startUPImage();
     STOP_SERIAL2
-    #ifdef FEEDBACK
-      popupButton(0); 
-    #endif
-    TouchInterrupt_ptr = INTER_resetPage;
+#ifdef FEEDBACK
+ popupButton(0); 
+#endif
 
+    TouchInterrupt_ptr = INTER_resetPage;
     flag = 0;
     pressed = 0;
-
    ATTACH_TOUCH_INTERRUPT
    yield();
 
@@ -130,12 +129,13 @@ HERE :
         Serial.printf(" total number of bytes used by the SPIFFS file system : %ld\n", SPIFFS.totalBytes() );
         Serial.printf("total Bytes used by SPIFFS : %ld\n", SPIFFS.usedBytes() );
            
-    }
+    }//end-if
     else if (  WeighingModeTouchEnable()  ) {
       // Weighing Mode has been touched. So draw rectangle on it.
-      #ifdef FEEDBACK
-        popupButton(WeightMode, TFT_GREEN);
-      #endif  
+#ifdef FEEDBACK
+ popupButton(WeightMode, TFT_GREEN);
+#endif  
+
       if ( userSetting.weighingMode ) {
         Mode = 2;
         START_SERIAL2
@@ -144,7 +144,7 @@ HERE :
         pressed =  0;   
         ATTACH_TOUCH_INTERRUPT     
       }
-    }
+    }//end-else-if
     else if (  CountingModeTouchEnable()  ) {
       // Count Mode has been touched. So draw rectangle on it.
       #ifdef FEEDBACK
@@ -155,12 +155,10 @@ HERE :
         START_SERIAL2
         CMD_STARTDATA
       } else {
-        pressed =  0;
-       
+        pressed =  0;  
         ATTACH_TOUCH_INTERRUPT
-       
       }
-    }
+    }//end-else-if
     else if (  PriceingModeTouchEnable()  ) {
      // Price Mode has been touched. So draw rectangle on it.
      #ifdef FEEDBACK
@@ -220,7 +218,7 @@ HERE :
         Mode = 0;
         flag = 1;
         pressed = 0;
-        delay(100);
+        delay(100);       
         goto HERE;
       }
       break;
