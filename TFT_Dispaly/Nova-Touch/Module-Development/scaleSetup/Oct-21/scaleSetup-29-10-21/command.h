@@ -22,12 +22,12 @@
 
 enum {
     STARTDATA = 0,
-    STOPDATA = 1,
-    GETTARE = 2,
-    AUTOTARE = 3,
-    ZERODATA = 4,
-    HIGHDATA = 5, // high precision weight
-    LOWDATA = 6, // low precision weight
+    STOPDATA  = 1,
+    GETTARE   = 2,
+    AUTOTARE  = 3,
+    ZERODATA  = 4,
+    HIGHDATA  = 5, // high precision weight
+    LOWDATA   = 6, // low precision weight
   }CMD;
 
   
@@ -72,7 +72,7 @@ class command{
         }
         if( millis() - timeout > 1000 ){
         Serial2.write( commandBuff[cmd] );
-        Serial.printf("send commad --->> %s\n",  commandBuff[cmd]);
+    //    Serial.printf("send commad --->> %s\n",  commandBuff[cmd]);
         timeout = millis();
         --count;
         }

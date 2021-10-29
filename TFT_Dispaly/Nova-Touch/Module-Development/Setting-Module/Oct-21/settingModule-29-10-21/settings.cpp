@@ -238,8 +238,7 @@ void  settings :: info(){
 #define RXD2 16
 #define TXD2 17
 
-void settings ::  settingPageInit( )
-{
+void settings ::  settingPageInit( ){
 
   Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2); // Weight Mechine
 
@@ -292,8 +291,7 @@ void settings ::  settingPageInit( )
    @ baseImage of setting page wihtout any String.
  *********************************************************************/
 
-void settings :: settingPageImage()
-{
+void settings :: settingPageImage(){
   tft.setSwapBytes(true);
   tft.pushImage(0, 0, settingPageImageWidth, settingPageImageHeight, settingPageImageArr );
 
@@ -305,8 +303,7 @@ void settings :: settingPageImage()
 ********************************************************************/
 #define isKeyPressed_NO 5
 
-int8_t settings :: ButtonTouch( )
-{
+int8_t settings :: ButtonTouch( ){
 
   uint16_t xAxis, yAxis;
   int8_t Phykey;
@@ -411,16 +408,16 @@ void  settings :: settingPageHandler( )
     tft.getTouch(&xAxis, &yAxis);
     
     if( ( xAxis >= 30 && xAxis < 160 ) && ( yAxis >= 90 && yAxis < 220 ) ){
-      Serial.println("Admin touched");
+   //   Serial.println("Admin touched");
       goto ADMIN;
     }
     else  if( ( xAxis >= 220 && xAxis < 360 ) && ( yAxis >= 90 && yAxis < 220 ) ){
-      Serial.println("User touched");
+    //  Serial.println("User touched");
        settingUserPageHandler(); // User Settings
        return;
     }
     else  if( ( xAxis >= 20 && xAxis < 140 ) && ( yAxis >= 245 && yAxis < 310 ) ){
-      Serial.println("Back touched");       
+   //   Serial.println("Back touched");       
        return;
     }
     

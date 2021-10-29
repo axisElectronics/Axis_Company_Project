@@ -126,8 +126,8 @@ HERE :
       #endif  
         pressed =  0;   
         ATTACH_TOUCH_INTERRUPT 
-        Serial.printf(" total number of bytes used by the SPIFFS file system : %ld\n", SPIFFS.totalBytes() );
-        Serial.printf("total Bytes used by SPIFFS : %ld\n", SPIFFS.usedBytes() );
+//        Serial.printf(" total number of bytes used by the SPIFFS file system : %ld\n", SPIFFS.totalBytes() );
+//        Serial.printf("total Bytes used by SPIFFS : %ld\n", SPIFFS.usedBytes() );
            
     }//end-if
     else if (  WeighingModeTouchEnable()  ) {
