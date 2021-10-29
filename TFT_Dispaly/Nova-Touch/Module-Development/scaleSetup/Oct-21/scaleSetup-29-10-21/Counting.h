@@ -243,8 +243,8 @@ int8_t countingMachine:: activityBasedOnTouch() {
       START_SERIAL1
       START_SERIAL2
     }
-    else  if ( Field_One_Touch  ) {
-      SPL("X : " + String(xAxis) + ", Y : " + String( yAxis ) );
+    else  if ( Field_One_Touch  ) {// this is for Pieces Counting
+   //   SPL("X : " + String(xAxis) + ", Y : " + String( yAxis ) );
       COUNT :
       
       STOP_SERIAL2
@@ -256,7 +256,7 @@ int8_t countingMachine:: activityBasedOnTouch() {
       kbd.userInput.numericSwitchFlag = 1;    
       strcpy( kbd.userInput.fieldLable, "COUNT" );      
       kbd.takeUserInput( NULL );
-      SPL("1-keyboard : " + String( kbd.userInput.userInputArray ) );
+  //    SPL("1-keyboard : " + String( kbd.userInput.userInputArray ) );
 
       updateField = COUNT;
       numericValues[COUNT_UnitWeight] = 0.0;
@@ -275,6 +275,7 @@ int8_t countingMachine:: activityBasedOnTouch() {
       strcpy( showDigits.preValue[1], "ABCDEFGH" );
       onScreen(COUNT_UnitWeight);
       onScreen(COUNT_NetWeight);
+      strcpy( showDigits.preValue[0], "ABCDEFGH" );
       onScreen(COUNT);
 
       delete[]  kbd.userInput.userInputArray;
@@ -578,6 +579,8 @@ void  countingMachine :: updateTotalPcsWindow() {
     asciiValues[COUNT][tempDotPos] = '\0';
     strcat(tempArray, asciiValues[COUNT]);
   } else return;
+
+
 #if 0
   SPL("ascii : " + String( asciiValues[COUNT] ) );
   SPL("numeric : " + String( numericValues[COUNT] ) );
@@ -643,13 +646,11 @@ void  countingMachine :: updateTotalPcsWindow() {
   //5. draw Digits only, Those digits which is different from previous Value.
   // front digit
   tft.setTextColor(showDigits.showDigitColorWindowOne, TFT_BLACK);
-  for (uint8_t idx = leadingZero ; idx < 7; ++idx )
-  {
-    if ( showDigits.preValue[0][idx] !=  showDigits.currentValue[idx] )
-    {
+  for (uint8_t idx = leadingZero ; idx < 7; ++idx ){
+    if ( showDigits.preValue[0][idx] !=  showDigits.currentValue[idx] ){
       tft.drawChar( showDigits.currentValue[idx], 15 + ( idx * 65), 130,  1);
-    }
-  }
+    }//end-if
+  }//end-for
 
   // end : update preVlaue
   strcpy( showDigits.preValue[0], showDigits.currentValue );
