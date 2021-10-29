@@ -1475,7 +1475,7 @@ extern class headerInput headerStr;
 int8_t addHeaderOne( class settings *settings ) {
   char buff[70];
   memset(buff, '\0', sizeof(buff));
-  Serial.println(settings->_getHeader(0));
+//  Serial.println(settings->_getHeader(0));
   strcpy(buff, (char *)settings->_getHeader(0).c_str());
   headerStr.takeStringInput( buff, 70 );
   strcpy( settings->userScaleSetup.saveHeader[0] , buff );
@@ -1501,7 +1501,7 @@ int8_t addHeaderOne( class settings *settings ) {
 int8_t addHeaderTwo( class settings *settings ) {
   char buff[70];
   memset(buff, '\0', sizeof(buff));
-  Serial.println(settings->_getHeader(1));
+//  Serial.println(settings->_getHeader(1));
   strcpy(buff, (char *)settings->_getHeader(1).c_str());
   headerStr.takeStringInput( buff, 70 );
   strcpy( settings->userScaleSetup.saveHeader[1] , buff );
@@ -1528,7 +1528,7 @@ int8_t addHeaderTwo( class settings *settings ) {
 int8_t addHeaderThree( class settings *settings ) {
   char buff[70];
   memset(buff, '\0', sizeof(buff));
-  Serial.println(settings->_getHeader(2));
+//  Serial.println(settings->_getHeader(2));
   strcpy(buff, (char *)settings->_getHeader(2).c_str());
   headerStr.takeStringInput( buff, 70 );
   strcpy( settings->userScaleSetup.saveHeader[2] , buff );
@@ -1556,7 +1556,7 @@ int8_t addHeaderThree( class settings *settings ) {
 int8_t addHeaderFour( class settings *settings ) {
   char buff[70];
   memset(buff, '\0', sizeof(buff));
-  Serial.println(settings->_getHeader(3));
+//  Serial.println(settings->_getHeader(3));
   strcpy(buff, (char *)settings->_getHeader(3).c_str());
   headerStr.takeStringInput( buff, 70 );
   strcpy( settings->userScaleSetup.saveHeader[3] , buff );
@@ -1584,7 +1584,7 @@ int8_t addHeaderFour( class settings *settings ) {
 int8_t addHeaderFive( class settings *settings ) {
   char buff[70];
   memset(buff, '\0', sizeof(buff));
-  Serial.println(settings->_getHeader(4));
+//  Serial.println(settings->_getHeader(4));
   strcpy(buff, (char *)settings->_getHeader(4).c_str());
   headerStr.takeStringInput( buff, 70 );
   strcpy( settings->userScaleSetup.saveHeader[4] , buff );
@@ -1613,7 +1613,7 @@ int8_t addFooterOne( class settings *settings ) {
 
   char buff[70];
   memset(buff, '\0', sizeof(buff));
-  Serial.println(settings->_getFooter(0));
+//  Serial.println(settings->_getFooter(0));
   strcpy(buff, (char *)settings->_getFooter(0).c_str());
   headerStr.takeStringInput( buff, 70 );
   strcpy( settings->userScaleSetup.saveFooter[0] , buff );
@@ -1639,7 +1639,7 @@ int8_t addFooterOne( class settings *settings ) {
 int8_t addFooterTwo( class settings *settings ) {
   char buff[70];
   memset(buff, '\0', sizeof(buff));
-  Serial.println(settings->_getFooter(1));
+//  Serial.println(settings->_getFooter(1));
   strcpy(buff, (char *)settings->_getFooter(1).c_str());
   headerStr.takeStringInput( buff, 70 );
   strcpy( settings->userScaleSetup.saveFooter[1] , buff );
@@ -1664,7 +1664,7 @@ int8_t addFooterTwo( class settings *settings ) {
 int8_t addFooterThree( class settings *settings ) {
   char buff[70];
   memset(buff, '\0', sizeof(buff));
-  Serial.println(settings->_getFooter(2));
+//  Serial.println(settings->_getFooter(2));
   strcpy(buff, (char *)settings->_getFooter(2).c_str());
   headerStr.takeStringInput( buff, 70 );
   strcpy( settings->userScaleSetup.saveFooter[2] , buff );
@@ -1692,7 +1692,7 @@ int8_t addProductName( class settings *settings ) {
 
   char buff[70];
   memset(buff, '\0', sizeof(buff));
-  Serial.println(settings-> _getProductName() );
+//  Serial.println(settings-> _getProductName() );
   strcpy(buff, (char *)settings-> _getProductName().c_str() );
   headerStr.takeStringInput( buff, 70 );
   strcpy( settings->userScaleSetup.saveProductName , buff );
@@ -1725,7 +1725,7 @@ int8_t addOperatorName( class settings *settings ) {
   strcpy( settings->userScaleSetup.saveOperatorName , buff     );
   settings->saveAsDefault();
 
-  SPL("addOperatorName ==>> " + settings->_getOperatorName() );
+//  SPL("addOperatorName ==>> " + settings->_getOperatorName() );
 
   returnToSettingPage(settings);
   return 1;
@@ -1739,7 +1739,7 @@ int8_t addShift( class settings *settings ) {
   settings->takeStringInput(buff, 70);
   strcpy( settings->userScaleSetup.saveShift , buff     );
   settings->saveAsDefault();
-  SPL("addShift ==>> " + settings->_getShift() );
+//  SPL("addShift ==>> " + settings->_getShift() );
   returnToSettingPage(settings);
   return 1;
 }
