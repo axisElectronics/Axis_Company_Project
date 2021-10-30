@@ -660,7 +660,7 @@ void WeighingHandle :: _windowThree(char *preValue, char *currentValue){
   for (uint8_t idx = leadingZero ; idx < 7; ++idx ){
     if ( preValue[idx] !=  currentValue[idx] ){
       tft.fillRect( 249  + ( idx * 31),  180,   30,  40,  TFT_BLACK );
-      tft.drawChar( currentValue[idx], 15 + ( idx * 31) , 210,  1);
+       tft.drawChar( currentValue[idx], 249 + ( idx * 31) , 210,  1 );
     }
   }
 
