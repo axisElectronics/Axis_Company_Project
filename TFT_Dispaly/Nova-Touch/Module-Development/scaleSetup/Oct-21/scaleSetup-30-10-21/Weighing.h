@@ -208,9 +208,9 @@ void   weight :: onScreen(uint8_t showMeAt ) {
   }
    
   switch ( showMeAt ) {
-    case GROSS      :  windowTwo(); break;
+    case GROSS      :  windowTwo(showDigits.dotPosition); break;
     case NET        :  windowOne(showDigits.dotPosition);  break;                     
-    case TARE       :  windowThree(); break;
+    case TARE       :  windowThree(showDigits.dotPosition); break;
   }
 
 }

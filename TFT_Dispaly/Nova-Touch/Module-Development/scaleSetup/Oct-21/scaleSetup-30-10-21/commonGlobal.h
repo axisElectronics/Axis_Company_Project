@@ -463,14 +463,18 @@ class WeighingHandle : public settings {
     void    initWeighingTFT( );
 
     String  handleFlags( char *Weight  );
+    void  windowOne( );
     void _windowOne(char *preValue, char *currentValue);
-    void    windowOne( );
-    void    windowOne(int8_t tempDotPos );
+    void  windowOne(int8_t tempDotPos );
+    
+    void  windowTwo( );
     void _windowTwo(char *preValue, char *currentValue);    
-    void    windowTwo( );
+    void  windowTwo(int8_t tempDotPos );
+    
+    void  windowThree( );
     void _windowThree(char *preValue, char *currentValue);  
-    void    windowThree( );
-   
+    void  windowThree(int8_t tempDotPos );
+    
     /* Basic images required for all 4 Modes */
     bool weighingMode();
     bool BootingImage();

@@ -621,7 +621,16 @@ void WeighingHandle :: windowTwo( ) {
 
 }
 
-
+void WeighingHandle :: windowTwo(int8_t tempDotPos ) {
+   windowTwo();
+  // remove all previous dots and redraw at given position;
+  for (uint8_t idx = 0; idx < 6; ++idx )
+    tft.fillCircle( 41 + ( idx * 31), 216, 3, TFT_BLACK);
+  
+  // draw dot at given position
+  if( tempDotPos != -1 )// if we donot want to use any dot.
+     tft.fillCircle( 41 + ( tempDotPos * 31), 216, 3, TFT_RED );
+}
 /*
    Note : Three variables are important here which need to be care to show data on screen.
           1 >>  showDigits.currentValue -->> this array data must be without dot.
@@ -749,6 +758,17 @@ void WeighingHandle :: windowThree( ) {
 
 }
 
+
+void WeighingHandle :: windowThree(int8_t tempDotPos ) {
+   windowTwo();
+  // remove all previous dots and redraw at given position;
+  for (uint8_t idx = 0; idx < 6; ++idx )
+   tft.fillCircle( 275 + ( idx * 31), 216, 3, TFT_BLACK);
+  
+  // draw dot at given position
+  if( tempDotPos != -1 )// if we donot want to use any dot.
+      tft.fillCircle( 275 + ( tempDotPos * 31), 216, 3, TFT_RED );
+}
 
 
 
